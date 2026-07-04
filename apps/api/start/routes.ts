@@ -29,6 +29,7 @@ router.group(() => {
   router.get('/spaces', [SpacesController, 'index'])
   router.get('/spaces/:spaceId/tree', [SpacesController, 'tree'])
 
+  router.get('/documents', [DocumentsController, 'index'])
   router.get('/documents/:documentId', [DocumentsController, 'show'])
   router.patch('/documents/:documentId', [DocumentsController, 'update'])
 

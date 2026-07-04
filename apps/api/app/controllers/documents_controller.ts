@@ -4,8 +4,14 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class DocumentsController {
   constructor(private catalog = new DocweaveCatalogService()) {}
 
+  async index() {
+    return {
+      data: await this.catalog.listDocuments(),
+    }
+  }
+
   async show({ params, response }: HttpContext) {
-    const document = this.catalog.getDocument(params.documentId)
+    const document = await this.catalog.getDocument(params.documentId)
 
     if (!document) {
       return response.status(404).send({
@@ -19,7 +25,10 @@ export default class DocumentsController {
   }
 
   async update({ params, request, response }: HttpContext) {
-    const document = this.catalog.getDocument(params.documentId)
+    const document = await this.catalog.updateDocument(
+      params.documentId,
+      request.only(['title', 'summary']),
+    )
 
     if (!document) {
       return response.status(404).send({
@@ -27,14 +36,9 @@ export default class DocumentsController {
       })
     }
 
-    const patch = request.only(['title', 'summary'])
-
     return {
-      message: 'Document update scaffold accepted',
-      data: {
-        ...document,
-        ...patch,
-      },
+      message: 'Document updated',
+      data: document,
     }
   }
 }

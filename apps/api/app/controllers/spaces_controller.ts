@@ -6,12 +6,12 @@ export default class SpacesController {
 
   async index() {
     return {
-      data: this.catalog.listSpaces(),
+      data: await this.catalog.listSpaces(),
     }
   }
 
   async tree({ params, response }: HttpContext) {
-    const tree = this.catalog.getSpaceTree(params.spaceId)
+    const tree = await this.catalog.getSpaceTree(params.spaceId)
 
     if (!tree) {
       return response.status(404).send({

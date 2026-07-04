@@ -1,80 +1,91 @@
-type SpaceRecord = {
-  id: string
-  name: string
-  summary: string
-  rootDocuments: string[]
-}
-
-type DocumentRecord = {
-  id: string
-  title: string
-  status: 'draft' | 'review' | 'ready'
-  summary: string
-  spaceId: string
-  updatedAt: string
-}
-
-const spaces: SpaceRecord[] = [
-  {
-    id: 'product',
-    name: 'Product Workspace',
-    summary: 'Owns workspace UX, editor surfaces, and user-facing flows.',
-    rootDocuments: ['doc-editor-runtime'],
-  },
-  {
-    id: 'architecture',
-    name: 'Architecture',
-    summary: 'Owns service boundaries, contracts, and implementation sequencing.',
-    rootDocuments: ['doc-collab-token'],
-  },
-]
-
-const documents: DocumentRecord[] = [
-  {
-    id: 'doc-editor-runtime',
-    title: 'Editor Runtime Baseline',
-    status: 'draft',
-    summary: 'Seed the editor page shell, route boundaries, and workspace navigation.',
-    spaceId: 'product',
-    updatedAt: '2026-07-04T00:00:00.000Z',
-  },
-  {
-    id: 'doc-collab-token',
-    title: 'Collaboration Token Flow',
-    status: 'review',
-    summary: 'Map how api and collab exchange access tokens for Yjs sessions.',
-    spaceId: 'architecture',
-    updatedAt: '2026-07-03T00:00:00.000Z',
-  },
-]
+import Document from '#models/document'
+import Space from '#models/space'
 
 export default class DocweaveCatalogService {
-  // Keep scaffold data centralized so route handlers stay close to future production wiring.
-  listSpaces() {
-    return spaces
+  // Keep persistence access centralized so controllers stay focused on API semantics.
+  async listSpaces() {
+    const spaces = await Space.query().preload('documents')
+
+    return spaces.map((space) => ({
+      id: space.id,
+      name: space.name,
+      summary: space.summary,
+      rootDocuments: space.documents.map((document) => document.id),
+    }))
   }
 
-  getSpaceTree(spaceId: string) {
-    const space = spaces.find((entry) => entry.id === spaceId) ?? null
+  async listDocuments() {
+    const documents = await Document.query().orderBy('updated_at', 'desc')
+
+    return documents.map((document) => ({
+      id: document.id,
+      title: document.title,
+      status: document.status,
+      summary: document.summary,
+      spaceId: document.spaceId,
+      updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
+    }))
+  }
+
+  async getSpaceTree(spaceId: string) {
+    const space = await Space.query().where('id', spaceId).preload('documents').first()
 
     if (!space) {
       return null
     }
 
     return {
-      space,
-      children: documents
-        .filter((document) => document.spaceId === spaceId)
-        .map((document) => ({
-          id: document.id,
-          title: document.title,
-          kind: 'document',
-          status: document.status,
-        })),
+      space: {
+        id: space.id,
+        name: space.name,
+        summary: space.summary,
+      },
+      children: space.documents.map((document) => ({
+        id: document.id,
+        title: document.title,
+        kind: 'document',
+        status: document.status,
+      })),
     }
   }
 
-  getDocument(documentId: string) {
-    return documents.find((entry) => entry.id === documentId) ?? null
+  async getDocument(documentId: string) {
+    const document = await Document.find(documentId)
+
+    if (!document) {
+      return null
+    }
+
+    return {
+      id: document.id,
+      title: document.title,
+      status: document.status,
+      summary: document.summary,
+      spaceId: document.spaceId,
+      updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
+    }
+  }
+
+  async updateDocument(
+    documentId: string,
+    patch: Partial<Pick<Document, 'title' | 'summary'>>,
+  ) {
+    const document = await Document.find(documentId)
+
+    if (!document) {
+      return null
+    }
+
+    document.merge(patch)
+    await document.save()
+
+    return {
+      id: document.id,
+      title: document.title,
+      status: document.status,
+      summary: document.summary,
+      spaceId: document.spaceId,
+      updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
+    }
   }
 }

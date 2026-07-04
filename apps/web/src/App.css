@@ -167,6 +167,10 @@
   border-top: 1px solid rgba(63, 46, 28, 0.08);
 }
 
+.empty-row {
+  justify-content: flex-start;
+}
+
 .stack-row:first-child {
   border-top: none;
   padding-top: 0;

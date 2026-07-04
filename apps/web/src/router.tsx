@@ -35,8 +35,8 @@ function AppShell() {
           <Link className="nav-link" to="/documents/$documentId" params={{ documentId: 'doc-editor-runtime' }}>
             Editor runtime
           </Link>
-          <Link className="nav-link" to="/documents/$documentId" params={{ documentId: 'doc-rag-pipeline' }}>
-            RAG pipeline
+          <Link className="nav-link" to="/documents/$documentId" params={{ documentId: 'doc-collab-token' }}>
+            Collaboration token
           </Link>
         </nav>
 
@@ -97,9 +97,17 @@ function OverviewPage() {
                   <strong>{space.name}</strong>
                   <p>{space.summary}</p>
                 </div>
-                <span>{space.documentIds.length} docs</span>
+                <span>{space.rootDocuments.length} docs</span>
               </li>
             ))}
+            {spacesQuery.data.length === 0 ? (
+              <li className="stack-row empty-row">
+                <div>
+                  <strong>No spaces yet</strong>
+                  <p>Run the PostgreSQL migrations and seed your first workspace records to populate this panel.</p>
+                </div>
+              </li>
+            ) : null}
           </ul>
         </article>
 
@@ -123,6 +131,14 @@ function OverviewPage() {
                 <span>{document.status}</span>
               </li>
             ))}
+            {documentsQuery.data.length === 0 ? (
+              <li className="stack-row empty-row">
+                <div>
+                  <strong>No documents yet</strong>
+                  <p>The API is wired. Next step is creating spaces and documents in PostgreSQL.</p>
+                </div>
+              </li>
+            ) : null}
           </ul>
         </article>
       </section>
