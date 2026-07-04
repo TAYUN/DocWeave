@@ -94,7 +94,9 @@ function OverviewPage() {
             {spacesQuery.data.map((space) => (
               <li key={space.id} className="stack-row">
                 <div>
-                  <strong>{space.name}</strong>
+                  <Link to="/spaces/$spaceId" params={{ spaceId: space.id }}>
+                    {space.name}
+                  </Link>
                   <p>{space.summary}</p>
                 </div>
                 <span>{space.rootDocuments.length} docs</span>
@@ -141,6 +143,68 @@ function OverviewPage() {
             ) : null}
           </ul>
         </article>
+      </section>
+    </div>
+  )
+}
+
+function SpacePage() {
+  const { spaceId } = spaceRoute.useParams()
+  const spacesQuery = useSuspenseQuery(queryOptions({ queryKey: ['spaces'], queryFn: listSpaces }))
+  const documentsQuery = useSuspenseQuery(
+    queryOptions({ queryKey: ['documents'], queryFn: listDocuments }),
+  )
+
+  const space = spacesQuery.data.find((entry) => entry.id === spaceId) ?? null
+  const documents = documentsQuery.data.filter((entry) => entry.spaceId === spaceId)
+
+  if (!space) {
+    return (
+      <section className="panel">
+        <p className="eyebrow">Missing space</p>
+        <h2>Workspace not found</h2>
+        <p>This route is ready, but the requested space does not exist in the current seed data.</p>
+      </section>
+    )
+  }
+
+  return (
+    <div className="page">
+      <section className="hero-panel compact">
+        <p className="eyebrow">Space</p>
+        <h2>{space.name}</h2>
+        <p className="hero-copy">{space.summary}</p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-header">
+          <div>
+            <p className="panel-kicker">Documents</p>
+            <h3>Documents in this workspace</h3>
+          </div>
+          <span className="badge">{documents.length}</span>
+        </div>
+        <ul className="stack-list">
+          {documents.map((document) => (
+            <li key={document.id} className="stack-row">
+              <div>
+                <Link to="/documents/$documentId" params={{ documentId: document.id }}>
+                  {document.title}
+                </Link>
+                <p>{document.summary}</p>
+              </div>
+              <span>{document.status}</span>
+            </li>
+          ))}
+          {documents.length === 0 ? (
+            <li className="stack-row empty-row">
+              <div>
+                <strong>No documents yet</strong>
+                <p>This space exists, but it does not have any documents in the current database.</p>
+              </div>
+            </li>
+          ) : null}
+        </ul>
       </section>
     </div>
   )
@@ -224,7 +288,13 @@ const documentRoute = createRoute({
   component: DocumentPage,
 })
 
-const routeTree = rootRoute.addChildren([indexRoute, documentRoute])
+const spaceRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/spaces/$spaceId',
+  component: SpacePage,
+})
+
+const routeTree = rootRoute.addChildren([indexRoute, spaceRoute, documentRoute])
 
 export const router = createRouter({
   routeTree,
