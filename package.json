@@ -1,0 +1,13 @@
+{
+  "name": "docweave",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.12.1",
+  "scripts": {
+    "dev:web": "pnpm --dir apps/web dev",
+    "dev:api": "pnpm --dir apps/api dev",
+    "dev:collab": "pnpm --dir apps/collab dev",
+    "dev:worker": "pnpm --dir apps/worker dev",
+    "check:workspace": "pnpm exec tsc -p tsconfig.base.json --noEmit"
+  }
+}
