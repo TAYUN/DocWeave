@@ -8,6 +8,12 @@
     "dev:api": "pnpm --dir apps/api dev",
     "dev:collab": "pnpm --dir apps/collab dev",
     "dev:worker": "pnpm --dir apps/worker dev",
-    "check:workspace": "pnpm exec tsc -p tsconfig.base.json --noEmit"
+    "build:web": "pnpm --dir apps/web build",
+    "build:api": "pnpm --dir apps/api build",
+    "lint:web": "pnpm --dir apps/web lint",
+    "lint:api": "pnpm --dir apps/api lint",
+    "typecheck:web": "pnpm --dir apps/web exec tsc -b --pretty false",
+    "typecheck:api": "pnpm --dir apps/api typecheck",
+    "check:workspace": "pnpm typecheck:web && pnpm typecheck:api"
   }
 }
