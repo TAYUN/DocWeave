@@ -30,6 +30,12 @@ const routes = {
     tokens: [{"old":"/api/spaces","type":0,"val":"api","end":""},{"old":"/api/spaces","type":0,"val":"spaces","end":""}],
     types: placeholder as Registry['spaces.index']['types'],
   },
+  'spaces.store': {
+    methods: ["POST"],
+    pattern: '/api/spaces',
+    tokens: [{"old":"/api/spaces","type":0,"val":"api","end":""},{"old":"/api/spaces","type":0,"val":"spaces","end":""}],
+    types: placeholder as Registry['spaces.store']['types'],
+  },
   'spaces.tree': {
     methods: ["GET","HEAD"],
     pattern: '/api/spaces/:spaceId/tree',
@@ -41,6 +47,12 @@ const routes = {
     pattern: '/api/documents',
     tokens: [{"old":"/api/documents","type":0,"val":"api","end":""},{"old":"/api/documents","type":0,"val":"documents","end":""}],
     types: placeholder as Registry['documents.index']['types'],
+  },
+  'documents.store': {
+    methods: ["POST"],
+    pattern: '/api/documents',
+    tokens: [{"old":"/api/documents","type":0,"val":"api","end":""},{"old":"/api/documents","type":0,"val":"documents","end":""}],
+    types: placeholder as Registry['documents.store']['types'],
   },
   'documents.show': {
     methods: ["GET","HEAD"],

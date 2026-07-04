@@ -1,4 +1,11 @@
-import { getDocumentById, listDocuments, listSpaces } from './api'
+import {
+  createDocument,
+  createSpace,
+  getDocumentById,
+  listDocuments,
+  listSpaces,
+  updateDocument,
+} from './api'
 
 export type WorkspaceStage = {
   id: string
@@ -32,4 +39,11 @@ export async function listStages() {
   return Promise.resolve(stages)
 }
 
-export { getDocumentById, listDocuments, listSpaces }
+export {
+  createDocument,
+  createSpace,
+  getDocumentById,
+  listDocuments,
+  listSpaces,
+  updateDocument,
+}

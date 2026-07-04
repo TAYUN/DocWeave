@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import {
   Link,
   Outlet,
@@ -6,14 +7,30 @@ import {
   createRouter,
   useRouterState,
 } from '@tanstack/react-router'
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
+import {
+  createDocument,
+  createSpace,
   getDocumentById,
   listDocuments,
   listSpaces,
   listStages,
+  updateDocument,
 } from './lib/workspace-data'
 import './App.css'
+
+function MutationNotice({ message, tone }: { message: string | null; tone: 'error' | 'success' }) {
+  if (!message) {
+    return null
+  }
+
+  return <p className={`notice notice-${tone}`}>{message}</p>
+}
 
 function AppShell() {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
@@ -54,11 +71,30 @@ function AppShell() {
 }
 
 function OverviewPage() {
+  const queryClient = useQueryClient()
+  const [spaceName, setSpaceName] = useState('')
+  const [spaceSummary, setSpaceSummary] = useState('')
+  const [feedback, setFeedback] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const stagesQuery = useSuspenseQuery(queryOptions({ queryKey: ['stages'], queryFn: listStages }))
   const spacesQuery = useSuspenseQuery(queryOptions({ queryKey: ['spaces'], queryFn: listSpaces }))
   const documentsQuery = useSuspenseQuery(
     queryOptions({ queryKey: ['documents'], queryFn: listDocuments }),
   )
+  const createSpaceMutation = useMutation({
+    mutationFn: createSpace,
+    onSuccess: async () => {
+      setSpaceName('')
+      setSpaceSummary('')
+      setError(null)
+      setFeedback('Space created successfully.')
+      await queryClient.invalidateQueries({ queryKey: ['spaces'] })
+    },
+    onError: (mutationError) => {
+      setFeedback(null)
+      setError(mutationError instanceof Error ? mutationError.message : 'Unable to create space')
+    },
+  })
 
   return (
     <div className="page">
@@ -82,6 +118,52 @@ function OverviewPage() {
       </section>
 
       <section className="grid split">
+        <article className="panel">
+          <div className="panel-header">
+            <div>
+              <p className="panel-kicker">Create space</p>
+              <h3>Open a new workspace domain</h3>
+            </div>
+          </div>
+          <form
+            className="form-stack"
+            onSubmit={(event) => {
+              event.preventDefault()
+              setFeedback(null)
+              setError(null)
+              createSpaceMutation.mutate({
+                name: spaceName,
+                summary: spaceSummary,
+              })
+            }}
+          >
+            <label className="field">
+              <span>Name</span>
+              <input
+                value={spaceName}
+                onChange={(event) => setSpaceName(event.target.value)}
+                placeholder="Research Workspace"
+                required
+              />
+            </label>
+            <label className="field">
+              <span>Summary</span>
+              <textarea
+                value={spaceSummary}
+                onChange={(event) => setSpaceSummary(event.target.value)}
+                placeholder="Track experiments, findings, and next actions."
+                required
+                rows={3}
+              />
+            </label>
+            <button className="action-button" type="submit" disabled={createSpaceMutation.isPending}>
+              {createSpaceMutation.isPending ? 'Creating...' : 'Create space'}
+            </button>
+            <MutationNotice message={feedback} tone="success" />
+            <MutationNotice message={error} tone="error" />
+          </form>
+        </article>
+
         <article className="panel">
           <div className="panel-header">
             <div>
@@ -150,10 +232,32 @@ function OverviewPage() {
 
 function SpacePage() {
   const { spaceId } = spaceRoute.useParams()
+  const queryClient = useQueryClient()
+  const [title, setTitle] = useState('')
+  const [summary, setSummary] = useState('')
+  const [feedback, setFeedback] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const spacesQuery = useSuspenseQuery(queryOptions({ queryKey: ['spaces'], queryFn: listSpaces }))
   const documentsQuery = useSuspenseQuery(
     queryOptions({ queryKey: ['documents'], queryFn: listDocuments }),
   )
+  const createDocumentMutation = useMutation({
+    mutationFn: createDocument,
+    onSuccess: async () => {
+      setTitle('')
+      setSummary('')
+      setError(null)
+      setFeedback('Document created successfully.')
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['documents'] }),
+        queryClient.invalidateQueries({ queryKey: ['spaces'] }),
+      ])
+    },
+    onError: (mutationError) => {
+      setFeedback(null)
+      setError(mutationError instanceof Error ? mutationError.message : 'Unable to create document')
+    },
+  })
 
   const space = spacesQuery.data.find((entry) => entry.id === spaceId) ?? null
   const documents = documentsQuery.data.filter((entry) => entry.spaceId === spaceId)
@@ -174,6 +278,53 @@ function SpacePage() {
         <p className="eyebrow">Space</p>
         <h2>{space.name}</h2>
         <p className="hero-copy">{space.summary}</p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-header">
+          <div>
+            <p className="panel-kicker">Create document</p>
+            <h3>Seed a document in this space</h3>
+          </div>
+        </div>
+        <form
+          className="form-stack"
+          onSubmit={(event) => {
+            event.preventDefault()
+            setFeedback(null)
+            setError(null)
+            createDocumentMutation.mutate({
+              spaceId,
+              title,
+              summary,
+            })
+          }}
+        >
+          <label className="field">
+            <span>Title</span>
+            <input
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="New document"
+              required
+            />
+          </label>
+          <label className="field">
+            <span>Summary</span>
+            <textarea
+              value={summary}
+              onChange={(event) => setSummary(event.target.value)}
+              placeholder="Describe the intent of this document."
+              required
+              rows={3}
+            />
+          </label>
+          <button className="action-button" type="submit" disabled={createDocumentMutation.isPending}>
+            {createDocumentMutation.isPending ? 'Creating...' : 'Create document'}
+          </button>
+          <MutationNotice message={feedback} tone="success" />
+          <MutationNotice message={error} tone="error" />
+        </form>
       </section>
 
       <section className="panel">
@@ -212,12 +363,35 @@ function SpacePage() {
 
 function DocumentPage() {
   const { documentId } = documentRoute.useParams()
+  const queryClient = useQueryClient()
+  const [title, setTitle] = useState('')
+  const [summary, setSummary] = useState('')
+  const [feedback, setFeedback] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const documentQuery = useSuspenseQuery(
     queryOptions({
       queryKey: ['document', documentId],
       queryFn: () => getDocumentById(documentId),
     }),
   )
+  const updateDocumentMutation = useMutation({
+    mutationFn: updateDocument,
+    onSuccess: async (updated: Awaited<ReturnType<typeof updateDocument>>) => {
+      setTitle(updated.title)
+      setSummary(updated.summary)
+      setError(null)
+      setFeedback('Document metadata saved.')
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['document', documentId] }),
+        queryClient.invalidateQueries({ queryKey: ['documents'] }),
+        queryClient.invalidateQueries({ queryKey: ['spaces'] }),
+      ])
+    },
+    onError: (mutationError) => {
+      setFeedback(null)
+      setError(mutationError instanceof Error ? mutationError.message : 'Unable to update document')
+    },
+  })
 
   const document = documentQuery.data
 
@@ -231,6 +405,11 @@ function DocumentPage() {
     )
   }
 
+  useEffect(() => {
+    setTitle(document.title)
+    setSummary(document.summary)
+  }, [document.summary, document.title])
+
   return (
     <div className="page">
       <section className="hero-panel compact">
@@ -240,6 +419,47 @@ function DocumentPage() {
       </section>
 
       <section className="grid split">
+        <article className="panel">
+          <p className="panel-kicker">Edit summary</p>
+          <h3>Update document metadata</h3>
+          <form
+            className="form-stack"
+            onSubmit={(event) => {
+              event.preventDefault()
+              setFeedback(null)
+              setError(null)
+              updateDocumentMutation.mutate({
+                documentId,
+                title,
+                summary,
+              })
+            }}
+          >
+            <label className="field">
+              <span>Title</span>
+              <input
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                required
+              />
+            </label>
+            <label className="field">
+              <span>Summary</span>
+              <textarea
+                value={summary}
+                onChange={(event) => setSummary(event.target.value)}
+                rows={5}
+                required
+              />
+            </label>
+            <button className="action-button" type="submit" disabled={updateDocumentMutation.isPending}>
+              {updateDocumentMutation.isPending ? 'Saving...' : 'Save metadata'}
+            </button>
+            <MutationNotice message={feedback} tone="success" />
+            <MutationNotice message={error} tone="error" />
+          </form>
+        </article>
+
         <article className="panel">
           <p className="panel-kicker">Delivery notes</p>
           <h3>Why this route matters</h3>

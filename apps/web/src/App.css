@@ -130,6 +130,79 @@
   padding: 24px;
 }
 
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field span {
+  color: var(--heading);
+  font-weight: 700;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid rgba(63, 46, 28, 0.14);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 251, 245, 0.9);
+  color: var(--heading);
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: 2px solid rgba(182, 84, 46, 0.2);
+  border-color: rgba(182, 84, 46, 0.4);
+}
+
+.action-button {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 18px;
+  background: var(--accent);
+  color: #fffaf2;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    opacity 180ms ease;
+}
+
+.action-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.notice {
+  margin: 0;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.notice-success {
+  background: rgba(86, 150, 92, 0.12);
+  color: #2f6b36;
+}
+
+.notice-error {
+  background: rgba(176, 69, 69, 0.12);
+  color: #8d2f2f;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;

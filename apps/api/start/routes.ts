@@ -27,9 +27,11 @@ router.group(() => {
   router.get('/auth/me', [AuthController, 'me'])
 
   router.get('/spaces', [SpacesController, 'index'])
+  router.post('/spaces', [SpacesController, 'store'])
   router.get('/spaces/:spaceId/tree', [SpacesController, 'tree'])
 
   router.get('/documents', [DocumentsController, 'index'])
+  router.post('/documents', [DocumentsController, 'store'])
   router.get('/documents/:documentId', [DocumentsController, 'show'])
   router.patch('/documents/:documentId', [DocumentsController, 'update'])
 

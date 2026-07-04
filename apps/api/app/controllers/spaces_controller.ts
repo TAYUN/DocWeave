@@ -23,4 +23,24 @@ export default class SpacesController {
       data: tree,
     }
   }
+
+  async store({ request, response }: HttpContext) {
+    const payload = request.only(['name', 'summary'])
+
+    if (!payload.name || !payload.summary) {
+      return response.status(422).send({
+        message: 'name and summary are required',
+      })
+    }
+
+    const space = await this.catalog.createSpace({
+      name: payload.name,
+      summary: payload.summary,
+    })
+
+    return response.status(201).send({
+      message: 'Space created',
+      data: space,
+    })
+  }
 }

@@ -18,15 +18,33 @@ type ApiEnvelope<T> = {
   data: T
 }
 
-async function requestJson<T>(path: string) {
+type RequestOptions = {
+  body?: unknown
+  method?: 'GET' | 'POST' | 'PATCH'
+}
+
+async function requestJson<T>(path: string, options: RequestOptions = {}) {
   const response = await fetch(path, {
+    method: options.method ?? 'GET',
     headers: {
       Accept: 'application/json',
+      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
     },
+    body: options.body ? JSON.stringify(options.body) : undefined,
   })
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status} ${response.statusText}`)
+    const fallback = `Request failed: ${response.status} ${response.statusText}`
+    let message = fallback
+
+    try {
+      const payload = (await response.json()) as { message?: string }
+      message = payload.message ?? fallback
+    } catch {
+      message = fallback
+    }
+
+    throw new Error(message)
   }
 
   return (await response.json()) as T
@@ -44,5 +62,43 @@ export async function listDocuments() {
 
 export async function getDocumentById(documentId: string) {
   const payload = await requestJson<ApiEnvelope<ApiDocument>>(`/api/documents/${documentId}`)
+  return payload.data
+}
+
+export async function createSpace(input: { name: string; summary: string }) {
+  const payload = await requestJson<ApiEnvelope<ApiSpace>>('/api/spaces', {
+    method: 'POST',
+    body: input,
+  })
+  return payload.data
+}
+
+export async function createDocument(input: {
+  spaceId: string
+  title: string
+  summary: string
+}) {
+  const payload = await requestJson<ApiEnvelope<ApiDocument>>('/api/documents', {
+    method: 'POST',
+    body: input,
+  })
+  return payload.data
+}
+
+export async function updateDocument(input: {
+  documentId: string
+  title?: string
+  summary?: string
+}) {
+  const payload = await requestJson<ApiEnvelope<ApiDocument>>(
+    `/api/documents/${input.documentId}`,
+    {
+      method: 'PATCH',
+      body: {
+        title: input.title,
+        summary: input.summary,
+      },
+    },
+  )
   return payload.data
 }

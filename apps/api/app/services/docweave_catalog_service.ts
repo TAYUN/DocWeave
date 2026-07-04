@@ -1,5 +1,17 @@
+import { randomUUID } from 'node:crypto'
 import Document from '#models/document'
 import Space from '#models/space'
+
+type SpaceInput = {
+  name: string
+  summary: string
+}
+
+type DocumentInput = {
+  spaceId: string
+  title: string
+  summary: string
+}
 
 export default class DocweaveCatalogService {
   // Keep persistence access centralized so controllers stay focused on API semantics.
@@ -87,5 +99,55 @@ export default class DocweaveCatalogService {
       spaceId: document.spaceId,
       updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
     }
+  }
+
+  async createSpace(input: SpaceInput) {
+    const space = await Space.create({
+      id: this.toId(input.name),
+      name: input.name,
+      summary: input.summary,
+    })
+
+    return {
+      id: space.id,
+      name: space.name,
+      summary: space.summary,
+      rootDocuments: [],
+    }
+  }
+
+  async createDocument(input: DocumentInput) {
+    const space = await Space.find(input.spaceId)
+
+    if (!space) {
+      return null
+    }
+
+    const document = await Document.create({
+      id: this.toId(input.title),
+      spaceId: input.spaceId,
+      title: input.title,
+      summary: input.summary,
+      status: 'draft',
+    })
+
+    return {
+      id: document.id,
+      title: document.title,
+      status: document.status,
+      summary: document.summary,
+      spaceId: document.spaceId,
+      updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
+    }
+  }
+
+  private toId(value: string) {
+    const base = value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+
+    return `${base || 'item'}-${randomUUID().slice(0, 8)}`
   }
 }

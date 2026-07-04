@@ -9,10 +9,12 @@ export interface ApiDefinition {
   }
   spaces: {
     index: typeof routes['spaces.index']
+    store: typeof routes['spaces.store']
     tree: typeof routes['spaces.tree']
   }
   documents: {
     index: typeof routes['documents.index']
+    store: typeof routes['documents.store']
     show: typeof routes['documents.show']
     update: typeof routes['documents.update']
   }

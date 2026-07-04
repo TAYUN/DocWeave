@@ -10,6 +10,33 @@ export default class DocumentsController {
     }
   }
 
+  async store({ request, response }: HttpContext) {
+    const payload = request.only(['spaceId', 'title', 'summary'])
+
+    if (!payload.spaceId || !payload.title || payload.summary === undefined) {
+      return response.status(422).send({
+        message: 'spaceId, title, and summary are required',
+      })
+    }
+
+    const document = await this.catalog.createDocument({
+      spaceId: payload.spaceId,
+      title: payload.title,
+      summary: payload.summary,
+    })
+
+    if (!document) {
+      return response.status(404).send({
+        message: 'Space not found',
+      })
+    }
+
+    return response.status(201).send({
+      message: 'Document created',
+      data: document,
+    })
+  }
+
   async show({ params, response }: HttpContext) {
     const document = await this.catalog.getDocument(params.documentId)
 
@@ -25,9 +52,17 @@ export default class DocumentsController {
   }
 
   async update({ params, request, response }: HttpContext) {
+    const patch = request.only(['title', 'summary'])
+
+    if (patch.title === undefined && patch.summary === undefined) {
+      return response.status(422).send({
+        message: 'At least one editable field is required',
+      })
+    }
+
     const document = await this.catalog.updateDocument(
       params.documentId,
-      request.only(['title', 'summary']),
+      patch,
     )
 
     if (!document) {

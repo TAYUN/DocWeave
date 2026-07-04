@@ -55,6 +55,18 @@ export interface Registry {
       errorResponse: unknown
     }
   }
+  'spaces.store': {
+    methods: ["POST"]
+    pattern: '/api/spaces'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
   'spaces.tree': {
     methods: ["GET","HEAD"]
     pattern: '/api/spaces/:spaceId/tree'
@@ -69,6 +81,18 @@ export interface Registry {
   }
   'documents.index': {
     methods: ["GET","HEAD"]
+    pattern: '/api/documents'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'documents.store': {
+    methods: ["POST"]
     pattern: '/api/documents'
     types: {
       body: {}

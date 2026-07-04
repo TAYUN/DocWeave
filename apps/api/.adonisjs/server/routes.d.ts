@@ -8,8 +8,10 @@ export type ScannedRoutes = {
     'auth.logout': { paramsTuple?: []; params?: {} }
     'auth.me': { paramsTuple?: []; params?: {} }
     'spaces.index': { paramsTuple?: []; params?: {} }
+    'spaces.store': { paramsTuple?: []; params?: {} }
     'spaces.tree': { paramsTuple: [ParamValue]; params: {'spaceId': ParamValue} }
     'documents.index': { paramsTuple?: []; params?: {} }
+    'documents.store': { paramsTuple?: []; params?: {} }
     'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'documents.update': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'collaboration_tokens.store': { paramsTuple?: []; params?: {} }
@@ -34,6 +36,8 @@ export type ScannedRoutes = {
   POST: {
     'auth.login': { paramsTuple?: []; params?: {} }
     'auth.logout': { paramsTuple?: []; params?: {} }
+    'spaces.store': { paramsTuple?: []; params?: {} }
+    'documents.store': { paramsTuple?: []; params?: {} }
     'collaboration_tokens.store': { paramsTuple?: []; params?: {} }
     'ai_editor.store': { paramsTuple?: []; params?: {} }
     'rag.search': { paramsTuple?: []; params?: {} }
