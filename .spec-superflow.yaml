@@ -1,0 +1,50 @@
+# .spec-superflow.yaml — lightweight state machine
+# 这是 DocWeave 工作区级的 spec-superflow 入口文件。
+# 这里保存的是可重建的派生状态；真正的规划与实现依据仍然在 docs/ 和 changes/ 中。
+
+# === Core state ===
+# 当前仓库默认还处于工作流入口阶段，后续由具体 change 目录推进状态。
+state: exploring
+
+# 工作流模式：
+# - auto: 让 spec-superflow 按上下文自动推断
+# - full: 强制完整流程
+# - hotfix / tweak: 适用于更轻量的变更
+workflow: auto
+
+# === Hashes (fast staleness detection) ===
+# 根工作区暂时没有具体 change 工件，因此保持 null。
+artifacts_hash: null
+contract_hash: null
+
+# === Execution progress ===
+execution_mode: null
+batches_completed: 0
+test_result: null
+
+# === Metadata ===
+# 这里放项目名，方便工具输出时识别当前工作区。
+change_name: DocWeave
+last_transition: null
+last_transition_from: null
+last_transition_to: null
+
+# === Decision points ===
+# DP-0 对应“设计前确认”，后续如果通过 workflow-start 进入具体变更，会逐步更新。
+dp_0_decisions: null
+dp_0_confirmed: null
+dp_0_timestamp: null
+dp_1_result: null
+dp_1_timestamp: null
+dp_2_result: null
+dp_2_timestamp: null
+dp_3_result: null
+dp_3_timestamp: null
+dp_4_result: null
+dp_4_timestamp: null
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: null
+dp_6_timestamp: null
+dp_7_result: null
+dp_7_timestamp: null

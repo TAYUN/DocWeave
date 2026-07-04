@@ -1,0 +1,4 @@
+interface:
+  display_name: "BlockNote Docs"
+  short_description: "优先参考 BlockNote 官网文档与示例实现"
+  default_prompt: "Use $blocknote-docs to implement or debug a BlockNote integration with the official docs and examples first."

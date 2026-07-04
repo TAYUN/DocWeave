@@ -1,0 +1,110 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# pnpm (monorepo)
+.pnpm-store/
+
+# Build Output
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+apps/web/dist/
+apps/api/build/
+apps/collab/build/
+packages/*/dist/
+packages/*/build/
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.test
+
+# Editor & IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.settings/
+.vs/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+*.lnk
+
+# Logs
+logs/
+*.log
+
+# Test & Coverage
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+junit.xml
+
+# AdonisJS
+tmp/
+public/assets/
+ace-manifest.json
+public/hot
+public/hot.json
+
+# Database (development)
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# Docker
+docker-compose.override.yml
+*.pid
+docker-data/
+redis-data/
+pgdata/
+qdrant_storage/
+
+# Cache
+.turbo/
+.cache/
+.eslintcache
+.stylelintcache
+
+# Runtime Temp
+temp/
+*.tgz
+
+# Local Uploads / Storage
+uploads/
+storage/
+public/assets/
+
+# Testing Artifacts
+cypress/videos/
+cypress/screenshots/
+playwright-report/
+storybook-static/
+
+# AI Agent Config (local tooling)
+.reasonix/
+reasonix.toml
+.codegraph/

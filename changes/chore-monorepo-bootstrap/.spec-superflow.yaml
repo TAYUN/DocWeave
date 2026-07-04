@@ -1,0 +1,40 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: exploring
+workflow: full
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:615b9625d6bc12f868760218dcbb19a65ecfcc6c34659a2e73f065d700bc96a7
+contract_hash: sha256:c3689fa80071065b777e572fb5a3ca8f228791f7175b4ba6a61423347f733b41
+
+# === Execution progress ===
+execution_mode: null
+batches_completed: 0
+test_result: null
+
+# === Metadata ===
+change_name: chore-monorepo-bootstrap
+last_transition: 2026-07-04T11:01:30.243Z
+last_transition_from: null
+last_transition_to: null
+
+# === Decision points ===
+dp_0_decisions: Change name: chore-monorepo-bootstrap; intent: initialize the DocWeave monorepo shell and directory baseline from the agreed architecture and planning docs; constraints: keep the phase-1 boundaries from decisions and planning docs, avoid premature BullMQ/assistant-ui/microservice expansion, and keep communication in Chinese with explicit reviewable artifacts.
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-04T10:25:48Z
+dp_1_result: null
+dp_1_timestamp: null
+dp_2_result: approved: proposal, specs, design, and tasks are confirmed for monorepo bootstrap baseline
+dp_2_timestamp: 2026-07-04T10:59:29Z
+dp_3_result: null
+dp_3_timestamp: null
+dp_4_result: null
+dp_4_timestamp: null
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: null
+dp_6_timestamp: null
+dp_7_result: null
+dp_7_timestamp: null
