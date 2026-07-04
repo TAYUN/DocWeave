@@ -7,52 +7,148 @@ import type { InferInput, SimpleError } from '@vinejs/vine/types'
 export type ParamValue = string | number | bigint | boolean
 
 export interface Registry {
-  'auth.new_account.store': {
+  'auth.login': {
     methods: ["POST"]
-    pattern: '/api/v1/auth/signup'
+    pattern: '/api/auth/login'
     types: {
-      body: ExtractBody<InferInput<(typeof import('#validators/user').signupValidator)>>
+      body: {}
       paramsTuple: []
       params: {}
-      query: ExtractQuery<InferInput<(typeof import('#validators/user').signupValidator)>>
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/new_account_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/new_account_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+      query: {}
+      response: unknown
+      errorResponse: unknown
     }
   }
-  'auth.access_tokens.store': {
+  'auth.logout': {
     methods: ["POST"]
-    pattern: '/api/v1/auth/login'
+    pattern: '/api/auth/logout'
     types: {
-      body: ExtractBody<InferInput<(typeof import('#validators/user').loginValidator)>>
+      body: {}
       paramsTuple: []
       params: {}
-      query: ExtractQuery<InferInput<(typeof import('#validators/user').loginValidator)>>
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/access_tokens_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/access_tokens_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+      query: {}
+      response: unknown
+      errorResponse: unknown
     }
   }
-  'profile.profile.show': {
+  'auth.me': {
     methods: ["GET","HEAD"]
-    pattern: '/api/v1/account/profile'
+    pattern: '/api/auth/me'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/profile_controller').default['show']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/profile_controller').default['show']>>>
+      response: unknown
+      errorResponse: unknown
     }
   }
-  'profile.access_tokens.destroy': {
-    methods: ["POST"]
-    pattern: '/api/v1/account/logout'
+  'spaces.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/spaces'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/access_tokens_controller').default['destroy']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/access_tokens_controller').default['destroy']>>>
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'spaces.tree': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/spaces/:spaceId/tree'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { spaceId: ParamValue }
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'documents.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/documents'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'documents.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/documents/:documentId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { documentId: ParamValue }
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'documents.update': {
+    methods: ["PATCH"]
+    pattern: '/api/documents/:documentId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { documentId: ParamValue }
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'collaboration_tokens.store': {
+    methods: ["POST"]
+    pattern: '/api/collaboration/token'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'ai_editor.store': {
+    methods: ["POST"]
+    pattern: '/api/ai/editor'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'rag.search': {
+    methods: ["POST"]
+    pattern: '/api/rag/search'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'rag.chat': {
+    methods: ["POST"]
+    pattern: '/api/rag/chat'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
     }
   }
 }

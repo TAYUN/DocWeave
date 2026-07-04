@@ -5,6 +5,12 @@
 
 export const controllers = {
   AccessTokens: () => import('#controllers/access_tokens_controller'),
+  AiEditor: () => import('#controllers/ai_editor_controller'),
+  Auth: () => import('#controllers/auth_controller'),
+  CollaborationTokens: () => import('#controllers/collaboration_tokens_controller'),
+  Documents: () => import('#controllers/documents_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
   Profile: () => import('#controllers/profile_controller'),
+  Rag: () => import('#controllers/rag_controller'),
+  Spaces: () => import('#controllers/spaces_controller'),
 }

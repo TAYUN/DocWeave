@@ -1,0 +1,40 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: exploring
+workflow: auto
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:f634031c6c7baee6aae9090f45018a324a75f41b2dfc8b0eb23d9702a05bdd7f
+contract_hash: sha256:ddda96084d19499d46130ab0ae621dfaf4e4294033e4e319ec4449d408867984
+
+# === Execution progress ===
+execution_mode: Batch Inline
+batches_completed: 4
+test_result: passed: web route shell, api metadata routes, postgres migrations, seed data, and workspace verification confirmed on 2026-07-04
+
+# === Metadata ===
+change_name: feat-web-api-postgres-foundation
+last_transition: 2026-07-04T12:07:24.629Z
+last_transition_from: null
+last_transition_to: null
+
+# === Decision points ===
+dp_0_decisions: Change name: feat-web-api-postgres-foundation; intent: formalize the already-implemented web/api/postgres baseline into spec-superflow after monorepo bootstrap; constraints: keep scope to routed web shell, api metadata routes, postgres metadata baseline, and local seed data without expanding into BlockNote/collab/worker/RAG execution.
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-04T13:10:00Z
+dp_1_result: null
+dp_1_timestamp: null
+dp_2_result: null
+dp_2_timestamp: null
+dp_3_result: approved: execution contract accepted for web/api/postgres foundation
+dp_3_timestamp: null
+dp_4_result: null
+dp_4_timestamp: null
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: null
+dp_6_timestamp: null
+dp_7_result: null
+dp_7_timestamp: null

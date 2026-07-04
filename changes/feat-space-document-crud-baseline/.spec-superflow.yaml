@@ -1,0 +1,40 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: exploring
+workflow: auto
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:c21e35956f6a798d436fba835f4f5177d49a1ee565031b4a090a1b7c199eef25
+contract_hash: sha256:ac7d4ac5505be2f94092edc7697b8a4f107699f062f5ff23ec74102adfe6e279
+
+# === Execution progress ===
+execution_mode: null
+batches_completed: 0
+test_result: null
+
+# === Metadata ===
+change_name: feat-space-document-crud-baseline
+last_transition: 2026-07-04T12:12:21.014Z
+last_transition_from: null
+last_transition_to: null
+
+# === Decision points ===
+dp_0_decisions: Change name: feat-space-document-crud-baseline; intent: deliver the first interactive metadata write loop for spaces and documents after the read-only foundation baseline; constraints: limit scope to create space, create document, and edit document summary without pulling in BlockNote, auth hardening, or collaboration.
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-04T13:35:00Z
+dp_1_result: null
+dp_1_timestamp: null
+dp_2_result: null
+dp_2_timestamp: null
+dp_3_result: approved: execution contract accepted for space/document crud baseline
+dp_3_timestamp: 2026-07-04T13:50:00Z
+dp_4_result: null
+dp_4_timestamp: null
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: null
+dp_6_timestamp: null
+dp_7_result: null
+dp_7_timestamp: null

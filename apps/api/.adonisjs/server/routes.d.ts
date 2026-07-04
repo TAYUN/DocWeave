@@ -4,21 +4,43 @@ type ParamValue = string | number | bigint | boolean
 
 export type ScannedRoutes = {
   ALL: {
-    'auth.new_account.store': { paramsTuple?: []; params?: {} }
-    'auth.access_tokens.store': { paramsTuple?: []; params?: {} }
-    'profile.profile.show': { paramsTuple?: []; params?: {} }
-    'profile.access_tokens.destroy': { paramsTuple?: []; params?: {} }
+    'auth.login': { paramsTuple?: []; params?: {} }
+    'auth.logout': { paramsTuple?: []; params?: {} }
+    'auth.me': { paramsTuple?: []; params?: {} }
+    'spaces.index': { paramsTuple?: []; params?: {} }
+    'spaces.tree': { paramsTuple: [ParamValue]; params: {'spaceId': ParamValue} }
+    'documents.index': { paramsTuple?: []; params?: {} }
+    'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'documents.update': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'collaboration_tokens.store': { paramsTuple?: []; params?: {} }
+    'ai_editor.store': { paramsTuple?: []; params?: {} }
+    'rag.search': { paramsTuple?: []; params?: {} }
+    'rag.chat': { paramsTuple?: []; params?: {} }
   }
   GET: {
-    'profile.profile.show': { paramsTuple?: []; params?: {} }
+    'auth.me': { paramsTuple?: []; params?: {} }
+    'spaces.index': { paramsTuple?: []; params?: {} }
+    'spaces.tree': { paramsTuple: [ParamValue]; params: {'spaceId': ParamValue} }
+    'documents.index': { paramsTuple?: []; params?: {} }
+    'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
   HEAD: {
-    'profile.profile.show': { paramsTuple?: []; params?: {} }
+    'auth.me': { paramsTuple?: []; params?: {} }
+    'spaces.index': { paramsTuple?: []; params?: {} }
+    'spaces.tree': { paramsTuple: [ParamValue]; params: {'spaceId': ParamValue} }
+    'documents.index': { paramsTuple?: []; params?: {} }
+    'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
   POST: {
-    'auth.new_account.store': { paramsTuple?: []; params?: {} }
-    'auth.access_tokens.store': { paramsTuple?: []; params?: {} }
-    'profile.access_tokens.destroy': { paramsTuple?: []; params?: {} }
+    'auth.login': { paramsTuple?: []; params?: {} }
+    'auth.logout': { paramsTuple?: []; params?: {} }
+    'collaboration_tokens.store': { paramsTuple?: []; params?: {} }
+    'ai_editor.store': { paramsTuple?: []; params?: {} }
+    'rag.search': { paramsTuple?: []; params?: {} }
+    'rag.chat': { paramsTuple?: []; params?: {} }
+  }
+  PATCH: {
+    'documents.update': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {
