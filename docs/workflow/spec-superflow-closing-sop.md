@@ -1,4 +1,4 @@
-# spec-superflow Closing Checklist
+# spec-superflow Closing SOP
 
 适用场景：change 已实现完成，准备从 `executing` 收口到 `closing`。
 
