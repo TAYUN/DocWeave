@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mantine UI Docs"
+  short_description: "优先参考 Mantine 官方 LLM 文档与组件说明"
+  default_prompt: "Use $mantine-ui-docs to implement or debug a Mantine UI integration with the official Mantine LLM docs first."
