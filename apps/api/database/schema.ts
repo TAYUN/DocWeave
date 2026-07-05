@@ -33,8 +33,10 @@ export class AuthAccessTokenSchema extends BaseModel {
 }
 
 export class DocumentSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'spaceId', 'status', 'summary', 'title', 'updatedAt'] as const
+  static $columns = ['content', 'createdAt', 'id', 'spaceId', 'status', 'summary', 'title', 'updatedAt'] as const
   $columns = DocumentSchema.$columns
+  @column()
+  declare content: string
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column({ isPrimary: true })

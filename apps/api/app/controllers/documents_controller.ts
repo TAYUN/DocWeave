@@ -52,9 +52,9 @@ export default class DocumentsController {
   }
 
   async update({ params, request, response }: HttpContext) {
-    const patch = request.only(['title', 'summary'])
+    const patch = request.only(['title', 'summary', 'content'])
 
-    if (patch.title === undefined && patch.summary === undefined) {
+    if (patch.title === undefined && patch.summary === undefined && patch.content === undefined) {
       return response.status(422).send({
         message: 'At least one editable field is required',
       })

@@ -10,6 +10,7 @@ export type ApiDocument = {
   title: string
   status: 'draft' | 'review' | 'ready'
   summary: string
+  content: string
   spaceId: string
   updatedAt: string
 }
@@ -89,6 +90,7 @@ export async function updateDocument(input: {
   documentId: string
   title?: string
   summary?: string
+  content?: string
 }) {
   const payload = await requestJson<ApiEnvelope<ApiDocument>>(
     `/api/documents/${input.documentId}`,
@@ -97,6 +99,7 @@ export async function updateDocument(input: {
       body: {
         title: input.title,
         summary: input.summary,
+        content: input.content,
       },
     },
   )

@@ -13,6 +13,13 @@ type DocumentInput = {
   summary: string
 }
 
+const DEFAULT_DOCUMENT_CONTENT = JSON.stringify([
+  {
+    type: 'paragraph',
+    content: 'Start writing your document here.',
+  },
+])
+
 export default class DocweaveCatalogService {
   // Keep persistence access centralized so controllers stay focused on API semantics.
   async listSpaces() {
@@ -34,6 +41,7 @@ export default class DocweaveCatalogService {
       title: document.title,
       status: document.status,
       summary: document.summary,
+      content: document.content,
       spaceId: document.spaceId,
       updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
     }))
@@ -73,6 +81,7 @@ export default class DocweaveCatalogService {
       title: document.title,
       status: document.status,
       summary: document.summary,
+      content: document.content,
       spaceId: document.spaceId,
       updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
     }
@@ -80,7 +89,7 @@ export default class DocweaveCatalogService {
 
   async updateDocument(
     documentId: string,
-    patch: Partial<Pick<Document, 'title' | 'summary'>>,
+    patch: Partial<Pick<Document, 'title' | 'summary' | 'content'>>,
   ) {
     const document = await Document.find(documentId)
 
@@ -96,6 +105,7 @@ export default class DocweaveCatalogService {
       title: document.title,
       status: document.status,
       summary: document.summary,
+      content: document.content,
       spaceId: document.spaceId,
       updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
     }
@@ -128,6 +138,7 @@ export default class DocweaveCatalogService {
       spaceId: input.spaceId,
       title: input.title,
       summary: input.summary,
+      content: DEFAULT_DOCUMENT_CONTENT,
       status: 'draft',
     })
 
@@ -136,6 +147,7 @@ export default class DocweaveCatalogService {
       title: document.title,
       status: document.status,
       summary: document.summary,
+      content: document.content,
       spaceId: document.spaceId,
       updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Link,
   Outlet,
@@ -22,6 +22,7 @@ import {
   listStages,
   updateDocument,
 } from './lib/workspace-data'
+import { DocumentEditor, type DocumentEditorContent } from '@docweave/editor'
 import './App.css'
 
 function MutationNotice({ message, tone }: { message: string | null; tone: 'error' | 'success' }) {
@@ -364,23 +365,28 @@ function SpacePage() {
 function DocumentPage() {
   const { documentId } = documentRoute.useParams()
   const queryClient = useQueryClient()
-  const [title, setTitle] = useState('')
-  const [summary, setSummary] = useState('')
-  const [feedback, setFeedback] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
   const documentQuery = useSuspenseQuery(
     queryOptions({
       queryKey: ['document', documentId],
       queryFn: () => getDocumentById(documentId),
     }),
   )
+  const document = documentQuery.data
+  const [title, setTitle] = useState(() => document.title)
+  const [summary, setSummary] = useState(() => document.summary)
+  const [draftContent, setDraftContent] = useState<DocumentEditorContent>(() =>
+    parseDocumentContent(document.content),
+  )
+  const [feedback, setFeedback] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const updateDocumentMutation = useMutation({
     mutationFn: updateDocument,
     onSuccess: async (updated: Awaited<ReturnType<typeof updateDocument>>) => {
       setTitle(updated.title)
       setSummary(updated.summary)
+      setDraftContent(parseDocumentContent(updated.content))
       setError(null)
-      setFeedback('Document metadata saved.')
+      setFeedback('Document saved.')
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['document', documentId] }),
         queryClient.invalidateQueries({ queryKey: ['documents'] }),
@@ -393,7 +399,18 @@ function DocumentPage() {
     },
   })
 
-  const document = documentQuery.data
+  const initialContent = useMemo(() => parseDocumentContent(document.content), [document.content])
+
+  // Reset local form state when a different document or persisted revision is loaded.
+  useEffect(() => {
+    if (!document) {
+      return
+    }
+
+    setTitle(document.title)
+    setSummary(document.summary)
+    setDraftContent(initialContent)
+  }, [document, initialContent])
 
   if (!document) {
     return (
@@ -405,69 +422,64 @@ function DocumentPage() {
     )
   }
 
-  useEffect(() => {
-    setTitle(document.title)
-    setSummary(document.summary)
-  }, [document.summary, document.title])
-
   return (
     <div className="page">
       <section className="hero-panel compact">
         <p className="eyebrow">{document.status}</p>
-        <h2>{document.title}</h2>
-        <p className="hero-copy">{document.summary}</p>
+        <h2>{title || document.title}</h2>
+        <p className="hero-copy">{summary || document.summary}</p>
       </section>
 
-      <section className="grid split">
-        <article className="panel">
-          <p className="panel-kicker">Edit summary</p>
-          <h3>Update document metadata</h3>
-          <form
-            className="form-stack"
-            onSubmit={(event) => {
-              event.preventDefault()
-              setFeedback(null)
-              setError(null)
-              updateDocumentMutation.mutate({
-                documentId,
-                title,
-                summary,
-              })
-            }}
-          >
+      <section className="grid editor-layout">
+        <form
+          className="panel editor-panel"
+          onSubmit={(event) => {
+            event.preventDefault()
+            setFeedback(null)
+            setError(null)
+            updateDocumentMutation.mutate({
+              documentId,
+              title,
+              summary,
+              content: JSON.stringify(draftContent),
+            })
+          }}
+        >
+          <div className="panel-header">
+            <div>
+              <p className="panel-kicker">Document</p>
+              <h3>Edit title, summary, and body</h3>
+            </div>
+          </div>
+
+          <div className="form-stack">
             <label className="field">
               <span>Title</span>
-              <input
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                required
-              />
+              <input value={title} onChange={(event) => setTitle(event.target.value)} required />
             </label>
             <label className="field">
               <span>Summary</span>
               <textarea
                 value={summary}
                 onChange={(event) => setSummary(event.target.value)}
-                rows={5}
+                rows={4}
                 required
               />
             </label>
+            <div className="editor-frame">
+              <DocumentEditor
+                key={document.id}
+                initialContent={draftContent}
+                onChange={setDraftContent}
+              />
+            </div>
             <button className="action-button" type="submit" disabled={updateDocumentMutation.isPending}>
-              {updateDocumentMutation.isPending ? 'Saving...' : 'Save metadata'}
+              {updateDocumentMutation.isPending ? 'Saving...' : 'Save document'}
             </button>
             <MutationNotice message={feedback} tone="success" />
             <MutationNotice message={error} tone="error" />
-          </form>
-        </article>
-
-        <article className="panel">
-          <p className="panel-kicker">Delivery notes</p>
-          <h3>Why this route matters</h3>
-          <p>
-            This document route demonstrates parameterized navigation and query-driven
-            data loading, which is the foundation for future workspace, document, and editor pages.
-          </p>
-        </article>
+          </div>
+        </form>
 
         <article className="panel">
           <p className="panel-kicker">Metadata</p>
@@ -486,10 +498,34 @@ function DocumentPage() {
               <dd>{document.updatedAt}</dd>
             </div>
           </dl>
+          <p className="sidebar-copy">
+            This page now loads a real BlockNote editor and persists the document body through the API boundary.
+          </p>
         </article>
       </section>
     </div>
   )
+}
+
+const defaultDocumentContent: DocumentEditorContent = [
+  {
+    type: 'paragraph',
+    content: 'Start writing your document here.',
+  },
+]
+
+function parseDocumentContent(rawContent: string): DocumentEditorContent {
+  try {
+    const parsed = JSON.parse(rawContent) as unknown
+
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed as DocumentEditorContent
+    }
+  } catch {
+    // Fall back to the seeded paragraph below when persisted content is missing or malformed.
+  }
+
+  return defaultDocumentContent
 }
 
 const rootRoute = createRootRoute({

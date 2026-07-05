@@ -19,6 +19,9 @@ export default class Document extends BaseModel {
   declare summary: string
 
   @column()
+  declare content: string
+
+  @column()
   declare status: 'draft' | 'review' | 'ready'
 
   @column.dateTime({ autoCreate: true })

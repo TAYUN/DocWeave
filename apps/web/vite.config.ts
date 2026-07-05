@@ -7,7 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:3333',
+        // Match the Adonis dev server host so local editor flows can reach the API through Vite.
+        target: 'http://localhost:3333',
         changeOrigin: true,
       },
     },
