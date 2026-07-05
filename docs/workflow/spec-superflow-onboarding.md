@@ -48,6 +48,7 @@
 - `docs/decisions/` 负责全局基线，不应被单次变更目录覆盖。
 - `docs/architecture/` 负责系统边界和核心设计，是变更设计的重要上游输入。
 - `docs/planning/` 负责阶段节奏与实施顺序，可作为拆分 `tasks.md` 的依据。
+- `docs/workflow/` 负责工作流接入、流程说明与收口 SOP。
 - `changes/` 只记录某次具体变更的增量工件和执行契约。
 
 ## 推荐首批动作
