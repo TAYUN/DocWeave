@@ -27,6 +27,15 @@ ssf state rebuild "<change-dir>"
 
 否则 `contract-fresh` 会因为 `artifacts_hash` 过期而失败。
 
+- 如果 `ssf audit "<change-dir>"` 已经显示状态是 `closing`，但 `ssf state check "<change-dir>"` 仍提示 `artifacts have changed since last transition`，优先执行一次：
+
+```bash
+ssf state rebuild "<change-dir>"
+ssf state check "<change-dir>"
+```
+
+这通常表示工件或审计文件在最后一次 transition 后又发生了更新，需要把派生状态哈希重新同步，而不代表必须回退整个 change。
+
 ## 5. 用绝对路径推进状态
 
 - 优先使用绝对路径执行 transition，避免相对路径被 guard 误判工件缺失
