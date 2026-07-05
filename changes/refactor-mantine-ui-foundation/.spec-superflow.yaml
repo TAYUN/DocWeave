@@ -1,0 +1,41 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: closing
+workflow: auto
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:be538424e3aa8d8cc5cb16116ab573981a861355246e02afe7933033d09a1891
+contract_hash: sha256:0e7cd7ccca6cd7f97c3e8591749b4e21a08923833b268fb34de8ef4c96c95cd6
+
+# === Execution progress ===
+execution_mode: Batch Inline
+batches_completed: 4
+test_result: pass
+
+# === Metadata ===
+change_name: refactor-mantine-ui-foundation
+last_transition: 2026-07-05T14:26:50Z
+last_transition_from: executing
+last_transition_to: closing
+
+# === Decision points ===
+dp_0_decisions: Change name: refactor-mantine-ui-foundation; intent: switch DocWeave product UI from shadcn/ui planning baseline to Mantine and align BlockNote editor UI adapter to @blocknote/mantine while preserving Tailwind CSS, React SPA, TanStack Router, TanStack Query, and non-UI functional behavior; constraints: update decision and planning docs first, keep scope to UI component library and editor adapter replacement, do not modify collaboration/Yjs/Hocuspocus code, and follow BlockNote official Mantine guidance including blocknoteStyles.css when the app already uses Mantine; communication: draft artifacts for review before implementation.
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-05T13:45:13Z
+dp_0_result: confirmed: change name, Mantine migration intent, scope fence, and BlockNote official Mantine guidance were confirmed before artifact drafting
+dp_1_result: confirmed: Mantine product UI baseline and BlockNote Mantine adapter requirements were accepted for specification
+dp_1_timestamp: 2026-07-05T13:55:05Z
+dp_2_result: approved: proposal, specs, design, and tasks for Mantine UI foundation and BlockNote Mantine adapter alignment were reviewed and accepted
+dp_2_timestamp: 2026-07-05T13:55:05Z
+dp_3_result: approved: execution contract accepted for Mantine UI foundation and BlockNote Mantine adapter alignment
+dp_3_timestamp: 2026-07-05T14:01:20Z
+dp_4_result: Batch Inline: 4 sequential batches for docs baseline, Mantine app bootstrap, product page migration, and BlockNote style alignment
+dp_4_timestamp: 2026-07-05T14:03:54Z
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: conditional: Mantine docs alignment, app bootstrap, page migration, and BlockNote style split are implemented and verified by pnpm typecheck:web, pnpm build:web, and pnpm check:workspace; production build still reports a large bundle size warning
+dp_6_timestamp: 2026-07-05T14:15:54Z
+dp_7_result: confirmed: Mantine UI foundation, web app bootstrap, page interaction migration, editor CSS type support, and BlockNote Mantine style alignment are implemented, verified, and accepted for archive; bundle size warning accepted as non-blocking
+dp_7_timestamp: 2026-07-05T14:26:50Z

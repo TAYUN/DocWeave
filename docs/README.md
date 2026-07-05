@@ -35,8 +35,8 @@
 截至当前，项目已经统一为以下执行摘要：
 
 1. 前端主形态采用 `React SPA + Vite + TanStack Router + TanStack Query`。
-2. UI 采用 `Tailwind CSS v4 + shadcn/ui + lucide-react`。
-3. 编辑器采用 `@blocknote/core + @blocknote/react + @blocknote/shadcn`。
+2. UI 采用 `Tailwind CSS v4 + @mantine/core + @mantine/hooks + @mantine/notifications + lucide-react`。
+3. 编辑器采用 `@blocknote/core + @blocknote/react + @blocknote/mantine`。
 4. 编辑器 AI 前端采用 `@blocknote/xl-ai`。
 5. 主业务后端采用 `AdonisJS v7`。
 6. 协同采用 `Yjs + Hocuspocus`，并作为独立进程运行。
