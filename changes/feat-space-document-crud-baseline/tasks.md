@@ -25,18 +25,18 @@
 
 ## 1. Batch 1: 建立写接口
 
-- [ ] **1.1 编写失败的测试**
+- [x] **1.1 编写失败的测试**
 
 ```text
 检查当前 API 不支持创建 space/document，也没有稳定的 summary 编辑闭环。
 ```
 
-- [ ] **1.2 运行测试并确认失败**
+- [x] **1.2 运行测试并确认失败**
 
 Run: `pnpm typecheck:api`
 Expected: 在写接口补齐前，当前 change 的目标能力尚不存在
 
-- [ ] **1.3 实现最小化代码**
+- [x] **1.3 实现最小化代码**
 
 ```text
 实现：
@@ -45,25 +45,25 @@ Expected: 在写接口补齐前，当前 change 的目标能力尚不存在
 - PATCH /api/documents/:documentId
 ```
 
-- [ ] **1.4 运行测试并确认通过**
+- [x] **1.4 运行测试并确认通过**
 
 Run: `pnpm typecheck:api`
 Expected: PASS
 
 ## 2. Batch 2: 建立表单与 mutation 闭环
 
-- [ ] **2.1 编写失败的测试**
+- [x] **2.1 编写失败的测试**
 
 ```text
 检查当前前端没有创建 space、创建 document、编辑 summary 的表单交互。
 ```
 
-- [ ] **2.2 运行测试并确认失败**
+- [x] **2.2 运行测试并确认失败**
 
 Run: `pnpm typecheck:web`
 Expected: 当前 UI 不具备写入能力
 
-- [ ] **2.3 实现最小化代码**
+- [x] **2.3 实现最小化代码**
 
 ```text
 实现：
@@ -74,7 +74,7 @@ Expected: 当前 UI 不具备写入能力
 - query refresh
 ```
 
-- [ ] **2.4 运行测试并确认通过**
+- [x] **2.4 运行测试并确认通过**
 
 Run:
 - `pnpm typecheck:web`
@@ -84,18 +84,18 @@ Expected: PASS
 
 ## 3. Batch 3: 验证第一条可交互闭环
 
-- [ ] **3.1 编写失败的测试**
+- [x] **3.1 编写失败的测试**
 
 ```text
 检查当前数据库数据不会因为页面操作而变化。
 ```
 
-- [ ] **3.2 运行测试并确认失败**
+- [x] **3.2 运行测试并确认失败**
 
 Run: `psql -h 127.0.0.1 -p 5432 -U root -d docweave -c "SELECT count(*) FROM spaces;"`
 Expected: 在写入前，记录数不增长
 
-- [ ] **3.3 实现最小化代码**
+- [x] **3.3 实现最小化代码**
 
 ```text
 通过 UI 或对应 API 调用：
@@ -104,7 +104,7 @@ Expected: 在写入前，记录数不增长
 - 编辑一个 document summary
 ```
 
-- [ ] **3.4 运行测试并确认通过**
+- [x] **3.4 运行测试并确认通过**
 
 Run:
 - `pnpm check:workspace`

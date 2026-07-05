@@ -2,39 +2,39 @@
 # Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
 
 # === Core state ===
-state: exploring
+state: closing
 workflow: auto
 
 # === Hashes (fast staleness detection) ===
-artifacts_hash: null
-contract_hash: null
+artifacts_hash: sha256:0bedc66fb586fb0519aded23c49c72c7bedc4008424186e960367be8eacc5eeb
+contract_hash: sha256:0b40620f104d8ed18fce6553567bba5d66acfa35898f5a0c912e2a6af521759f
 
 # === Execution progress ===
 execution_mode: null
 batches_completed: 3
-test_result: null
+test_result: pass
 
 # === Metadata ===
 change_name: feat-document-editor-single-user-baseline
-last_transition: 2026-07-04T12:25:49.342Z
-last_transition_from: null
-last_transition_to: null
+last_transition: 2026-07-05T10:33:03.582Z
+last_transition_from: executing
+last_transition_to: closing
 
 # === Decision points ===
 dp_0_decisions: Change name: feat-document-editor-single-user-baseline; intent: move the document page from metadata-only state to BlockNote-based single-user editing after the metadata CRUD baseline; constraints: keep scope to BlockNote single-user editing, minimal content load/save, and packages/editor boundary without pulling in collaboration, AI, or snapshot/index pipelines.
 dp_0_confirmed: true
 dp_0_timestamp: 2026-07-04T14:25:00Z
-dp_1_result: null
-dp_1_timestamp: null
-dp_2_result: null
-dp_2_timestamp: null
-dp_3_result: null
-dp_3_timestamp: null
+dp_1_result: confirmed: user approved the document editor baseline requirements
+dp_1_timestamp: 2026-07-05T10:23:20Z
+dp_2_result: approved: proposal, specs, design, and tasks were reviewed and accepted by the user
+dp_2_timestamp: 2026-07-05T10:23:20Z
+dp_3_result: approved: execution contract accepted for document editor single-user baseline
+dp_3_timestamp: 2026-07-05T10:23:20Z
 dp_4_result: Batch Inline: 3 sequential batches with clear API/editor/verification boundaries
-dp_4_timestamp: null
+dp_4_timestamp: 2026-07-05T10:23:20Z
 dp_5_result: null
 dp_5_timestamp: null
-dp_6_result: null
-dp_6_timestamp: null
-dp_7_result: null
-dp_7_timestamp: null
+dp_6_result: conditional: verification passed for workspace typecheck, web build, and save-refresh reload flow; production build still reports a large bundle size warning
+dp_6_timestamp: 2026-07-05T10:24:06Z
+dp_7_result: confirmed: single-user BlockNote editor baseline is implemented, verified, and ready for archive with audit report
+dp_7_timestamp: 2026-07-05T10:24:22Z
