@@ -6,7 +6,7 @@ state: closing
 workflow: auto
 
 # === Hashes (fast staleness detection) ===
-artifacts_hash: sha256:0bedc66fb586fb0519aded23c49c72c7bedc4008424186e960367be8eacc5eeb
+artifacts_hash: sha256:89c710cb037efbdd3089036b77d92b4393e1538142736d6e6c4617f8b84b2d2a
 contract_hash: sha256:0b40620f104d8ed18fce6553567bba5d66acfa35898f5a0c912e2a6af521759f
 
 # === Execution progress ===

@@ -1,8 +1,8 @@
 # Decision-Point Audit Report
 
 **变更**: chore-monorepo-bootstrap  
-**生成时间**: 2026-07-05T10:44:10.866Z  
-**当前状态**: approved-for-build  
+**生成时间**: 2026-07-05T13:07:11.476Z  
+**当前状态**: closing  
 
 ## 汇总表
 

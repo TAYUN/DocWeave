@@ -1,8 +1,8 @@
 # Decision-Point Audit Report
 
 **变更**: feat-space-document-crud-baseline  
-**生成时间**: 2026-07-05T10:44:10.845Z  
-**当前状态**: approved-for-build  
+**生成时间**: 2026-07-05T13:07:11.533Z  
+**当前状态**: closing  
 
 ## 汇总表
 

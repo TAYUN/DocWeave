@@ -1,8 +1,8 @@
 # Decision-Point Audit Report
 
 **变更**: feat-web-api-postgres-foundation  
-**生成时间**: 2026-07-05T10:44:10.865Z  
-**当前状态**: approved-for-build  
+**生成时间**: 2026-07-05T13:07:11.540Z  
+**当前状态**: closing  
 
 ## 汇总表
 
