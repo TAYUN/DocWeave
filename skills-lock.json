@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "adonis-mcp": {
+      "source": "batosai/adonis-mcp",
+      "sourceType": "github",
+      "skillPath": "skills/adonis-mcp/SKILL.md",
+      "computedHash": "14e33f825c912aa2b3fb27c62c5123a926ab30a684729880c6f7428a0a7b0daa"
+    }
+  }
+}
