@@ -1,5 +1,7 @@
 # spec-superflow DP-0 审计不一致问题记录
 
+> 状态说明：这是一个历史问题记录。该问题最初出现在 `spec-superflow 0.8.9`，当前本地已升级到 `0.8.11`，后续优先按最新版实际行为判断，不再默认把本文档视为“当前仍未修复”。
+
 ## 现象
 
 在 `spec-superflow 0.8.9` 中，某些 change 的 `.spec-superflow.yaml` 已包含：
@@ -45,7 +47,7 @@
 - `scripts/lib/state-loader.mjs`
 - `skills/workflow-start/SKILL.md`
 
-## 建议修复
+## 历史建议修复
 
 ### 最小代码修复
 
@@ -72,7 +74,7 @@
    - 优先读 `dp_0_result`
    - 如果缺失但 `dp_0_confirmed === true`，则视为已记录
 
-## 推荐修复顺序
+## 历史推荐修复顺序
 
 推荐先做这两步：
 
@@ -86,7 +88,18 @@
 - 不需要改变已有 DP-1~DP-7 的判定方式
 - 可以避免出现“命令成功但字段没落盘”的误导行为
 
-## 建议补充测试
+## 历史建议补充测试
+
+## 当前处理结论
+
+根据当前官方发布节奏，这个问题已在后续版本中修复；本项目环境现已升级到 `spec-superflow 0.8.11`。
+
+后续如果再次观察到：
+
+- `.spec-superflow.yaml` 已有 `dp_0_result`
+- `ssf audit` 仍把 DP-0 标记为 `not recorded`
+
+应优先按“新版本回归问题”处理，而不是继续沿用本文档里的旧版本根因假设。
 
 1. `cmd-state` / `state-loader`
    - 设置 `dp_0_result` 后重新读取，断言字段仍存在
