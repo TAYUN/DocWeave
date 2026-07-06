@@ -1,205 +1,341 @@
 # DocWeave Design Guide
 
-本文档用于约定 DocWeave 的前端设计基线，但它不是独立于 `Mantine` 的第二套样式系统。
+本文档只定义 DocWeave 的设计规范，不定义实现规范。
 
-在当前项目里，设计约定必须优先落到以下实现入口：
+它参考了 `awesome-design-md` 一类设计系统文档的组织方式，但内容完全基于 DocWeave 当前产品目标与 `Mantine` 官方默认视觉基线。
 
-1. `MantineProvider`
-2. `createTheme(...)`
-3. `Styles API / classNames / styles`
-4. `CSS Modules`
+如果你想知道：
 
-也就是说，`DESIGN.md` 负责回答“界面应该呈现什么气质、优先使用什么组件语言、哪些实现方式是推荐的”，而不是替代 `Mantine` 的 theme 配置本身。
+- 页面应该看起来像什么
+- 状态在视觉上应如何区分
+- 颜色、字体、圆角、阴影应该呈现什么气质
 
-## 1. 当前 Mantine 基线
+看这份文档。
 
-当前仓库已经明确采用 `Mantine` 作为产品 UI 的主设计系统，基线以 Mantine 官方设计为准。
+如果你想知道：
 
-当前已落地的关键设定包括：
+- `MantineProvider` 怎么配
+- props 应不应该传
+- `radius`、`shadow`、`variant` 具体怎么落代码
 
-- 根部统一挂载单个 `MantineProvider`
-- `defaultColorScheme` 为 `light`
-- `primaryColor` 使用自定义 `cinnamon`
-- 正文字体使用 `Segoe UI, PingFang SC, Microsoft YaHei, sans-serif`
-- 标题字体使用 `Georgia, Times New Roman, serif`
-- `defaultRadius` 为 `md`
+请看实现规范文档，而不是这份设计文档。
 
-后续如果 `DESIGN.md` 与实际 theme 配置不一致，以代码中的 `createTheme(...)` 为最终事实来源；文档应随后补齐，而不是各自漂移。
+## 适用范围
 
-## 2. 设计目标
+这份文档适用于：
 
-DocWeave 的产品气质应该更接近“编辑工作台”而不是“通用后台模板”。
+- 定义产品视觉气质
+- 定义颜色、字体、边界、层级的设计语言
+- 定义交互状态在视觉上的区分方式
+- 约束页面和组件“看起来应该像什么”
 
-我们希望界面呈现出这些特征：
+这份文档不适用于：
 
-- 偏暖的纸面感背景，而不是生硬的纯白后台
-- 有编辑器产品气质的层级感，而不是营销站式的大视觉冲击
-- 标题更像出版物或文稿工作台，正文与操作区保持高可读性
-- 圆角、边框、阴影都要克制，强调稳定与可读，而不是炫技
-- 品牌强调色只用于行动点、当前状态和局部重点，不把整页染满
+- 规定 `MantineProvider` 如何配置
+- 规定组件 props 默认怎么传
+- 规定 `radius`、`shadow`、`variant` 的代码写法
+- 规定页面级 CSS 与 `Mantine` props 的实现边界
 
-## 3. Mantine-First 规则
+以上实现问题统一交给 [`docs/workflow/frontend-mantine-implementation-guide.md`](./docs/workflow/frontend-mantine-implementation-guide.md)。
 
-### 3.1 先用 Mantine 原生能力
+---
 
-新增界面时，优先按这个顺序选方案：
+## 1. Visual Theme & Atmosphere
 
-1. 先看 `Mantine` 现成组件能不能直接表达
-2. 再看 theme override 能不能解决
-3. 再看 `Styles API`、`classNames`、`styles`
-4. 最后才补 `CSS Modules`
+DocWeave 的界面应像一个稳定、清晰、低噪音的文档工作台。
 
-不推荐一上来就写大量独立 CSS，把 `Mantine` 只当成一个“顺手装了的组件库”。
+它不是营销站，不是品牌秀场，也不是高装饰性的创意编辑器。整体视觉应建立在 `Mantine` 官方默认主题的秩序感之上，再叠加少量文档产品特有的克制感。
 
-### 3.2 不要平行造第二套组件语言
+这种气质由以下要素共同构成：
 
-下面这些元素优先使用 `Mantine` 原语及其组合：
+- 大部分区域保持清爽、明亮、可长期阅读
+- 文本层级清晰，信息优先级比装饰更重要
+- 分区依靠结构、留白、标题和轻边界，而不是重背景和重阴影
+- 互动元素应明确，但不应抢走正文和信息内容的注意力
+- 界面整体应显得“可靠、规整、安静”，而不是“热闹、品牌化、强视觉”
 
-- 页面骨架：`AppShell`、`Container`、`Paper`、`Stack`、`Group`
-- 表单：`TextInput`、`Textarea`、`Select`、`Checkbox`、`Switch`
-- 操作：`Button`、`ActionIcon`、`Menu`、`Tabs`、`Modal`、`Drawer`
-- 反馈：`Notification`、`Alert`、`Tooltip`、`Skeleton`
+**Key Characteristics**
 
-如果某个交互需要自定义样式，也应尽量建立在这些原语之上，而不是绕开它们重做一套视觉语言。
+- 默认采用 `Mantine` 官方默认视觉语义，不建立项目私有主题色体系
+- 色彩使用以中性背景 + 蓝色交互强调为主
+- 标题与正文保持统一字体家族，避免人为制造品牌化字体反差
+- 边框与阴影都应轻量，只承担结构和层级作用
+- 页面视觉重心来自布局和内容，不来自渐变、玻璃感或漂浮效果
 
-### 3.3 Tailwind 的角色
+---
 
-项目允许继续使用 `Tailwind CSS v4`，但角色应限制在：
+## 2. Color Palette & Roles
 
-- 布局辅助
-- 少量间距或响应式微调
-- 临时性的低风险样式补充
+DocWeave 当前颜色策略不单独发明品牌色，而是直接继承 `Mantine` 官方默认主题的颜色角色。
 
-不要用 `Tailwind` 重新定义按钮、表单、弹层、导航这些本该由 `Mantine` 统一的组件层。
+### Primary
 
-## 4. Theme Token 方向
+- **Blue**: 主操作、可点击强调、活动状态、焦点语义
+- **White / Default Surface**: 页面背景、内容面板、输入区、区块容器
+- **Dark Text**: 主标题、正文、表单内容、重要信息
 
-这里描述的是主题方向，不是要求把所有 token 原封不动写进文档里维护两份。
+### Neutral Structure
 
-### 4.1 颜色
+- **Border Neutral**: 用于卡片边界、分组边界、列表分隔
+- **Muted Text**: 用于辅助说明、次级信息、描述、元数据
+- **Soft Surface Contrast**: 用于区块之间的轻层级差
 
-当前主色方向是 `cinnamon`，应继续作为以下场景的主强调色：
+### Semantic Colors
 
-- 主按钮
-- 当前激活导航
-- 关键确认动作
-- 局部高亮状态
+- **Green**: 成功、完成、可用、就绪
+- **Yellow / Orange**: 警告、待确认、处理中
+- **Red**: 错误、阻塞、危险、不可逆操作
+- **Blue**: 信息提示、交互高亮、主流程动作
 
-背景与表面色应保持暖色、低刺激、可长时间阅读：
+### Color Principles
 
-- 页面外层背景避免冷白
-- 卡片、侧栏、编辑器周边表面要与页面背景有轻微层次差
-- 边框优先用于建立结构感，而不是制造强烈分割
+- 主色只用于交互和局部强调，不铺满大面积背景
+- 语义色只用于有明确语义的状态，不用于装饰
+- 中性背景必须让正文长期阅读保持舒适
+- 页面之间的区分优先依赖结构，不依赖换一套背景颜色
 
-语义色应保持克制：
+---
 
-- 成功态、警告态、危险态只用于明确反馈
-- 焦点态必须清晰可见，不能为了“干净”去掉 focus ring
+## 3. Typography Rules
 
-### 4.2 字体
+DocWeave 的字体规范跟随 `Mantine` 官方默认字体系统，不额外定义品牌字体策略。
 
-字体策略保持当前双栈：
+### Hierarchy
 
-- 标题使用衬线字体，强调文档产品气质
-- 正文、控件、表格、说明文字使用无衬线字体，保证长时间操作可读性
+| Role | Intent | Visual Rule |
+|------|--------|-------------|
+| Page Title | 页面主标题 | 明确、稳定、不过度夸张 |
+| Section Title | 区块标题 | 比正文明显，但不制造营销式冲击 |
+| Body | 正文与说明 | 可连续阅读，优先清晰 |
+| Meta | 标签、辅助说明、元数据 | 弱于正文，但仍需可读 |
+| Status / Badge | 状态与短标签 | 紧凑、明确、可快速扫描 |
 
-不要把整站都做成营销式的大号 serif，也不要把所有标题都抹平成纯工具后台口吻。
+### Typography Principles
 
-### 4.3 圆角与阴影
+- 标题层级应明显，但不要通过超大字号制造宣传页感
+- 正文应是视觉系统的核心，而不是配角
+- 辅助说明必须弱于正文，但不能弱到难以阅读
+- 同一页面中的字体层级不应过多，通常保持 `标题 / 正文 / 辅助信息` 三层即可
+- 不使用衬线/无衬线混搭来制造品牌感
 
-- 默认圆角应维持 `md` 到 `lg` 的柔和区间
-- 阴影用于弱分层，不做玻璃感和漂浮感
-- 多层嵌套时优先减少阴影数量，而不是不断叠效果
+---
 
-## 5. 页面与组件倾向
+## 4. Component Stylings
 
-### 5.1 工作台页面
+这一节定义组件“看起来应该像什么”，不定义 props 该怎么传。
 
-工作台、概览页、空间页应优先体现“稳定的阅读与操作框架”：
+### Buttons
 
-- 页面结构清晰
-- 信息分组明确
-- 首屏能看出主操作区和辅助信息区
+**Primary Action**
 
-### 5.2 编辑器相关界面
+- 视觉上应是页面内最明确的操作
+- 默认使用官方主色语义
+- 不需要额外品牌化阴影或大圆角强化存在感
 
-编辑器页面、AI 辅助面板、引用侧栏、元数据编辑区，应该属于同一个工作台家族。
+**Secondary Action**
 
-这类界面要遵守：
+- 明显弱于主操作
+- 仍然清晰可见，不应伪装成普通文本
 
-- 可读性优先于装饰
-- 让 `BlockNote` 负责正文编辑体验
-- 让 `Mantine` 负责编辑器外围的产品 chrome
-- 不要对正文区域做过度包装，避免抢走内容本身的注意力
+**Danger Action**
 
-### 5.3 表单与设置页
+- 使用危险语义色
+- 只在真正不可逆或高风险动作时出现
 
-- 标签必须清晰可见，不依赖 placeholder 传达字段含义
-- 校验反馈要靠近字段
-- 密集设置页依赖间距、标题和分组建立秩序，不依赖五颜六色的强调块
+### Badges & Status Labels
 
-### 5.4 状态与反馈
+- 用于表达状态、数量、轻量标签
+- 视觉上应紧凑、可扫描、不抢页面主层级
+- 不应用 badge 承担大段信息表达
 
-- 空状态要有明确下一步动作
-- 加载态要安静，不做花哨动画
-- 错误反馈要明确指出失败原因和下一步建议
+### Cards & Containers
 
-## 6. 样式落地边界
+- 卡片和容器应像结构模块，而不是装饰物
+- 边界应清晰但克制
+- 默认层级应依赖边框和轻阴影，而不是厚背景和强浮起感
 
-### 6.1 适合放进 `createTheme(...)` 的内容
+### Inputs & Forms
 
-- `primaryColor`
-- 字体族
-- `defaultRadius`
-- 全局颜色 scale
-- 组件级默认 props
-- 共享的 `Mantine` 组件样式覆写
+- 输入区应清晰、规整、稳定
+- 标签必须永远比 placeholder 更可靠
+- 表单的视觉任务是“支持填写”，不是“制造品牌风格”
 
-### 6.2 适合放进 `Styles API` / `classNames` / `styles` 的内容
+### Icons
 
-- 单个组件或一组组件的局部视觉调整
-- 某个组件在不同页面语境下的样式差异
-- 需要根据组件内部 slot 精细控制的样式
+- 图标是语义辅助，不是视觉主角
+- 只在确实帮助识别动作或类型时出现
+- 不用图标堆出热闹感
 
-### 6.3 适合放进 `CSS Modules` 的内容
+---
 
-- 页面级排版
-- 复合布局
-- Mantine 原语外层的容器样式
-- 无法靠 theme 和 Styles API 清晰表达的局部结构样式
+## 5. Layout Principles
 
-### 6.4 不适合放进 `DESIGN.md` 的内容
+这里定义布局的审美原则，不定义具体页面结构实现。
 
-- 组件的完整 props 列表
-- 某个页面的逐像素视觉说明
-- 与实际代码脱节的第二份 token 真值表
-- 替代官方文档的 Mantine API 描述
+### Spacing System
 
-## 7. Agent 使用说明
+- 页面应保持稳定的纵向节奏
+- 区块之间的距离应明显大于区块内部元素距离
+- 信息分组依赖留白和标题，而不是大量边框框出一切
 
-当 agent 为 DocWeave 生成或修改前端代码时，应遵循下面的顺序：
+### Grid & Rhythm
 
-1. 先阅读当前 `MantineProvider` 和 theme 配置
-2. 优先复用现有 `Mantine` 组件与项目中的页面语言
-3. 需要扩展时，先判断是 theme 问题、组件问题还是页面布局问题
-4. 只有在 `Mantine` 原生能力不够时，才增加局部自定义样式
-5. 新页面必须看起来属于 DocWeave，而不是另一个独立产品
+- 优先使用清晰、规整、容易扫描的布局
+- 页面应存在明确主区与次区，但不靠强装饰来区分
+- 避免把页面切成太多同权重盒子
 
-## 8. 官方资料优先级
+### Whitespace Philosophy
 
-涉及 `Mantine` 用法时，优先参考官方资料，而不是凭印象写：
+- 留白应服务理解，不是服务“高级感表演”
+- 页面应允许内容呼吸，但不能松到像宣传页
+- 在内容型产品里，留白的目标是让阅读和编辑更顺，而不是制造空旷感
 
-1. Getting Started: [https://mantine.dev/getting-started/](https://mantine.dev/getting-started/)
-2. Mantine Provider: [https://mantine.dev/theming/mantine-provider/](https://mantine.dev/theming/mantine-provider/)
-3. Theme Object: [https://mantine.dev/theming/theme-object/](https://mantine.dev/theming/theme-object/)
-4. Mantine Styles: [https://mantine.dev/styles/mantine-styles/](https://mantine.dev/styles/mantine-styles/)
-5. Styles API: [https://mantine.dev/styles/styles-api/](https://mantine.dev/styles/styles-api/)
+---
 
-## 9. 一句话结论
+## 6. Depth & Elevation
 
-DocWeave 的 `DESIGN.md` 应该始终是一个 `Mantine-first` 的设计约束文档：
+DocWeave 的深度系统应该很克制。
 
-- 它定义设计方向
-- 它约束组件语言
-- 它指导 theme 与样式该落在哪一层
-- 但它不替代 `Mantine` 自己的 theme、Styles API 和官方样式体系
+| Level | Treatment | Use |
+|-------|-----------|-----|
+| Flat | 无额外强调 | 页面背景、普通排版区 |
+| Structured | 轻边框 | 普通区块、列表项、表单区域 |
+| Soft Elevated | 极轻阴影 | 需要从背景中略微浮出的面板 |
+| Semantic Focus | 焦点环 / 活动边框 | 焦点、当前项、选中态 |
+
+### Depth Principles
+
+- 默认先靠边框建立结构
+- 阴影只在确实需要层级时使用
+- 不做大面积柔光、重投影、玻璃感或漂浮卡片风格
+- 浮起感不能替代信息层级本身
+
+---
+
+## 7. Responsive Behavior
+
+### Desktop
+
+- 可以有主区与辅助区
+- 视觉重点仍应集中，不要让每个区域都同样大声
+
+### Tablet
+
+- 并列区块数量减少
+- 页面层级保持不变，但结构开始收束
+
+### Mobile
+
+- 单列优先
+- 主任务优先
+- 次级信息后置、折叠或下移
+
+### Responsive Principles
+
+- 响应式变化应保留信息层级，而不是只做简单堆叠
+- 小屏时应先保护主任务，再考虑附属信息
+
+---
+
+## 8. Accessibility & States
+
+这一节定义状态的设计规范，也就是你刚才提到的“哪些状态应该用哪些样式”。
+
+### Focus System
+
+- 焦点必须可见
+- 焦点态是功能性反馈，不是装饰性反馈
+- 不能为了更“干净”去掉 focus 指示
+
+### Interactive States
+
+**Default**
+
+- 安静、稳定、规整
+- 不依赖装饰强化存在感
+
+**Hover**
+
+- 轻量变化即可
+- 可表现为轻边界变化、轻背景变化、轻色彩变化
+- 不建议用位移和大阴影表达 hover
+
+**Active / Selected**
+
+- 应明显区别于默认态
+- 优先使用颜色、填充、边框或组件原生激活态表达
+- 不建议依靠“浮起来”表达选中
+
+**Disabled**
+
+- 应明显弱化
+- 但仍应保持可辨认
+- 禁用态是“不可操作”，不是“不可见”
+
+### Semantic State Styling
+
+**Success**
+
+- 使用成功语义色
+- 应让用户感到流程完成，但不要压过主界面内容
+
+**Warning**
+
+- 用于需要注意但尚未失败的情形
+- 语气应是提醒，而不是报错
+
+**Error**
+
+- 使用错误语义色
+- 视觉上应足够明确，但不应把整页变成高压告警面板
+
+**Info**
+
+- 用于解释、提示、引导下一步
+- 不应与成功或错误的视觉语义混淆
+
+### Empty / Loading / Missing
+
+**Loading**
+
+- 安静、克制、不过度动画化
+- 不抢页面主视觉
+
+**Empty**
+
+- 应显得“这里还没有内容”，而不是“界面坏了”
+- 同时要给出下一步方向
+
+**Missing / Not Found**
+
+- 应明确说明对象不存在或不可用
+- 视觉上仍然属于同一产品系统，不应突然变成另一套错误页风格
+
+---
+
+## 9. Agent Prompt Guide
+
+这部分只服务设计生成，不服务具体实现。
+
+当 agent 生成 DocWeave 界面时，应该默认理解为：
+
+- 这是一个 `Mantine` 默认主题下的文档工作台
+- 视觉重点来自结构，不来自品牌装饰
+- 蓝色是交互强调，不是品牌舞台灯光
+- 卡片、输入框、状态标签都应服从清晰、克制、稳定的原则
+- 页面不应出现重品牌化背景、强烈渐变、玻璃态、重阴影和夸张 hover
+
+一句话提示：
+
+> 设计一个清晰、克制、默认风格优先的 Mantine 文档工作台，而不是一个包装过度的品牌官网。
+
+---
+
+## 10. Final Summary
+
+DocWeave 的设计规范可以总结为：
+
+- 结构参考通用设计系统文档写法
+- 视觉基线建立在 `Mantine` 官方默认主题上
+- 设计文档只定义外观、气质、层级和状态表现
+- 不在设计文档中混入代码实现规则

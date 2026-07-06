@@ -95,6 +95,9 @@
 - 查 AdonisJS、`@jrmc/adonis-mcp`、BlockNote、Mantine、OpenAI/Codex 等官方文档
 - 确认当前推荐安装方式、配置格式、API 形状和官方边界
 - 判断某个仓库或方案是不是官方
+- 涉及前端时，先区分“设计规范问题”与“实现规范问题”：
+  - 设计规范优先看根目录 [`DESIGN.md`](../../DESIGN.md)
+  - `Mantine` 默认主题下的实现规范优先看 [`frontend-mantine-implementation-guide.md`](./frontend-mantine-implementation-guide.md)
 
 不适合的任务：
 

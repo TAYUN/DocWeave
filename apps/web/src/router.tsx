@@ -10,9 +10,7 @@ import {
   Text,
   TextInput,
   Textarea,
-  ThemeIcon,
   Title,
-  UnstyledButton,
 } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { AlertCircle, ArrowRight, FileText, FolderOpen, LayoutDashboard, Sparkles } from 'lucide-react'
@@ -52,7 +50,6 @@ function MutationNotice({ message }: { message: string | null }) {
       className="notice-inline"
       color="red"
       icon={<AlertCircle size={18} />}
-      radius="lg"
       variant="light"
     >
       {message}
@@ -67,7 +64,7 @@ function AppShell() {
   return (
     <div className="shell">
       <aside className="sidebar">
-        <Paper className="sidebar-surface" p="xl" radius="xl" shadow="md" withBorder>
+        <Paper className="sidebar-surface" p="xl" withBorder>
           <Stack gap="xl">
             <div>
               <Text className="eyebrow">DocWeave</Text>
@@ -86,8 +83,6 @@ function AppShell() {
                 justify="flex-start"
                 leftSection={<LayoutDashboard size={18} />}
                 onClick={() => navigate({ to: '/' })}
-                radius="xl"
-                size="md"
                 variant={pathname === '/' ? 'filled' : 'light'}
               >
                 Overview
@@ -99,8 +94,6 @@ function AppShell() {
                 onClick={() =>
                   navigate({ to: '/documents/$documentId', params: { documentId: 'doc-editor-runtime' } })
                 }
-                radius="xl"
-                size="md"
                 variant={pathname.includes('doc-editor-runtime') ? 'filled' : 'light'}
               >
                 Editor runtime
@@ -112,15 +105,13 @@ function AppShell() {
                 onClick={() =>
                   navigate({ to: '/documents/$documentId', params: { documentId: 'doc-collab-token' } })
                 }
-                radius="xl"
-                size="md"
                 variant={pathname.includes('doc-collab-token') ? 'filled' : 'light'}
               >
                 Collaboration token
               </Button>
             </Stack>
 
-            <Paper className="status-card" p="lg" radius="xl" withBorder>
+            <Paper className="status-card" p="lg" withBorder>
               <Text className="status-label">Current route</Text>
               <Text className="status-value" fw={700} mt={6}>
                 {pathname}
@@ -168,7 +159,7 @@ function OverviewPage() {
 
   return (
     <Stack className="page" gap="xl">
-      <Paper className="hero-panel" p="xl" radius="xl" shadow="md" withBorder>
+      <Paper className="hero-panel" p="xl" withBorder>
         <Group justify="space-between" align="flex-start" gap="xl">
           <div>
             <Text className="eyebrow">Phase 1</Text>
@@ -180,15 +171,13 @@ function OverviewPage() {
               surface for editor, collaboration, and AI milestones.
             </Text>
           </div>
-          <ThemeIcon color="cinnamon" radius="xl" size={56} variant="light">
-            <Sparkles size={28} />
-          </ThemeIcon>
+          <Sparkles size={28} />
         </Group>
       </Paper>
 
       <SimpleGrid cols={{ base: 1, lg: 3 }} spacing="lg">
         {stagesQuery.data.map((stage) => (
-          <Paper key={stage.id} className="panel stage-card" p="xl" radius="xl" shadow="sm" withBorder>
+          <Paper key={stage.id} className="panel stage-card" p="xl" withBorder>
             <Group justify="space-between" align="flex-start">
               <div>
                 <Text className="panel-kicker">{stage.owner}</Text>
@@ -196,9 +185,7 @@ function OverviewPage() {
                   {stage.name}
                 </Title>
               </div>
-              <ThemeIcon color="cinnamon" radius="xl" variant="light">
-                <Sparkles size={18} />
-              </ThemeIcon>
+              <Sparkles size={18} />
             </Group>
             <Text mt="md">{stage.summary}</Text>
           </Paper>
@@ -206,7 +193,7 @@ function OverviewPage() {
       </SimpleGrid>
 
       <SimpleGrid cols={{ base: 1, xl: 2 }} spacing="lg">
-        <Paper className="panel" p="xl" radius="xl" shadow="sm" withBorder>
+        <Paper className="panel" p="xl" withBorder>
           <Group className="panel-header" justify="space-between" align="flex-start">
             <div>
               <Text className="panel-kicker">Create space</Text>
@@ -214,9 +201,7 @@ function OverviewPage() {
                 Open a new workspace domain
               </Title>
             </div>
-            <ThemeIcon color="cinnamon" radius="xl" variant="light">
-              <FolderOpen size={18} />
-            </ThemeIcon>
+            <FolderOpen size={18} />
           </Group>
           <Stack
             component="form"
@@ -237,7 +222,6 @@ function OverviewPage() {
               onChange={(event) => setSpaceName(event.currentTarget.value)}
               placeholder="Research Workspace"
               required
-              radius="lg"
               value={spaceName}
             />
             <Textarea
@@ -247,17 +231,16 @@ function OverviewPage() {
               onChange={(event) => setSpaceSummary(event.currentTarget.value)}
               placeholder="Track experiments, findings, and next actions."
               required
-              radius="lg"
               value={spaceSummary}
             />
-            <Button loading={createSpaceMutation.isPending} radius="xl" size="md" type="submit">
+            <Button loading={createSpaceMutation.isPending} type="submit">
               {createSpaceMutation.isPending ? 'Creating...' : 'Create space'}
             </Button>
             <MutationNotice message={error} />
           </Stack>
         </Paper>
 
-        <Paper className="panel" p="xl" radius="xl" shadow="sm" withBorder>
+        <Paper className="panel" p="xl" withBorder>
           <Group className="panel-header" justify="space-between" align="flex-start">
             <div>
               <Text className="panel-kicker">Spaces</Text>
@@ -265,15 +248,18 @@ function OverviewPage() {
                 Approved workspace domains
               </Title>
             </div>
-            <Badge className="badge" color="cinnamon" radius="xl" size="lg" variant="light">
+            <Badge className="badge">
               {spacesQuery.data.length}
             </Badge>
           </Group>
           <Stack className="stack-list" gap="md" mt="lg">
             {spacesQuery.data.map((space) => (
-              <UnstyledButton
+              <Paper
+                component="button"
                 key={space.id}
                 className="stack-row"
+                p="md"
+                withBorder
                 onClick={() => navigate({ to: '/spaces/$spaceId', params: { spaceId: space.id } })}
               >
                 <Group justify="space-between" align="flex-start" wrap="nowrap">
@@ -283,14 +269,14 @@ function OverviewPage() {
                       {space.summary}
                     </Text>
                   </div>
-                  <Badge color="cinnamon" radius="xl" variant="light">
+                  <Badge>
                     {space.rootDocuments.length} docs
                   </Badge>
                 </Group>
-              </UnstyledButton>
+              </Paper>
             ))}
             {spacesQuery.data.length === 0 ? (
-              <Paper className="stack-row empty-row" p="lg" radius="lg" withBorder>
+              <Paper className="stack-row empty-row" p="lg" withBorder>
                 <Text fw={700}>No spaces yet</Text>
                 <Text className="stack-support" mt={4} size="sm">
                   Run the PostgreSQL migrations and seed your first workspace records to populate this panel.
@@ -300,7 +286,7 @@ function OverviewPage() {
           </Stack>
         </Paper>
 
-        <Paper className="panel" p="xl" radius="xl" shadow="sm" withBorder>
+        <Paper className="panel" p="xl" withBorder>
           <Group className="panel-header" justify="space-between" align="flex-start">
             <div>
               <Text className="panel-kicker">Documents</Text>
@@ -308,15 +294,18 @@ function OverviewPage() {
                 Priority implementation threads
               </Title>
             </div>
-            <Badge className="badge" color="cinnamon" radius="xl" size="lg" variant="light">
+            <Badge className="badge">
               {documentsQuery.data.length}
             </Badge>
           </Group>
           <Stack className="stack-list" gap="md" mt="lg">
             {documentsQuery.data.map((document) => (
-              <UnstyledButton
+              <Paper
+                component="button"
                 key={document.id}
                 className="stack-row"
+                p="md"
+                withBorder
                 onClick={() =>
                   navigate({ to: '/documents/$documentId', params: { documentId: document.id } })
                 }
@@ -328,14 +317,14 @@ function OverviewPage() {
                       {document.summary}
                     </Text>
                   </div>
-                  <Badge color="cinnamon" radius="xl" style={{ textTransform: 'capitalize' }} variant="light">
+                  <Badge style={{ textTransform: 'capitalize' }}>
                     {document.status}
                   </Badge>
                 </Group>
-              </UnstyledButton>
+              </Paper>
             ))}
             {documentsQuery.data.length === 0 ? (
-              <Paper className="stack-row empty-row" p="lg" radius="lg" withBorder>
+              <Paper className="stack-row empty-row" p="lg" withBorder>
                 <Text fw={700}>No documents yet</Text>
                 <Text className="stack-support" mt={4} size="sm">
                   The API is wired. Next step is creating spaces and documents in PostgreSQL.
@@ -386,7 +375,7 @@ function SpacePage() {
 
   if (!space) {
     return (
-      <Paper className="panel" p="xl" radius="xl" shadow="sm" withBorder>
+      <Paper className="panel" p="xl" withBorder>
         <Text className="eyebrow">Missing space</Text>
         <Title order={2} mt="xs">
           Workspace not found
@@ -400,7 +389,7 @@ function SpacePage() {
 
   return (
     <Stack className="page" gap="xl">
-      <Paper className="hero-panel compact" p="xl" radius="xl" shadow="md" withBorder>
+      <Paper className="hero-panel compact" p="xl" withBorder>
         <Group justify="space-between" align="flex-start" gap="xl">
           <div>
             <Text className="eyebrow">Space</Text>
@@ -411,13 +400,11 @@ function SpacePage() {
               {space.summary}
             </Text>
           </div>
-          <ThemeIcon color="cinnamon" radius="xl" size={56} variant="light">
-            <FolderOpen size={28} />
-          </ThemeIcon>
+          <FolderOpen size={28} />
         </Group>
       </Paper>
 
-      <Paper className="panel" p="xl" radius="xl" shadow="sm" withBorder>
+      <Paper className="panel" p="xl" withBorder>
         <Group className="panel-header" justify="space-between" align="flex-start">
           <div>
             <Text className="panel-kicker">Create document</Text>
@@ -425,9 +412,7 @@ function SpacePage() {
               Seed a document in this space
             </Title>
           </div>
-          <ThemeIcon color="cinnamon" radius="xl" variant="light">
-            <FileText size={18} />
-          </ThemeIcon>
+          <FileText size={18} />
         </Group>
         <Stack
           component="form"
@@ -448,7 +433,6 @@ function SpacePage() {
             label="Title"
             onChange={(event) => setTitle(event.currentTarget.value)}
             placeholder="New document"
-            radius="lg"
             required
             value={title}
           />
@@ -458,18 +442,17 @@ function SpacePage() {
             minRows={3}
             onChange={(event) => setSummary(event.currentTarget.value)}
             placeholder="Describe the intent of this document."
-            radius="lg"
             required
             value={summary}
           />
-          <Button loading={createDocumentMutation.isPending} radius="xl" size="md" type="submit">
+          <Button loading={createDocumentMutation.isPending} type="submit">
             {createDocumentMutation.isPending ? 'Creating...' : 'Create document'}
           </Button>
           <MutationNotice message={error} />
         </Stack>
       </Paper>
 
-      <Paper className="panel" p="xl" radius="xl" shadow="sm" withBorder>
+      <Paper className="panel" p="xl" withBorder>
         <Group className="panel-header" justify="space-between" align="flex-start">
           <div>
             <Text className="panel-kicker">Documents</Text>
@@ -477,15 +460,18 @@ function SpacePage() {
               Documents in this workspace
             </Title>
           </div>
-          <Badge className="badge" color="cinnamon" radius="xl" size="lg" variant="light">
+          <Badge className="badge">
             {documents.length}
           </Badge>
         </Group>
         <Stack className="stack-list" gap="md" mt="lg">
           {documents.map((document) => (
-            <UnstyledButton
+            <Paper
+              component="button"
               key={document.id}
               className="stack-row"
+              p="md"
+              withBorder
               onClick={() =>
                 navigate({ to: '/documents/$documentId', params: { documentId: document.id } })
               }
@@ -498,18 +484,16 @@ function SpacePage() {
                   </Text>
                 </div>
                 <Group gap="sm" wrap="nowrap">
-                  <Badge color="cinnamon" radius="xl" style={{ textTransform: 'capitalize' }} variant="light">
+                  <Badge style={{ textTransform: 'capitalize' }}>
                     {document.status}
                   </Badge>
-                  <ThemeIcon color="cinnamon" radius="xl" size={28} variant="light">
-                    <ArrowRight size={16} />
-                  </ThemeIcon>
+                  <ArrowRight size={16} />
                 </Group>
               </Group>
-            </UnstyledButton>
+            </Paper>
           ))}
           {documents.length === 0 ? (
-            <Paper className="stack-row empty-row" p="lg" radius="lg" withBorder>
+            <Paper className="stack-row empty-row" p="lg" withBorder>
               <Text fw={700}>No documents yet</Text>
               <Text className="stack-support" mt={4} size="sm">
                 This space exists, but it does not have any documents in the current database.
@@ -577,7 +561,7 @@ function DocumentPage() {
 
   if (!document) {
     return (
-      <Paper className="panel" p="xl" radius="xl" shadow="sm" withBorder>
+      <Paper className="panel" p="xl" withBorder>
         <Text className="eyebrow">Missing document</Text>
         <Title order={2} mt="xs">
           Route found, document not seeded
@@ -591,7 +575,7 @@ function DocumentPage() {
 
   return (
     <Stack className="page" gap="xl">
-      <Paper className="hero-panel compact" p="xl" radius="xl" shadow="md" withBorder>
+      <Paper className="hero-panel compact" p="xl" withBorder>
         <Group justify="space-between" align="flex-start" gap="xl">
           <div>
             <Text className="eyebrow">{document.status}</Text>
@@ -602,9 +586,7 @@ function DocumentPage() {
               {summary || document.summary}
             </Text>
           </div>
-          <ThemeIcon color="cinnamon" radius="xl" size={56} variant="light">
-            <FileText size={28} />
-          </ThemeIcon>
+          <FileText size={28} />
         </Group>
       </Paper>
 
@@ -613,8 +595,6 @@ function DocumentPage() {
           className="panel editor-panel"
           component="form"
           p="xl"
-          radius="xl"
-          shadow="sm"
           withBorder
           onSubmit={(event) => {
             event.preventDefault()
@@ -634,16 +614,13 @@ function DocumentPage() {
                 Edit title, summary, and body
               </Title>
             </div>
-            <ThemeIcon color="cinnamon" radius="xl" variant="light">
-              <LayoutDashboard size={18} />
-            </ThemeIcon>
+            <LayoutDashboard size={18} />
           </Group>
 
           <Stack className="form-stack" gap="md" mt="lg">
             <TextInput
               label="Title"
               onChange={(event) => setTitle(event.currentTarget.value)}
-              radius="lg"
               required
               value={title}
             />
@@ -652,43 +629,42 @@ function DocumentPage() {
               label="Summary"
               minRows={4}
               onChange={(event) => setSummary(event.currentTarget.value)}
-              radius="lg"
               required
               value={summary}
             />
-            <Paper className="editor-frame" p="md" radius="lg" withBorder>
+            <Paper className="editor-frame" p="md" withBorder>
               <DocumentEditor
                 key={document.id}
                 initialContent={draftContent}
                 onChange={setDraftContent}
               />
             </Paper>
-            <Button loading={updateDocumentMutation.isPending} radius="xl" size="md" type="submit">
+            <Button loading={updateDocumentMutation.isPending} type="submit">
               {updateDocumentMutation.isPending ? 'Saving...' : 'Save document'}
             </Button>
             <MutationNotice message={error} />
           </Stack>
         </Paper>
 
-        <Paper className="panel metadata-card" p="xl" radius="xl" shadow="sm" withBorder>
+        <Paper className="panel metadata-card" p="xl" withBorder>
           <Text className="panel-kicker">Metadata</Text>
           <Title order={3} mt="xs">
             Seeded status
           </Title>
           <Stack className="details" gap="md" mt="lg">
-            <Paper className="detail-row" p="md" radius="lg" withBorder>
+            <Paper className="detail-row" p="md" withBorder>
               <Text fw={700}>Document ID</Text>
               <Text className="stack-support" mt={4} size="sm">
                 {document.id}
               </Text>
             </Paper>
-            <Paper className="detail-row" p="md" radius="lg" withBorder>
+            <Paper className="detail-row" p="md" withBorder>
               <Text fw={700}>Space</Text>
               <Text className="stack-support" mt={4} size="sm">
                 {document.spaceId}
               </Text>
             </Paper>
-            <Paper className="detail-row" p="md" radius="lg" withBorder>
+            <Paper className="detail-row" p="md" withBorder>
               <Text fw={700}>Updated</Text>
               <Text className="stack-support" mt={4} size="sm">
                 {document.updatedAt}

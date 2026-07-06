@@ -10,6 +10,12 @@
 4. `workflow/`：工程协作方式、agent 使用约定和研发流程说明。
 5. `tem/`：早期草稿、讨论记录和未收口材料。
 
+前端相关文档当前按下面方式分工：
+
+1. 根目录 [`DESIGN.md`](../DESIGN.md)：只负责设计规范与视觉语言。
+2. [`workflow/frontend-mantine-implementation-guide.md`](./workflow/frontend-mantine-implementation-guide.md)：只负责 `Mantine` 默认主题下的实现规范。
+3. [`workflow/frontend-adonis-api-client-guide.md`](./workflow/frontend-adonis-api-client-guide.md)：负责 `apps/web` 与 `apps/api` 之间的类型安全 API 调用约定。
+
 ## 推荐阅读顺序
 
 如果是第一次进入项目，建议按以下顺序阅读：
@@ -22,6 +28,8 @@
 6. [RAG 与 Citation 设计](./architecture/20.%20RAG%20与%20Citation%20设计.md)
 7. [spec-superflow 工作流接入说明](./planning/12.%20spec-superflow%20工作流接入说明.md)
 8. [Agent Workflow Guide](./workflow/agent-workflow.md)
+9. [Frontend Mantine Implementation Guide](./workflow/frontend-mantine-implementation-guide.md)
+10. [Frontend Adonis API Client Guide](./workflow/frontend-adonis-api-client-guide.md)
 
 ## 外部参考
 
@@ -68,6 +76,7 @@
 2. 文件存储与上传策略文档。
 3. 协同 token 与 Presence 设计文档。
 4. BlockNote 服务端能力接入文档，明确 `@blocknote/xl-ai/server` 与 `@blocknote/server-util` 在 `AdonisJS` 中的落点。
+5. 前端默认主题与组件实现规范，统一 `Mantine` 默认主题下的页面实现方式。
 
 ## Agent 协作入口
 

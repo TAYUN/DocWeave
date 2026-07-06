@@ -50,8 +50,10 @@ DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
 ## 前端设计约定
 
 - 产品 UI 统一优先采用 `Mantine`，不要平行造第二套组件语言
-- 当前设计基线以 [`DESIGN.md`](./DESIGN.md) 为文档入口，以 `apps/web/src/main.tsx` 中的 `MantineProvider` 和 `createTheme(...)` 为代码事实来源
-- 新增界面时，优先按“`Mantine` 组件 -> theme override -> Styles API / `classNames` / `styles` -> CSS Modules”的顺序落地
+- 设计语言、状态外观、视觉气质统一以 [`DESIGN.md`](./DESIGN.md) 为入口
+- `Mantine` 默认主题下的实现规则、props 使用与 CSS 落地边界统一以 [`docs/workflow/frontend-mantine-implementation-guide.md`](./docs/workflow/frontend-mantine-implementation-guide.md) 为入口
+- 当前代码事实来源以 `apps/web/src/main.tsx` 中的 `MantineProvider` 和页面实现为准
+- 新增界面时，优先按“`Mantine` 组件默认行为 -> 必要时显式 props -> Styles API / `classNames` / `styles` -> CSS Modules”的顺序落地
 - `Tailwind CSS v4` 仅作为布局和细节补充，不用于重做按钮、表单、弹层、导航等本该由 `Mantine` 统一的组件层
 - 涉及 `Mantine` 的用法、样式机制或覆盖方式时，优先查官方文档，尤其是 `MantineProvider`、theme object、Mantine styles 与 Styles API
 
@@ -59,7 +61,7 @@ DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
 
 - `README.md`：项目介绍与导航入口
 - `ROADMAP.md`：阶段路线与工程推进顺序
-- `DESIGN.md`：可供 agent 消费的设计系统基线
+- `DESIGN.md`：设计系统与视觉规范入口
 - `docs/`：详细的决策、架构、规划与协作资料
 
 ## 推荐执行顺序

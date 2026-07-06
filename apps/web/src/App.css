@@ -6,26 +6,25 @@
 
 .sidebar {
   padding: 32px 24px;
-  background: rgba(255, 249, 240, 0.5);
-  backdrop-filter: blur(14px);
+  background: var(--mantine-color-body);
 }
 
 .sidebar-surface {
   min-height: calc(100vh - 64px);
-  background: rgba(255, 249, 240, 0.78);
-  border-color: var(--app-border);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 .sidebar-title,
 .hero-panel h2,
 .panel h3 {
-  color: var(--app-heading);
-  font-family: var(--app-display);
+  color: var(--mantine-color-text);
+  font-family: var(--mantine-font-family-headings);
 }
 
 .sidebar-copy,
 .hero-copy {
-  color: var(--app-text-soft);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
 }
 
 .eyebrow,
@@ -35,7 +34,7 @@
   text-transform: uppercase;
   letter-spacing: 0.2em;
   font-size: 0.72rem;
-  color: var(--app-accent);
+  color: var(--mantine-color-blue-6);
 }
 
 .nav-button {
@@ -43,16 +42,16 @@
 }
 
 .nav-button:hover {
-  transform: translateX(4px);
+  transform: none;
 }
 
 .status-card {
-  background: rgba(255, 252, 247, 0.92);
-  border-color: var(--app-border);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 .status-value {
-  color: var(--app-heading);
+  color: var(--mantine-color-text);
   word-break: break-word;
 }
 
@@ -67,10 +66,8 @@
 }
 
 .hero-panel {
-  background:
-    linear-gradient(135deg, rgba(182, 84, 46, 0.1), rgba(255, 250, 241, 0.92)),
-    var(--app-panel-strong);
-  border-color: var(--app-border);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 .hero-panel.compact {
@@ -78,9 +75,8 @@
 }
 
 .panel {
-  background: var(--app-panel);
-  border-color: var(--app-border);
-  box-shadow: var(--app-shadow);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 .form-stack {
@@ -107,20 +103,16 @@
   display: block;
   width: 100%;
   text-align: left;
-  padding: 16px 18px;
-  border-radius: 18px;
-  background: rgba(255, 252, 247, 0.88);
-  border: 1px solid rgba(63, 46, 28, 0.08);
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease;
+  appearance: none;
+  border-radius: var(--mantine-radius-md);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  transition: border-color 180ms ease;
+  cursor: pointer;
 }
 
 .stack-row:hover {
-  transform: translateY(-1px);
-  border-color: rgba(220, 119, 41, 0.22);
-  box-shadow: 0 16px 36px rgba(92, 61, 34, 0.1);
+  border-color: light-dark(var(--mantine-color-blue-3), var(--mantine-color-blue-8));
 }
 
 .empty-row:hover {
@@ -129,22 +121,17 @@
 }
 
 .stack-support {
-  color: var(--app-text-soft);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
 }
 
 .editor-frame {
-  background: rgba(255, 253, 249, 0.96);
-  border-color: rgba(63, 46, 28, 0.1);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 .detail-row {
-  background: rgba(255, 252, 247, 0.88);
-  border-color: rgba(63, 46, 28, 0.08);
-}
-
-.mantine-Textarea-input,
-.mantine-TextInput-input {
-  background: rgba(255, 253, 249, 0.96);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 @media (max-width: 960px) {
