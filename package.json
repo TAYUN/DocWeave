@@ -8,6 +8,8 @@
     "dev:api": "pnpm --dir apps/api dev",
     "dev:collab": "pnpm --dir apps/collab dev",
     "dev:worker": "pnpm --dir apps/worker dev",
+    "mcp:api:stdio": "pnpm --dir apps/api mcp:start",
+    "mcp:api:inspect": "pnpm --dir apps/api mcp:inspect",
     "build:web": "pnpm --dir apps/web build",
     "build:api": "pnpm --dir apps/api build",
     "lint:web": "pnpm --dir apps/web lint",

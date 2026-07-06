@@ -1,10 +1,12 @@
 import router from '@adonisjs/core/services/router'
-import AiEditorController from '#controllers/ai_editor_controller'
-import AuthController from '#controllers/auth_controller'
-import CollaborationTokensController from '#controllers/collaboration_tokens_controller'
-import DocumentsController from '#controllers/documents_controller'
-import RagController from '#controllers/rag_controller'
-import SpacesController from '#controllers/spaces_controller'
+import { middleware } from '#start/kernel'
+
+const AiEditorController = () => import('#controllers/ai_editor_controller')
+const AuthController = () => import('#controllers/auth_controller')
+const CollaborationTokensController = () => import('#controllers/collaboration_tokens_controller')
+const DocumentsController = () => import('#controllers/documents_controller')
+const RagController = () => import('#controllers/rag_controller')
+const SpacesController = () => import('#controllers/spaces_controller')
 
 router.get('/', () => {
   return {
@@ -21,23 +23,28 @@ router.get('/api/health', () => {
   }
 })
 
-router.group(() => {
-  router.post('/auth/login', [AuthController, 'login'])
-  router.post('/auth/logout', [AuthController, 'logout'])
-  router.get('/auth/me', [AuthController, 'me'])
+// MCP 路由单独挂载，便于让外部 agent 通过标准协议直接调用 DocWeave 能力。
+router.mcp().use(middleware.mcp())
 
-  router.get('/spaces', [SpacesController, 'index'])
-  router.post('/spaces', [SpacesController, 'store'])
-  router.get('/spaces/:spaceId/tree', [SpacesController, 'tree'])
+router
+  .group(() => {
+    router.post('/auth/login', [AuthController, 'login'])
+    router.post('/auth/logout', [AuthController, 'logout'])
+    router.get('/auth/me', [AuthController, 'me'])
 
-  router.get('/documents', [DocumentsController, 'index'])
-  router.post('/documents', [DocumentsController, 'store'])
-  router.get('/documents/:documentId', [DocumentsController, 'show'])
-  router.patch('/documents/:documentId', [DocumentsController, 'update'])
+    router.get('/spaces', [SpacesController, 'index'])
+    router.post('/spaces', [SpacesController, 'store'])
+    router.get('/spaces/:spaceId/tree', [SpacesController, 'tree'])
 
-  router.post('/collaboration/token', [CollaborationTokensController, 'store'])
-  router.post('/ai/editor', [AiEditorController, 'store'])
+    router.get('/documents', [DocumentsController, 'index'])
+    router.post('/documents', [DocumentsController, 'store'])
+    router.get('/documents/:documentId', [DocumentsController, 'show'])
+    router.patch('/documents/:documentId', [DocumentsController, 'update'])
 
-  router.post('/rag/search', [RagController, 'search'])
-  router.post('/rag/chat', [RagController, 'chat'])
-}).prefix('/api')
+    router.post('/collaboration/token', [CollaborationTokensController, 'store'])
+    router.post('/ai/editor', [AiEditorController, 'store'])
+
+    router.post('/rag/search', [RagController, 'search'])
+    router.post('/rag/chat', [RagController, 'chat'])
+  })
+  .prefix('/api')
