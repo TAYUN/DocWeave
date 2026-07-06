@@ -1,20 +1,14 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import RagService from '#services/rag_service'
 
 export default class RagController {
+  constructor(private rag = new RagService()) {}
+
   async search({ request }: HttpContext) {
     const payload = request.only(['query'])
 
     return {
-      data: {
-        query: payload.query ?? '',
-        hits: [
-          {
-            documentId: 'doc-rag-pipeline',
-            score: 0.92,
-            snippet: 'Snapshot, chunking, and embedding run in worker-owned stages.',
-          },
-        ],
-      },
+      data: await this.rag.search(payload.query ?? ''),
     }
   }
 

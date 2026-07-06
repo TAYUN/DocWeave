@@ -1,0 +1,40 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: closing
+workflow: tweak
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:5321e7d5f93ea9b5dac38f15cc8a73d2cbc71b8db4daae682f7447ddd59be432
+contract_hash: null
+
+# === Execution progress ===
+execution_mode: Batch Inline
+batches_completed: 1
+test_result: pass
+
+# === Metadata ===
+change_name: refactor-rag-search-shared-entry
+last_transition: 2026-07-06T02:28:11.286Z
+last_transition_from: executing
+last_transition_to: closing
+
+# === Decision points ===
+dp_0_decisions: Change name: refactor-rag-search-shared-entry; intent: use a tweak workflow to quickly converge HTTP RAG search and MCP search_knowledge onto one shared entry while preserving the current scaffold response shape; constraints: keep scope inside apps/api, do not implement real retrieval or RAG chat, and preserve current query plus hits payload shape.
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-06T02:20:52.568Z
+dp_1_result: confirmed: shared-entry scope and non-goals are stable enough for tweak execution
+dp_1_timestamp: 2026-07-06T02:20:52.568Z
+dp_2_result: approved: proposal, spec, design, and tasks are sufficient for a tweak-level shared-entry refactor
+dp_2_timestamp: 2026-07-06T02:20:52.568Z
+dp_3_result: approved: tweak change approved to build with proposal, spec, design, and tasks as the minimal execution baseline
+dp_3_timestamp: 2026-07-06T02:20:52.568Z
+dp_4_result: Batch Inline: 1 batch to add RagService and migrate HTTP plus MCP search callers to the shared entry
+dp_4_timestamp: 2026-07-06T02:20:52.568Z
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: pass: RagService shared entry now backs both HTTP /api/rag/search and MCP search_knowledge, verified by pnpm --dir apps/api typecheck and targeted eslint on rag_service.ts, rag_controller.ts, and search_knowledge_tool.ts
+dp_6_timestamp: 2026-07-06T02:27:14Z
+dp_7_result: confirmed: tweak change is ready for archive with shared RAG search entry implemented, verification recorded, and no remaining unchecked tasks
+dp_7_timestamp: 2026-07-06T02:27:14Z
