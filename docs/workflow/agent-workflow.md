@@ -98,6 +98,7 @@
 - 涉及前端时，先区分“设计规范问题”与“实现规范问题”：
   - 设计规范优先看根目录 [`DESIGN.md`](../../DESIGN.md)
   - `Mantine` 默认主题下的实现规范优先看 [`frontend-mantine-implementation-guide.md`](./frontend-mantine-implementation-guide.md)
+  - 如果问题涉及 `apps/web` 调 `apps/api`、Tuyau、registry 或 TanStack Query 与 Adonis API 的衔接，优先看 [`frontend-adonis-api-client-guide.md`](./frontend-adonis-api-client-guide.md)
 
 不适合的任务：
 

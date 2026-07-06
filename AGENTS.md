@@ -52,6 +52,7 @@ DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
 - 产品 UI 统一优先采用 `Mantine`，不要平行造第二套组件语言
 - 设计语言、状态外观、视觉气质统一以 [`DESIGN.md`](./DESIGN.md) 为入口
 - `Mantine` 默认主题下的实现规则、props 使用与 CSS 落地边界统一以 [`docs/workflow/frontend-mantine-implementation-guide.md`](./docs/workflow/frontend-mantine-implementation-guide.md) 为入口
+- `apps/web` 与 `apps/api` 之间的类型安全 API 调用、Tuyau 接入和后续扩展流程统一以 [`docs/workflow/frontend-adonis-api-client-guide.md`](./docs/workflow/frontend-adonis-api-client-guide.md) 为入口
 - 当前代码事实来源以 `apps/web/src/main.tsx` 中的 `MantineProvider` 和页面实现为准
 - 新增界面时，优先按“`Mantine` 组件默认行为 -> 必要时显式 props -> Styles API / `classNames` / `styles` -> CSS Modules”的顺序落地
 - `Tailwind CSS v4` 仅作为布局和细节补充，不用于重做按钮、表单、弹层、导航等本该由 `Mantine` 统一的组件层
