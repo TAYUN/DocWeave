@@ -1,14 +1,14 @@
 # Decision-Point Audit Report
 
 **变更**: refactor-rag-search-shared-entry  
-**生成时间**: 2026-07-06T02:28:56.967Z  
+**生成时间**: 2026-07-06T02:34:50.019Z  
 **当前状态**: closing  
 
 ## 汇总表
 
 | DP | 名称 | 结果 | 时间戳 |
 |----|------|------|--------|
-| DP-0 | 用户确认门禁 | not recorded | 2026-07-06T02:20:52.568Z |
+| DP-0 | 用户确认门禁 | confirmed: shared-entry scope, constraints, and tweak workflow were confirmed before execution | 2026-07-06T02:20:52.568Z |
 | DP-1 | 需求确认 | confirmed: shared-entry scope and non-goals are stable enough for tweak execution | 2026-07-06T02:20:52.568Z |
 | DP-2 | 工件审查 | approved: proposal, spec, design, and tasks are sufficient for a tweak-level shared-entry refactor | 2026-07-06T02:20:52.568Z |
 | DP-3 | 契约批准 | approved: tweak change approved to build with proposal, spec, design, and tasks as the minimal execution baseline | 2026-07-06T02:20:52.568Z |
@@ -17,15 +17,15 @@
 | DP-6 | 验证失败 | pass: RagService shared entry now backs both HTTP /api/rag/search and MCP search_knowledge, verified by pnpm --dir apps/api typecheck and targeted eslint on rag_service.ts, rag_controller.ts, and search_knowledge_tool.ts | 2026-07-06T02:27:14Z |
 | DP-7 | 归档确认 | confirmed: tweak change is ready for archive with shared RAG search entry implemented, verification recorded, and no remaining unchecked tasks | 2026-07-06T02:27:14Z |
 
-**统计**: 6/8 已记录，2/8 未记录。
+**统计**: 7/8 已记录，1/8 未记录。
 
 ## 逐决策点说明
 
 ### DP-0: 用户确认门禁
 
-- **结果**: not recorded
+- **结果**: confirmed: shared-entry scope, constraints, and tweak workflow were confirmed before execution
 - **时间戳**: 2026-07-06T02:20:52.568Z
-- **解读**: 该决策点尚未记录结果。如果工作流已经经过该阶段，请检查是否漏记。
+- **解读**: 决策点 DP-0 已记录为 "confirmed: shared-entry scope, constraints, and tweak workflow were confirmed before execution"。
 
 ### DP-1: 需求确认
 

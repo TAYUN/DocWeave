@@ -24,6 +24,7 @@ last_transition_to: closing
 dp_0_decisions: Change name: refactor-rag-search-shared-entry; intent: use a tweak workflow to quickly converge HTTP RAG search and MCP search_knowledge onto one shared entry while preserving the current scaffold response shape; constraints: keep scope inside apps/api, do not implement real retrieval or RAG chat, and preserve current query plus hits payload shape.
 dp_0_confirmed: true
 dp_0_timestamp: 2026-07-06T02:20:52.568Z
+dp_0_result: confirmed: shared-entry scope, constraints, and tweak workflow were confirmed before execution
 dp_1_result: confirmed: shared-entry scope and non-goals are stable enough for tweak execution
 dp_1_timestamp: 2026-07-06T02:20:52.568Z
 dp_2_result: approved: proposal, spec, design, and tasks are sufficient for a tweak-level shared-entry refactor
