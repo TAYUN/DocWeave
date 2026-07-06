@@ -1,0 +1,76 @@
+# DocWeave Agent Guide
+
+本文档是仓库根目录的协作入口，约定人在 DocWeave 中如何与主 agent、skills、MCP 和 subagents 协作。更完整的背景说明见 [`docs/workflow/agent-workflow.md`](./docs/workflow/agent-workflow.md)。
+
+## 目标
+
+- 让 agent 协作降低上下文切换成本，而不是放大协调成本
+- 让实现、研究、审查三类工作有清晰分工
+- 让产出的代码、文档与设计口径保持统一
+
+## 默认协作模式
+
+DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
+
+- 主 agent：负责理解需求、落地实现、运行验证、整理结果
+- 子 agent：负责探索、资料研究、独立 review
+
+默认不建议让多个 agent 同时修改同一条业务链路上的代码。
+
+## 什么时候值得开子 Agent
+
+满足以下任意 2 到 3 条时，通常值得开子 agent：
+
+- 需求横跨 `apps/web`、`apps/api`、`apps/collab`、`apps/worker` 或多个 `packages/*`
+- 需要同时梳理代码现状和官方文档口径
+- 需要一个独立视角检查回归风险、接口契约或测试缺口
+- 子任务可以一句话说清，例如“定位文档保存链路”或“确认 Mantine 官方推荐接入方式”
+
+## 什么时候不要拆
+
+- 改动只涉及一个文件或一条很短的链路
+- 需求边界还不清楚
+- 多个 agent 会改同一批文件
+- 只是为了并行而并行，没有明确分工
+
+## DocWeave 的资料优先级
+
+### 代码与仓库现状
+
+1. 先看仓库当前实现
+2. 再看 `docs/` 里的决策、架构和规划文档
+3. 如仓库根目录存在 `.codegraph/`，优先用 `CodeGraph` 理解调用链和符号关系
+
+### 官方文档
+
+1. `Mantine` 相关问题优先看官方文档，尤其是 Getting Started、`MantineProvider`、theme object、Styles API
+2. `BlockNote` 相关问题优先看官方文档和示例
+3. `AdonisJS`、MCP、OpenAI / Codex 等接入问题优先查官方资料
+
+## 前端设计约定
+
+- 产品 UI 组件统一优先采用 `Mantine`
+- 当前主题基线以 [`DESIGN.md`](./DESIGN.md) 和 `apps/web/src/main.tsx` 中的 Mantine theme 为准
+- `Tailwind CSS v4` 仅作为布局和细节补充，不绕开 `Mantine` 另起一套组件语言
+- 如需自定义组件样式，优先使用 `Mantine` 的 theme、CSS variables、Styles API 与 CSS Modules 模式
+
+## 文档约定
+
+- `README.md`：项目介绍与导航入口
+- `ROADMAP.md`：阶段路线与工程推进顺序
+- `DESIGN.md`：可供 agent 消费的设计系统基线
+- `docs/`：详细的决策、架构、规划与协作资料
+
+## 推荐执行顺序
+
+面对一个中等复杂度任务时，推荐按下面顺序推进：
+
+1. 主 agent 明确目标与边界
+2. 必要时开一个 explorer 类 agent 摸底代码
+3. 涉及三方库或框架时补一轮官方资料确认
+4. 主 agent 落地改动并跑验证
+5. 必要时开一个 reviewer 类 agent 做独立审查
+
+## 一句话原则
+
+在 DocWeave 里，多 agent 的价值不在于“很多人一起写”，而在于“把探索、研究、审查从主实现链路里解耦出来，再由主 agent 统一收口”。

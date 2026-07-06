@@ -1,32 +1,45 @@
 # DocWeave
 
-DocWeave 当前先落地 Monorepo 工程壳，目的是为后续各运行时和共享包的增量初始化提供稳定边界。
+DocWeave 是一个面向知识型团队的文档工作台，目标是把文档编辑、多人协同、AI 辅助改写与 RAG 检索收口到同一条产品链路里。
 
-## Top-Level Structure
+当前仓库已经完成 phase-1 的 Monorepo 工程骨架，并在前端建立了 `Mantine + TanStack Router + TanStack Query + BlockNote` 的基础接入方向。
 
-- `apps/`: phase-1 运行时目录，包含 `web`、`api`、`collab`、`worker`
-- `packages/`: phase-1 共享能力目录，包含 `shared`、`auth`、`database`、`editor`、`ai`、`rag`、`collaboration`、`ui`、`config`
-- `infrastructure/`: 本地开发依赖入口，包含 `postgres`、`redis`、`qdrant`、`minio`
-- `changes/`: `spec-superflow` 变更工件与执行痕迹
-- `docs/`: 架构、规划与项目文档
+## 项目定位
 
-## Collaboration Notes
+- 产品前端：`React SPA + Vite`
+- UI 体系：`Mantine`
+- 编辑器：`BlockNote`
+- 主业务后端：`AdonisJS v7`
+- 协同：`Yjs + Hocuspocus`
+- AI / RAG：`Vercel AI SDK + Qdrant`
 
-- 项目内关于 Codex、skills、MCP 和 subagents 的协作约定，见 [docs/workflow/agent-workflow.md](./docs/workflow/agent-workflow.md)
+## 仓库结构
 
-## Workspace Baseline
+- `apps/`：运行时应用，当前包含 `web`、`api`、`collab`、`worker`
+- `packages/`：共享能力包，承载 `auth`、`database`、`editor`、`ai`、`rag`、`ui` 等模块
+- `infrastructure/`：本地开发依赖入口，包含 `postgres`、`redis`、`qdrant`、`minio`
+- `docs/`：架构、决策、规划与协作文档
+- `changes/`：`spec-superflow` 变更工件与执行痕迹
 
-- 使用 `pnpm workspace` 管理 `apps/*` 与 `packages/*`
-- 使用根 `tsconfig.base.json` 作为后续子项目共享 TypeScript 基线
-- 根脚本只提供 phase-1 运行时入口，不预置第二阶段依赖
+## 快速导航
 
-## Scaffold Choices
+- 项目路线图：[`ROADMAP.md`](./ROADMAP.md)
+- Agent 协作约定：[`AGENTS.md`](./AGENTS.md)
+- 设计系统基线：[`DESIGN.md`](./DESIGN.md)
+- 文档总览：[`docs/README.md`](./docs/README.md)
+- 最终技术方案：[`docs/decisions/01. 最终技术方案确认.md`](./docs/decisions/01.%20最终技术方案确认.md)
+- 整体架构设计：[`docs/architecture/01. 整体架构设计.md`](./docs/architecture/01.%20整体架构设计.md)
+- 当前实施路线图：[`docs/planning/00. 当前实施路线图.md`](./docs/planning/00.%20当前实施路线图.md)
 
-- `apps/web` 采用 Vite 官方 `react-ts` 脚手架，契合已确认的 `React SPA` 方向，并保留后续接入 `TanStack Router`、`TanStack Query` 与编辑器能力的空间
-- `apps/api` 采用 AdonisJS v7 官方 `api` starter kit，其目录结构符合标准后端形态，便于继续承载认证、权限、文档元数据、文件与 AI / RAG 编排
-- 当前不选择带前端耦合的 AdonisJS UI 类 starter，避免与根 `apps/web` 的独立 SPA 边界冲突
+## 当前状态
 
-## Non-Goals
+当前阶段优先目标不是一次性把整个平台做满，而是先把以下最小闭环稳定打通：
 
-- 当前不包含业务页面、业务 API、协同协议细节或 RAG 处理链实现
-- `infrastructure/` 仅服务本地开发入口，不代表完整生产编排
+1. 账号与权限基础
+2. 单人文档编辑
+3. 多人协同编辑
+4. 稳定快照与索引
+5. 编辑器 AI 最小闭环
+6. RAG 搜索与问答最小闭环
+
+更细的阶段拆分和执行顺序见 [`ROADMAP.md`](./ROADMAP.md)。
