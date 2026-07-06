@@ -4,6 +4,7 @@ type ParamValue = string | number | bigint | boolean
 
 export type ScannedRoutes = {
   ALL: {
+    'mcp.post': { paramsTuple?: []; params?: {} }
     'auth.login': { paramsTuple?: []; params?: {} }
     'auth.logout': { paramsTuple?: []; params?: {} }
     'auth.me': { paramsTuple?: []; params?: {} }
@@ -34,6 +35,7 @@ export type ScannedRoutes = {
     'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
   POST: {
+    'mcp.post': { paramsTuple?: []; params?: {} }
     'auth.login': { paramsTuple?: []; params?: {} }
     'auth.logout': { paramsTuple?: []; params?: {} }
     'spaces.store': { paramsTuple?: []; params?: {} }

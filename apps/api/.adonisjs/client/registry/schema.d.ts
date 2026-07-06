@@ -7,6 +7,18 @@ import type { InferInput, SimpleError } from '@vinejs/vine/types'
 export type ParamValue = string | number | bigint | boolean
 
 export interface Registry {
+  'mcp.post': {
+    methods: ["POST"]
+    pattern: '/mcp'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
   'auth.login': {
     methods: ["POST"]
     pattern: '/api/auth/login'
@@ -15,8 +27,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['login']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['login']>>>
     }
   }
   'auth.logout': {
@@ -27,8 +39,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['logout']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['logout']>>>
     }
   }
   'auth.me': {
@@ -39,8 +51,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['me']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/auth_controller').default['me']>>>
     }
   }
   'spaces.index': {
@@ -51,20 +63,20 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/spaces_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/spaces_controller').default['index']>>>
     }
   }
   'spaces.store': {
     methods: ["POST"]
     pattern: '/api/spaces'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/spaces').createSpaceValidator)>>
       paramsTuple: []
       params: {}
-      query: {}
-      response: unknown
-      errorResponse: unknown
+      query: ExtractQuery<InferInput<(typeof import('#validators/spaces').createSpaceValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/spaces_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/spaces_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'spaces.tree': {
@@ -75,8 +87,8 @@ export interface Registry {
       paramsTuple: [ParamValue]
       params: { spaceId: ParamValue }
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/spaces_controller').default['tree']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/spaces_controller').default['tree']>>>
     }
   }
   'documents.index': {
@@ -87,20 +99,20 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['index']>>>
     }
   }
   'documents.store': {
     methods: ["POST"]
     pattern: '/api/documents'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/documents').createDocumentValidator)>>
       paramsTuple: []
       params: {}
-      query: {}
-      response: unknown
-      errorResponse: unknown
+      query: ExtractQuery<InferInput<(typeof import('#validators/documents').createDocumentValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'documents.show': {
@@ -111,20 +123,20 @@ export interface Registry {
       paramsTuple: [ParamValue]
       params: { documentId: ParamValue }
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['show']>>>
     }
   }
   'documents.update': {
     methods: ["PATCH"]
     pattern: '/api/documents/:documentId'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/documents').updateDocumentValidator)>>
       paramsTuple: [ParamValue]
       params: { documentId: ParamValue }
-      query: {}
-      response: unknown
-      errorResponse: unknown
+      query: ExtractQuery<InferInput<(typeof import('#validators/documents').updateDocumentValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'collaboration_tokens.store': {
@@ -135,8 +147,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/collaboration_tokens_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/collaboration_tokens_controller').default['store']>>>
     }
   }
   'ai_editor.store': {
@@ -147,8 +159,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>>
     }
   }
   'rag.search': {
@@ -159,8 +171,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['search']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['search']>>>
     }
   }
   'rag.chat': {
@@ -171,8 +183,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: unknown
-      errorResponse: unknown
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['chat']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['chat']>>>
     }
   }
 }

@@ -1,4 +1,8 @@
 import DocweaveCatalogService from '#services/docweave_catalog_service'
+import {
+  createDocumentValidator,
+  updateDocumentValidator,
+} from '#validators/documents'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class DocumentsController {
@@ -11,13 +15,7 @@ export default class DocumentsController {
   }
 
   async store({ request, response }: HttpContext) {
-    const payload = request.only(['spaceId', 'title', 'summary'])
-
-    if (!payload.spaceId || !payload.title || payload.summary === undefined) {
-      return response.status(422).send({
-        message: 'spaceId, title, and summary are required',
-      })
-    }
+    const payload = await request.validateUsing(createDocumentValidator)
 
     const document = await this.catalog.createDocument({
       spaceId: payload.spaceId,
@@ -31,10 +29,12 @@ export default class DocumentsController {
       })
     }
 
-    return response.status(201).send({
+    response.status(201)
+
+    return {
       message: 'Document created',
       data: document,
-    })
+    }
   }
 
   async show({ params, response }: HttpContext) {
@@ -52,8 +52,9 @@ export default class DocumentsController {
   }
 
   async update({ params, request, response }: HttpContext) {
-    const patch = request.only(['title', 'summary', 'content'])
+    const patch = await request.validateUsing(updateDocumentValidator)
 
+    // Vine 负责字段级约束，这里保留“至少提交一个可编辑字段”的业务边界。
     if (patch.title === undefined && patch.summary === undefined && patch.content === undefined) {
       return response.status(422).send({
         message: 'At least one editable field is required',

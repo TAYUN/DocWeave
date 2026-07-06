@@ -2,6 +2,9 @@
 import type { routes } from './index.ts'
 
 export interface ApiDefinition {
+  mcp: {
+    post: typeof routes['mcp.post']
+  }
   auth: {
     login: typeof routes['auth.login']
     logout: typeof routes['auth.logout']

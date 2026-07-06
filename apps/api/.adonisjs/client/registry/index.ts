@@ -6,6 +6,12 @@ import type { ApiDefinition } from './tree.d.ts'
 const placeholder: any = {}
 
 const routes = {
+  'mcp.post': {
+    methods: ["POST"],
+    pattern: '/mcp',
+    tokens: [{"old":"/mcp","type":0,"val":"mcp","end":""}],
+    types: placeholder as Registry['mcp.post']['types'],
+  },
   'auth.login': {
     methods: ["POST"],
     pattern: '/api/auth/login',

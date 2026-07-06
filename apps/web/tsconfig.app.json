@@ -8,6 +8,7 @@
     "types": ["vite/client", "react", "react-dom"],
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
+    "experimentalDecorators": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -20,7 +21,7 @@
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": false,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"]
