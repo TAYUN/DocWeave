@@ -7,7 +7,8 @@
 1. `decisions/`：技术选型、关键取舍、最终拍板结论。
 2. `architecture/`：系统边界、模块职责、核心数据流和运行时拆分。
 3. `planning/`：阶段路线、实施顺序和第一阶段节奏。
-4. `tem/`：早期草稿、讨论记录和未收口材料。
+4. `workflow/`：工程协作方式、agent 使用约定和研发流程说明。
+5. `tem/`：早期草稿、讨论记录和未收口材料。
 
 ## 推荐阅读顺序
 
@@ -20,6 +21,7 @@
 5. [Monorepo 初始化与目录落地方案](./planning/11.%20Monorepo%20初始化与目录落地方案.md)
 6. [RAG 与 Citation 设计](./architecture/20.%20RAG%20与%20Citation%20设计.md)
 7. [spec-superflow 工作流接入说明](./planning/12.%20spec-superflow%20工作流接入说明.md)
+8. [Agent Workflow Guide](./workflow/agent-workflow.md)
 
 ## 外部参考
 
@@ -56,6 +58,7 @@
 2. `architecture/` 文档负责把技术基线展开成边界、职责和数据流。
 3. `planning/` 文档负责把“做什么”转成“先做什么、怎么做”。
 4. `tem/` 仅保留草稿和讨论记录，不作为最终执行依据。
+5. `workflow/` 用于约定如何使用 Codex、skills、MCP 和 subagents 参与协作。
 
 ## 当前建议
 
@@ -65,3 +68,9 @@
 2. 文件存储与上传策略文档。
 3. 协同 token 与 Presence 设计文档。
 4. BlockNote 服务端能力接入文档，明确 `@blocknote/xl-ai/server` 与 `@blocknote/server-util` 在 `AdonisJS` 中的落点。
+
+## Agent 协作入口
+
+如果要了解当前项目如何使用 Codex、skills、MCP 与 subagents，优先阅读：
+
+1. [Agent Workflow Guide](./workflow/agent-workflow.md)
