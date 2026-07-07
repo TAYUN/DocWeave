@@ -29,17 +29,23 @@ router.mcp().use(middleware.mcp())
 router
   .group(() => {
     router.post('/auth/login', [AuthController, 'login'])
-    router.post('/auth/logout', [AuthController, 'logout'])
-    router.get('/auth/me', [AuthController, 'me'])
 
-    router.get('/spaces', [SpacesController, 'index'])
-    router.post('/spaces', [SpacesController, 'store'])
-    router.get('/spaces/:spaceId/tree', [SpacesController, 'tree'])
+    router
+      .group(() => {
+        router.post('/auth/logout', [AuthController, 'logout'])
+        router.get('/auth/me', [AuthController, 'me'])
 
-    router.get('/documents', [DocumentsController, 'index'])
-    router.post('/documents', [DocumentsController, 'store'])
-    router.get('/documents/:documentId', [DocumentsController, 'show'])
-    router.patch('/documents/:documentId', [DocumentsController, 'update'])
+        router.get('/spaces', [SpacesController, 'index'])
+        router.post('/spaces', [SpacesController, 'store'])
+        router.get('/spaces/:spaceId/tree', [SpacesController, 'tree'])
+
+        router.get('/documents', [DocumentsController, 'index'])
+        router.post('/documents', [DocumentsController, 'store'])
+        router.get('/documents/:documentId', [DocumentsController, 'show'])
+        router.patch('/documents/:documentId', [DocumentsController, 'update'])
+      })
+      // M2 工作台入口以“先认证、再进入业务资源”为边界，匿名请求不应直接读取空间和文档。
+      .use(middleware.auth())
 
     router.post('/collaboration/token', [CollaborationTokensController, 'store'])
     router.post('/ai/editor', [AiEditorController, 'store'])

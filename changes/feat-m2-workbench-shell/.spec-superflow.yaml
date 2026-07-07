@@ -1,0 +1,41 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: exploring
+workflow: full
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:3ee3b37f4052045cef7bf21cd250a8033ea8558052745ea0f4065f0f73e67ca1
+contract_hash: sha256:6751d09b0144f02ade04ce22f7931880e002b1a8f95a2ad7a062de92a29e2be4
+
+# === Execution progress ===
+execution_mode: null
+batches_completed: 3
+test_result: pass
+
+# === Metadata ===
+change_name: feat-m2-workbench-shell
+last_transition: 2026-07-07T01:46:28.917Z
+last_transition_from: null
+last_transition_to: null
+
+# === Decision points ===
+dp_0_decisions: Change name: feat-m2-workbench-shell; intent: complete the true M2 product loop so a user can log in, enter the workbench, navigate the space tree, open a real document, and save edits; constraints: keep scope to auth/session, current user, workbench entry, space tree navigation, and protected document editing without pulling in collaboration, AI, RAG, or fine-grained permission design.
+dp_0_result: confirmed
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-07T01:41:41Z
+dp_1_result: confirmed: auth/current-user and workbench-shell requirements define the real M2 product loop acceptance behavior
+dp_1_timestamp: 2026-07-07T01:45:03Z
+dp_2_result: approved: proposal, specs, design, and tasks establish the M2 auth/workbench/document product loop scope and implementation batches
+dp_2_timestamp: 2026-07-07T01:44:51Z
+dp_3_result: approved: execution contract locks scope to real auth, protected workbench shell, space-tree navigation, and preserved document save flow
+dp_3_timestamp: 2026-07-07T01:46:28Z
+dp_4_result: SDD: 3 execution batches across api auth boundary, web auth shell, and workbench tree/document flow
+dp_4_timestamp: 2026-07-07T02:07:29Z
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: pass: auth workbench functional test passed, workspace typecheck passed, web build passed, api build passed, and the development seed now provides a usable login account
+dp_6_timestamp: 2026-07-07T02:08:05Z
+dp_7_result: confirmed: real login, current user, protected workbench shell, space-tree navigation, and document save entry are implemented and archive-ready
+dp_7_timestamp: 2026-07-07T02:08:05Z

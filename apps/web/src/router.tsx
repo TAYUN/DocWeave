@@ -13,7 +13,15 @@ import {
   Title,
 } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
-import { AlertCircle, ArrowRight, FileText, FolderOpen, LayoutDashboard, Sparkles } from 'lucide-react'
+import {
+  AlertCircle,
+  ArrowRight,
+  FileText,
+  FolderOpen,
+  LayoutDashboard,
+  LogOut,
+  UserRound,
+} from 'lucide-react'
 import {
   Outlet,
   createRootRoute,
@@ -25,18 +33,25 @@ import {
 import {
   queryOptions,
   useMutation,
+  useQueries,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query'
 import {
   createDocument,
   createSpace,
+  getCurrentUser,
   getDocumentById,
+  getSpaceTree,
   listDocuments,
   listSpaces,
-  listStages,
+  login,
+  logout,
   updateDocument,
 } from './lib/workspace-data'
+import { isAuthError } from './lib/api'
+import { clearAccessToken, hasAccessToken, readAuthSession, saveAccessToken } from './lib/auth'
 import { DocumentEditor, type DocumentEditorContent } from '@docweave/editor'
 import './App.css'
 
@@ -57,9 +72,211 @@ function MutationNotice({ message }: { message: string | null }) {
   )
 }
 
-function AppShell() {
+function LoadingState({ label }: { label: string }) {
+  return (
+    <Paper className="panel loading-panel" p="xl" withBorder>
+      <Text className="eyebrow">Loading</Text>
+      <Title order={2} mt="xs">
+        {label}
+      </Title>
+      <Text className="hero-copy" mt="md">
+        The workbench is syncing the current product state.
+      </Text>
+    </Paper>
+  )
+}
+
+function RootLayout() {
+  return <Outlet />
+}
+
+function LoginPage() {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [email, setEmail] = useState('owner@docweave.dev')
+  const [password, setPassword] = useState('docweave123')
+  const [error, setError] = useState<string | null>(null)
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: async (payload) => {
+      saveAccessToken(payload.token)
+      setError(null)
+      notifications.show({
+        color: 'green',
+        message: 'The workbench is ready.',
+        title: 'Sign in',
+      })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['current-user'] }),
+        queryClient.invalidateQueries({ queryKey: ['spaces'] }),
+        queryClient.invalidateQueries({ queryKey: ['documents'] }),
+      ])
+      navigate({ to: '/' })
+    },
+    onError: (mutationError) => {
+      setError(mutationError instanceof Error ? mutationError.message : 'Unable to sign in')
+    },
+  })
+
+  useEffect(() => {
+    if (hasAccessToken()) {
+      navigate({ to: '/' })
+    }
+  }, [navigate])
+
+  return (
+    <div className="login-shell">
+      <Paper className="login-panel" p="xl" withBorder>
+        <Stack gap="xl">
+          <div>
+            <Text className="eyebrow">DocWeave M2</Text>
+            <Title order={1} mt="xs">
+              Sign in to the real workbench
+            </Title>
+            <Text className="hero-copy" mt="md">
+              This entry now gates the actual space tree and document editing flow instead of
+              dropping into the old demo shell.
+            </Text>
+          </div>
+
+          <Paper className="hint-card" p="lg" withBorder>
+            <Text fw={700}>Development account</Text>
+            <Text className="stack-support" mt={6} size="sm">
+              Email: <code>owner@docweave.dev</code>
+            </Text>
+            <Text className="stack-support" size="sm">
+              Password: <code>docweave123</code>
+            </Text>
+          </Paper>
+
+          <Stack
+            component="form"
+            className="form-stack"
+            gap="md"
+            onSubmit={(event) => {
+              event.preventDefault()
+              setError(null)
+              loginMutation.mutate({
+                email,
+                password,
+              })
+            }}
+          >
+            <TextInput
+              label="Email"
+              onChange={(event) => setEmail(event.currentTarget.value)}
+              required
+              type="email"
+              value={email}
+            />
+            <TextInput
+              label="Password"
+              onChange={(event) => setPassword(event.currentTarget.value)}
+              required
+              type="password"
+              value={password}
+            />
+            <Button loading={loginMutation.isPending} type="submit">
+              {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
+            </Button>
+            <MutationNotice message={error} />
+          </Stack>
+        </Stack>
+      </Paper>
+    </div>
+  )
+}
+
+function WorkbenchShell() {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const currentUserQuery = useQuery({
+    queryKey: ['current-user'],
+    queryFn: getCurrentUser,
+    enabled: readAuthSession().token !== null,
+    retry: false,
+  })
+  const spacesQuery = useQuery({
+    queryKey: ['spaces'],
+    queryFn: listSpaces,
+    enabled: currentUserQuery.isSuccess,
+    retry: false,
+  })
+  const treeQueries = useQueries({
+    queries: (spacesQuery.data ?? []).map((space) => ({
+      queryKey: ['space-tree', space.id],
+      queryFn: () => getSpaceTree(space.id),
+      enabled: currentUserQuery.isSuccess,
+      retry: false,
+    })),
+  })
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSettled: async () => {
+      clearAccessToken()
+      queryClient.clear()
+      notifications.show({
+        color: 'blue',
+        message: 'You have exited the workbench.',
+        title: 'Signed out',
+      })
+      await navigate({ to: '/login' })
+    },
+  })
+
+  const firstAuthError =
+    currentUserQuery.error ??
+    spacesQuery.error ??
+    treeQueries.find((query) => query.error instanceof Error)?.error ??
+    null
+
+  useEffect(() => {
+    if (!hasAccessToken()) {
+      void navigate({ to: '/login' })
+    }
+  }, [navigate])
+
+  useEffect(() => {
+    if (firstAuthError && isAuthError(firstAuthError)) {
+      clearAccessToken()
+      queryClient.clear()
+      void navigate({ to: '/login' })
+    }
+  }, [firstAuthError, navigate, queryClient])
+
+  if (!hasAccessToken()) {
+    return <LoadingState label="Redirecting to sign in" />
+  }
+
+  if (currentUserQuery.isPending || spacesQuery.isPending) {
+    return <LoadingState label="Loading the workbench shell" />
+  }
+
+  if (currentUserQuery.isError || spacesQuery.isError || !currentUserQuery.data) {
+    return (
+      <Paper className="panel" p="xl" withBorder>
+        <Text className="eyebrow">Workbench blocked</Text>
+        <Title order={2} mt="xs">
+          Unable to load the signed-in shell
+        </Title>
+        <Text className="hero-copy" mt="md">
+          {(firstAuthError as Error | null)?.message ?? 'The current user context could not be resolved.'}
+        </Text>
+        <Button mt="lg" onClick={() => currentUserQuery.refetch()}>
+          Retry
+        </Button>
+      </Paper>
+    )
+  }
+
+  const user = currentUserQuery.data
+  const spaces = spacesQuery.data ?? []
+  const treeEntries = spaces.map((space, index) => ({
+    space,
+    tree: treeQueries[index]?.data ?? null,
+    isPending: treeQueries[index]?.isPending ?? false,
+  }))
 
   return (
     <div className="shell">
@@ -69,13 +286,40 @@ function AppShell() {
             <div>
               <Text className="eyebrow">DocWeave</Text>
               <Title className="sidebar-title" order={1}>
-                Workspace cockpit
+                Product workbench
               </Title>
               <Text className="sidebar-copy" mt="md">
-                React SPA, routing, and data orchestration are now wired for the phase-1 runtime.
-                This shell is ready for TanStack Router, Query, and Mantine driven growth.
+                The shell now reflects the real M2 chain: signed-in user, real space tree, and
+                protected document entrypoints.
               </Text>
             </div>
+
+            <Paper className="user-card" p="lg" withBorder>
+              <Group justify="space-between" align="flex-start">
+                <div>
+                  <Text className="status-label">Current user</Text>
+                  <Text className="status-value" fw={700} mt={6}>
+                    {user.fullName ?? user.email}
+                  </Text>
+                  <Text className="stack-support" mt={4} size="sm">
+                    {user.email}
+                  </Text>
+                </div>
+                <UserRound size={20} />
+              </Group>
+              <Button
+                className="logout-button"
+                color="gray"
+                fullWidth
+                leftSection={<LogOut size={16} />}
+                loading={logoutMutation.isPending}
+                mt="md"
+                onClick={() => logoutMutation.mutate()}
+                variant="light"
+              >
+                Sign out
+              </Button>
+            </Paper>
 
             <Stack className="nav" gap="sm">
               <Button
@@ -85,30 +329,65 @@ function AppShell() {
                 onClick={() => navigate({ to: '/' })}
                 variant={pathname === '/' ? 'filled' : 'light'}
               >
-                Overview
+                Workbench
               </Button>
-              <Button
-                className="nav-button"
-                justify="flex-start"
-                leftSection={<FileText size={18} />}
-                onClick={() =>
-                  navigate({ to: '/documents/$documentId', params: { documentId: 'doc-editor-runtime' } })
-                }
-                variant={pathname.includes('doc-editor-runtime') ? 'filled' : 'light'}
-              >
-                Editor runtime
-              </Button>
-              <Button
-                className="nav-button"
-                justify="flex-start"
-                leftSection={<Sparkles size={18} />}
-                onClick={() =>
-                  navigate({ to: '/documents/$documentId', params: { documentId: 'doc-collab-token' } })
-                }
-                variant={pathname.includes('doc-collab-token') ? 'filled' : 'light'}
-              >
-                Collaboration token
-              </Button>
+            </Stack>
+
+            <Stack className="tree-list" gap="sm">
+              <Text className="status-label">Space tree</Text>
+              {treeEntries.map(({ space, tree, isPending }) => (
+                <Paper key={space.id} className="tree-space" p="md" withBorder>
+                  <Button
+                    className="tree-button"
+                    justify="space-between"
+                    leftSection={<FolderOpen size={16} />}
+                    onClick={() => navigate({ to: '/spaces/$spaceId', params: { spaceId: space.id } })}
+                    variant={pathname.includes(`/spaces/${space.id}`) ? 'filled' : 'subtle'}
+                  >
+                    {space.name}
+                  </Button>
+                  <Text className="stack-support" mt={8} size="sm">
+                    {space.summary}
+                  </Text>
+                  <Stack gap={6} mt="md">
+                    {isPending ? (
+                      <Text className="stack-support" size="sm">
+                        Loading space tree...
+                      </Text>
+                    ) : tree && tree.children.length > 0 ? (
+                      tree.children.map((document) => (
+                        <Button
+                          key={document.id}
+                          className="tree-doc-button"
+                          justify="space-between"
+                          leftSection={<FileText size={14} />}
+                          onClick={() =>
+                            navigate({
+                              to: '/documents/$documentId',
+                              params: { documentId: document.id },
+                            })
+                          }
+                          variant={pathname.includes(`/documents/${document.id}`) ? 'filled' : 'light'}
+                        >
+                          {document.title}
+                        </Button>
+                      ))
+                    ) : (
+                      <Text className="stack-support" size="sm">
+                        No documents in this space yet.
+                      </Text>
+                    )}
+                  </Stack>
+                </Paper>
+              ))}
+              {treeEntries.length === 0 ? (
+                <Paper className="tree-space" p="md" withBorder>
+                  <Text fw={700}>No spaces yet</Text>
+                  <Text className="stack-support" mt={6} size="sm">
+                    Create a space from the workbench home to start the M2 flow.
+                  </Text>
+                </Paper>
+              ) : null}
             </Stack>
 
             <Paper className="status-card" p="lg" withBorder>
@@ -128,13 +407,12 @@ function AppShell() {
   )
 }
 
-function OverviewPage() {
+function WorkbenchHome() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [spaceName, setSpaceName] = useState('')
   const [spaceSummary, setSpaceSummary] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const stagesQuery = useSuspenseQuery(queryOptions({ queryKey: ['stages'], queryFn: listStages }))
   const spacesQuery = useSuspenseQuery(queryOptions({ queryKey: ['spaces'], queryFn: listSpaces }))
   const documentsQuery = useSuspenseQuery(
     queryOptions({ queryKey: ['documents'], queryFn: listDocuments }),
@@ -162,35 +440,18 @@ function OverviewPage() {
       <Paper className="hero-panel" p="xl" withBorder>
         <Group justify="space-between" align="flex-start" gap="xl">
           <div>
-            <Text className="eyebrow">Phase 1</Text>
+            <Text className="eyebrow">Workbench</Text>
             <Title order={2} mt="xs">
-              Monorepo runtime baseline is live
+              Enter a real space before opening documents
             </Title>
             <Text className="hero-copy" mt="md">
-              The frontend now has route state, query orchestration, and a clearer landing
-              surface for editor, collaboration, and AI milestones.
+              The old demo shortcuts are gone. Use the authenticated shell and real space tree to
+              move from workspace entry to document editing.
             </Text>
           </div>
-          <Sparkles size={28} />
+          <LayoutDashboard size={28} />
         </Group>
       </Paper>
-
-      <SimpleGrid cols={{ base: 1, lg: 3 }} spacing="lg">
-        {stagesQuery.data.map((stage) => (
-          <Paper key={stage.id} className="panel stage-card" p="xl" withBorder>
-            <Group justify="space-between" align="flex-start">
-              <div>
-                <Text className="panel-kicker">{stage.owner}</Text>
-                <Title order={3} mt="xs">
-                  {stage.name}
-                </Title>
-              </div>
-              <Sparkles size={18} />
-            </Group>
-            <Text mt="md">{stage.summary}</Text>
-          </Paper>
-        ))}
-      </SimpleGrid>
 
       <SimpleGrid cols={{ base: 1, xl: 2 }} spacing="lg">
         <Paper className="panel" p="xl" withBorder>
@@ -245,12 +506,10 @@ function OverviewPage() {
             <div>
               <Text className="panel-kicker">Spaces</Text>
               <Title order={3} mt="xs">
-                Approved workspace domains
+                Active workbench domains
               </Title>
             </div>
-            <Badge className="badge">
-              {spacesQuery.data.length}
-            </Badge>
+            <Badge className="badge">{spacesQuery.data.length}</Badge>
           </Group>
           <Stack className="stack-list" gap="md" mt="lg">
             {spacesQuery.data.map((space) => (
@@ -269,9 +528,7 @@ function OverviewPage() {
                       {space.summary}
                     </Text>
                   </div>
-                  <Badge>
-                    {space.rootDocuments.length} docs
-                  </Badge>
+                  <Badge>{space.rootDocuments.length} docs</Badge>
                 </Group>
               </Paper>
             ))}
@@ -279,61 +536,57 @@ function OverviewPage() {
               <Paper className="stack-row empty-row" p="lg" withBorder>
                 <Text fw={700}>No spaces yet</Text>
                 <Text className="stack-support" mt={4} size="sm">
-                  Run the PostgreSQL migrations and seed your first workspace records to populate this panel.
-                </Text>
-              </Paper>
-            ) : null}
-          </Stack>
-        </Paper>
-
-        <Paper className="panel" p="xl" withBorder>
-          <Group className="panel-header" justify="space-between" align="flex-start">
-            <div>
-              <Text className="panel-kicker">Documents</Text>
-              <Title order={3} mt="xs">
-                Priority implementation threads
-              </Title>
-            </div>
-            <Badge className="badge">
-              {documentsQuery.data.length}
-            </Badge>
-          </Group>
-          <Stack className="stack-list" gap="md" mt="lg">
-            {documentsQuery.data.map((document) => (
-              <Paper
-                component="button"
-                key={document.id}
-                className="stack-row"
-                p="md"
-                withBorder
-                onClick={() =>
-                  navigate({ to: '/documents/$documentId', params: { documentId: document.id } })
-                }
-              >
-                <Group justify="space-between" align="flex-start" wrap="nowrap">
-                  <div>
-                    <Text fw={700}>{document.title}</Text>
-                    <Text className="stack-support" mt={4} size="sm">
-                      {document.summary}
-                    </Text>
-                  </div>
-                  <Badge style={{ textTransform: 'capitalize' }}>
-                    {document.status}
-                  </Badge>
-                </Group>
-              </Paper>
-            ))}
-            {documentsQuery.data.length === 0 ? (
-              <Paper className="stack-row empty-row" p="lg" withBorder>
-                <Text fw={700}>No documents yet</Text>
-                <Text className="stack-support" mt={4} size="sm">
-                  The API is wired. Next step is creating spaces and documents in PostgreSQL.
+                  Create a space to unlock the next step in the M2 flow.
                 </Text>
               </Paper>
             ) : null}
           </Stack>
         </Paper>
       </SimpleGrid>
+
+      <Paper className="panel" p="xl" withBorder>
+        <Group className="panel-header" justify="space-between" align="flex-start">
+          <div>
+            <Text className="panel-kicker">Documents</Text>
+            <Title order={3} mt="xs">
+              Recent product threads
+            </Title>
+          </div>
+          <Badge className="badge">{documentsQuery.data.length}</Badge>
+        </Group>
+        <Stack className="stack-list" gap="md" mt="lg">
+          {documentsQuery.data.map((document) => (
+            <Paper
+              component="button"
+              key={document.id}
+              className="stack-row"
+              p="md"
+              withBorder
+              onClick={() =>
+                navigate({ to: '/documents/$documentId', params: { documentId: document.id } })
+              }
+            >
+              <Group justify="space-between" align="flex-start" wrap="nowrap">
+                <div>
+                  <Text fw={700}>{document.title}</Text>
+                  <Text className="stack-support" mt={4} size="sm">
+                    {document.summary}
+                  </Text>
+                </div>
+                <Badge style={{ textTransform: 'capitalize' }}>{document.status}</Badge>
+              </Group>
+            </Paper>
+          ))}
+          {documentsQuery.data.length === 0 ? (
+            <Paper className="stack-row empty-row" p="lg" withBorder>
+              <Text fw={700}>No documents yet</Text>
+              <Text className="stack-support" mt={4} size="sm">
+                Enter a space and create a document to continue the M2 chain.
+              </Text>
+            </Paper>
+          ) : null}
+        </Stack>
+      </Paper>
     </Stack>
   )
 }
@@ -363,6 +616,7 @@ function SpacePage() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['documents'] }),
         queryClient.invalidateQueries({ queryKey: ['spaces'] }),
+        queryClient.invalidateQueries({ queryKey: ['space-tree', spaceId] }),
       ])
     },
     onError: (mutationError) => {
@@ -381,7 +635,7 @@ function SpacePage() {
           Workspace not found
         </Title>
         <Text className="hero-copy" mt="md">
-          This route is ready, but the requested space does not exist in the current seed data.
+          The requested space does not exist in the current database.
         </Text>
       </Paper>
     )
@@ -460,9 +714,7 @@ function SpacePage() {
               Documents in this workspace
             </Title>
           </div>
-          <Badge className="badge">
-            {documents.length}
-          </Badge>
+          <Badge className="badge">{documents.length}</Badge>
         </Group>
         <Stack className="stack-list" gap="md" mt="lg">
           {documents.map((document) => (
@@ -484,9 +736,7 @@ function SpacePage() {
                   </Text>
                 </div>
                 <Group gap="sm" wrap="nowrap">
-                  <Badge style={{ textTransform: 'capitalize' }}>
-                    {document.status}
-                  </Badge>
+                  <Badge style={{ textTransform: 'capitalize' }}>{document.status}</Badge>
                   <ArrowRight size={16} />
                 </Group>
               </Group>
@@ -539,6 +789,7 @@ function DocumentPage() {
         queryClient.invalidateQueries({ queryKey: ['document', documentId] }),
         queryClient.invalidateQueries({ queryKey: ['documents'] }),
         queryClient.invalidateQueries({ queryKey: ['spaces'] }),
+        queryClient.invalidateQueries({ queryKey: ['space-tree', updated.spaceId] }),
       ])
     },
     onError: (mutationError) => {
@@ -558,20 +809,6 @@ function DocumentPage() {
     setSummary(document.summary)
     setDraftContent(initialContent)
   }, [document, initialContent])
-
-  if (!document) {
-    return (
-      <Paper className="panel" p="xl" withBorder>
-        <Text className="eyebrow">Missing document</Text>
-        <Title order={2} mt="xs">
-          Route found, document not seeded
-        </Title>
-        <Text className="hero-copy" mt="md">
-          This path is ready, but the scaffold dataset does not include the requested document yet.
-        </Text>
-      </Paper>
-    )
-  }
 
   return (
     <Stack className="page" gap="xl">
@@ -649,7 +886,7 @@ function DocumentPage() {
         <Paper className="panel metadata-card" p="xl" withBorder>
           <Text className="panel-kicker">Metadata</Text>
           <Title order={3} mt="xs">
-            Seeded status
+            Current document context
           </Title>
           <Stack className="details" gap="md" mt="lg">
             <Paper className="detail-row" p="md" withBorder>
@@ -672,7 +909,7 @@ function DocumentPage() {
             </Paper>
           </Stack>
           <Text className="sidebar-copy" mt="lg">
-            This page now loads a real BlockNote editor and persists the document body through the API boundary.
+            This document is now being entered through the real authenticated workbench path.
           </Text>
         </Paper>
       </SimpleGrid>
@@ -702,28 +939,43 @@ function parseDocumentContent(rawContent: string): DocumentEditorContent {
 }
 
 const rootRoute = createRootRoute({
-  component: AppShell,
+  component: RootLayout,
+})
+
+const loginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/login',
+  component: LoginPage,
+})
+
+const workbenchLayoutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  id: 'workbench',
+  component: WorkbenchShell,
 })
 
 const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => workbenchLayoutRoute,
   path: '/',
-  component: OverviewPage,
+  component: WorkbenchHome,
 })
 
 const documentRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => workbenchLayoutRoute,
   path: '/documents/$documentId',
   component: DocumentPage,
 })
 
 const spaceRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => workbenchLayoutRoute,
   path: '/spaces/$spaceId',
   component: SpacePage,
 })
 
-const routeTree = rootRoute.addChildren([indexRoute, spaceRoute, documentRoute])
+const routeTree = rootRoute.addChildren([
+  loginRoute,
+  workbenchLayoutRoute.addChildren([indexRoute, spaceRoute, documentRoute]),
+])
 
 export const router = createRouter({
   routeTree,

@@ -1,5 +1,6 @@
 import { registry } from '@docweave/api/registry'
 import { createTuyau } from '@tuyau/core/client'
+import { getAccessToken } from './auth'
 
 /**
  * 统一通过同一个 Tuyau client 访问后端。
@@ -8,4 +9,16 @@ import { createTuyau } from '@tuyau/core/client'
 export const tuyau = createTuyau({
   registry,
   baseUrl: '/',
+  hooks: {
+    beforeRequest: [
+      (request) => {
+        const token = getAccessToken()
+
+        // 统一在 client 层注入 access token，避免每个 query/mutation 手工拼接认证头。
+        if (token) {
+          request.headers.set('authorization', `Bearer ${token}`)
+        }
+      },
+    ],
+  },
 })

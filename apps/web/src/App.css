@@ -1,29 +1,59 @@
 .shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-columns: 340px minmax(0, 1fr);
 }
 
-.sidebar {
-  padding: 32px 24px;
-  background: var(--mantine-color-body);
+.login-shell {
+  min-height: 100vh;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--mantine-color-blue-2) 70%, transparent) 0, transparent 34%),
+    linear-gradient(180deg, color-mix(in srgb, var(--mantine-color-blue-0) 80%, white) 0%, var(--mantine-color-body) 100%);
 }
 
-.sidebar-surface {
-  min-height: calc(100vh - 64px);
+.login-panel {
+  width: min(100%, 520px);
   background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
   border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
+.hint-card,
+.user-card,
+.status-card,
+.sidebar-surface,
+.hero-panel,
+.panel,
+.editor-frame,
+.detail-row,
+.tree-space {
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.sidebar {
+  padding: 28px 24px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--mantine-color-gray-0) 92%, white) 0%, var(--mantine-color-body) 100%);
+}
+
+.sidebar-surface {
+  min-height: calc(100vh - 56px);
+}
+
 .sidebar-title,
 .hero-panel h2,
-.panel h3 {
+.panel h3,
+.login-panel h1 {
   color: var(--mantine-color-text);
   font-family: var(--mantine-font-family-headings);
 }
 
 .sidebar-copy,
-.hero-copy {
+.hero-copy,
+.stack-support {
   color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
 }
 
@@ -37,22 +67,23 @@
   color: var(--mantine-color-blue-6);
 }
 
-.nav-button {
-  box-shadow: none;
-}
-
-.nav-button:hover {
-  transform: none;
-}
-
-.status-card {
-  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
-  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-}
-
 .status-value {
   color: var(--mantine-color-text);
   word-break: break-word;
+}
+
+.nav-button,
+.tree-button,
+.tree-doc-button,
+.logout-button {
+  box-shadow: none;
+}
+
+.nav-button:hover,
+.tree-button:hover,
+.tree-doc-button:hover,
+.logout-button:hover {
+  transform: none;
 }
 
 .content {
@@ -65,18 +96,13 @@
   gap: 24px;
 }
 
-.hero-panel {
-  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
-  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-}
-
 .hero-panel.compact {
   min-height: auto;
 }
 
-.panel {
-  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
-  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+.loading-panel {
+  max-width: 720px;
+  margin: 48px auto;
 }
 
 .form-stack {
@@ -93,6 +119,19 @@
 
 .badge {
   min-width: 42px;
+}
+
+.tree-list {
+  min-width: 0;
+}
+
+.tree-button,
+.tree-doc-button {
+  width: 100%;
+}
+
+.tree-doc-button {
+  justify-content: flex-start;
 }
 
 .stack-list {
@@ -116,25 +155,10 @@
 }
 
 .empty-row:hover {
-  transform: none;
   box-shadow: none;
 }
 
-.stack-support {
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
-}
-
-.editor-frame {
-  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
-  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-}
-
-.detail-row {
-  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
-  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-}
-
-@media (max-width: 960px) {
+@media (max-width: 1080px) {
   .shell {
     grid-template-columns: 1fr;
   }
@@ -143,16 +167,11 @@
     padding: 20px 20px 0;
   }
 
-  .content {
-    padding: 20px;
-  }
-
   .sidebar-surface {
     min-height: auto;
   }
 
-  .sidebar-title,
-  .hero-panel h2 {
-    font-size: clamp(2rem, 5vw, 2.5rem);
+  .content {
+    padding: 20px;
   }
 }
