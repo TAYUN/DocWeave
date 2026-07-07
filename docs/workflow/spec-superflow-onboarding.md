@@ -86,8 +86,10 @@
 收口时请直接参考：
 
 - [spec-superflow Closing SOP](D:/code-my/DocWeave/docs/workflow/spec-superflow-closing-sop.md)
+- [close-change.ps1](D:/code-my/DocWeave/tools/spec-superflow/close-change.ps1)
 
 这份 SOP 记录了本仓库里真正会卡住 closing 的几个关键步骤。
+如无特殊情况，优先直接运行 `close-change.ps1`，而不是手工跳过其中某一步。
 
 ## 目录命名建议
 
@@ -114,6 +116,13 @@
 2. `.spec-superflow.yaml` 里的 `test_result` 要写成精确的 `pass`，不要写成 `passed: ...`。
 3. 修改过 `proposal.md`、`specs/`、`design.md`、`tasks.md` 后，要先执行 `ssf state rebuild "<change-dir>"`，否则 `contract-fresh` 可能失败。
 4. 执行 `ssf state transition` 时，优先使用绝对路径，避免相对路径在 guard 里被误判。
+5. 进入 `closing` 时，优先执行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "D:\code-my\DocWeave\tools\spec-superflow\close-change.ps1" "D:\code-my\DocWeave\changes\<change-name>"
+```
+
+这样可以同时检查 `tasks.md` 是否全部勾完、`.spec-superflow.yaml` 是否补齐关键字段，并刷新审计报告。
 
 ## 推荐首批动作
 

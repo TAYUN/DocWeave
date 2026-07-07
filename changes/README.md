@@ -37,6 +37,7 @@ spec-superflow validate changes/<change-name>
 spec-superflow state init changes/<change-name>
 spec-superflow state check changes/<change-name>
 spec-superflow audit changes/<change-name>
+powershell -ExecutionPolicy Bypass -File "D:\code-my\DocWeave\tools\spec-superflow\close-change.ps1" "D:\code-my\DocWeave\changes\<change-name>"
 ```
 
 ## 与本项目文档的关系
