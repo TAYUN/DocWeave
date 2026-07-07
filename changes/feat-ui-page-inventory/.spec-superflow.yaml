@@ -1,0 +1,41 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: closing
+workflow: auto
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:782a008123b924774a9c4850ad85431b01e2573a2c39428f5c51fc230f424a18
+contract_hash: sha256:37488e95c694f345e8096d6ef2c93d25acf7be455ee4622a5676f148a0cb7ef9
+
+# === Execution progress ===
+execution_mode: Batch Inline
+batches_completed: 2
+test_result: pass
+
+# === Metadata ===
+change_name: feat-ui-page-inventory
+last_transition: 2026-07-07T07:09:55.204Z
+last_transition_from: executing
+last_transition_to: closing
+
+# === Decision points ===
+dp_0_decisions: Change name: feat-ui-page-inventory; intent: establish a reusable DocWeave UI page inventory and per-page spec baseline for later implementation changes; constraints: stay in planning/documentation scope, do not implement page code, and keep Mantine default workbench boundaries explicit.
+dp_0_result: confirmed: page-inventory planning scope, non-goals, and documentation-first workflow were confirmed before bridging
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-07T06:20:00.000Z
+dp_1_result: confirmed: UI page inventory scope, page boundary definitions, and planning-only outcome are stable enough to proceed
+dp_1_timestamp: 2026-07-07T06:20:00.000Z
+dp_2_result: approved: proposal, specs, design, and tasks are sufficient to serve as the baseline planning artifacts for UI page definitions
+dp_2_timestamp: 2026-07-07T06:25:00.000Z
+dp_3_result: approved: planning change is approved to bridge with proposal, specs, design, tasks, and execution-contract as the execution baseline for documentation delivery
+dp_3_timestamp: 2026-07-07T07:10:00.000Z
+dp_4_result: Batch Inline: 2 sequential documentation batches for page inventory/spec delivery and UI review-driven corrections
+dp_4_timestamp: 2026-07-07T07:10:00.000Z
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: pass: documentation verification passed after syncing proposal, design, specs, page inventory, per-page specs, and planning-only closing records; ssf state check and audit were rerun for the updated artifacts
+dp_6_timestamp: 2026-07-07T07:25:00.000Z
+dp_7_result: confirmed: UI page inventory baseline is ready for archive as a planning-only change, with reusable page specs delivered and no remaining unchecked tasks
+dp_7_timestamp: 2026-07-07T07:25:00.000Z
