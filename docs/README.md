@@ -2,19 +2,23 @@
 
 本文档用于统一 `docs/` 目录的阅读入口、文档分层和当前有效口径。
 
-当前文档体系按四类组织：
+当前文档体系按六类组织：
 
 1. `decisions/`：技术选型、关键取舍、最终拍板结论。
 2. `architecture/`：系统边界、模块职责、核心数据流和运行时拆分。
 3. `planning/`：阶段路线、实施顺序和第一阶段节奏。
 4. `workflow/`：工程协作方式、agent 使用约定和研发流程说明。
-5. `tem/`：早期草稿、讨论记录和未收口材料。
+5. `ui/`：页面清单、单页规格、导航流转和 UI 相关索引。
+6. `tem/`：早期草稿、讨论记录和未收口材料。
 
 前端相关文档当前按下面方式分工：
 
 1. 根目录 [`DESIGN.md`](../DESIGN.md)：只负责设计规范与视觉语言。
-2. [`workflow/frontend-mantine-implementation-guide.md`](./workflow/frontend-mantine-implementation-guide.md)：只负责 `Mantine` 默认主题下的实现规范。
-3. [`workflow/frontend-adonis-api-client-guide.md`](./workflow/frontend-adonis-api-client-guide.md)：负责 `apps/web` 与 `apps/api` 之间的类型安全 API 调用约定。
+2. [`ui/page-inventory.md`](./ui/page-inventory.md)：负责页面总览、路由语义、导航流转和阶段状态。
+3. [`ui/app-shell-layout.md`](./ui/app-shell-layout.md)：负责 `AppHeader`、Sidebar 与应用壳层布局规格。
+4. [`workflow/frontend-route-architecture.md`](./workflow/frontend-route-architecture.md)：负责前端路由拆分、目录树和页面代码组织边界。
+5. [`workflow/frontend-mantine-implementation-guide.md`](./workflow/frontend-mantine-implementation-guide.md)：只负责 `Mantine` 默认主题下的实现规范。
+6. [`workflow/frontend-adonis-api-client-guide.md`](./workflow/frontend-adonis-api-client-guide.md)：负责 `apps/web` 与 `apps/api` 之间的类型安全 API 调用约定。
 
 ## 推荐阅读顺序
 
@@ -28,8 +32,11 @@
 6. [RAG 与 Citation 设计](./architecture/20.%20RAG%20与%20Citation%20设计.md)
 7. [spec-superflow 工作流接入说明](./planning/12.%20spec-superflow%20工作流接入说明.md)
 8. [Agent Workflow Guide](./workflow/agent-workflow.md)
-9. [Frontend Mantine Implementation Guide](./workflow/frontend-mantine-implementation-guide.md)
-10. [Frontend Adonis API Client Guide](./workflow/frontend-adonis-api-client-guide.md)
+9. [页面总览地图](./ui/page-inventory.md)
+10. [应用壳层布局规格](./ui/app-shell-layout.md)
+11. [Frontend Route Architecture Guide](./workflow/frontend-route-architecture.md)
+12. [Frontend Mantine Implementation Guide](./workflow/frontend-mantine-implementation-guide.md)
+13. [Frontend Adonis API Client Guide](./workflow/frontend-adonis-api-client-guide.md)
 
 ## 外部参考
 

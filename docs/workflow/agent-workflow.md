@@ -143,12 +143,30 @@
 - 为新增页面或页面改造补齐信息架构、主次操作和状态规格
 - 判断某个需求应该新增页面、扩展现有页面，还是只补一个局部交互
 - 在 AI 开始写页面前，先产出 `docs/ui/pages/` 风格的文本级规格
+- 页面信息架构统一沉淀到 [`../ui/page-inventory.md`](../ui/page-inventory.md)
+- 如果任务已经进入前端实现拆分，再补充或对齐 [`frontend-route-architecture.md`](./frontend-route-architecture.md) 中的路由与目录边界
 
 不适合的任务：
 
 - 直接跳过页面定义进入视觉发挥或代码实现
 - 在已有页面规格明确时重复发明另一套结构
 - 只根据审美偏好增加区块、入口或页面层级
+
+### `docweave-frontend-architect`
+
+适合的任务：
+
+- 审核 `apps/web` 的路由拆分、目录分层和页面模块组织
+- 检查是否遵守 [`frontend-route-architecture.md`](./frontend-route-architecture.md) 中的 `layout / routes / pages / features` 边界
+- 识别“虽然能跑，但会继续把前端推回大文件耦合”的实现方式
+- 在页面大改版或路由重构前，判断某个改动应该落在 layout、route、page 还是 feature
+
+不适合的任务：
+
+- 直接替代 `docweave-ui-planner` 定义页面
+- 直接替代 `docweave-ui-reviewer` 判断视觉气质或组件观感
+- 只给抽象的最佳实践，不结合 DocWeave 当前目录和文档边界
+- 在没有实际改动、重构计划或候选方案时空泛审查
 
 ## DocWeave 里适合开子 Agent 的任务
 
@@ -164,9 +182,10 @@
 1. `docweave-explorer` 先摸底
 2. 必要时 `docweave-docs-researcher` 查资料
 3. 涉及页面设计时，由 `docweave-ui-planner` 先产出页面规格
-4. 主 agent 实现
-5. `docweave-reviewer` 做行为与回归检查
-6. 涉及页面体验时，由 `docweave-ui-reviewer` 补一轮 UI 评审
+4. 涉及前端结构演进时，由 `docweave-frontend-architect` 先守一轮实现架构边界
+5. 主 agent 实现
+6. `docweave-reviewer` 做行为与回归检查
+7. 涉及页面体验时，由 `docweave-ui-reviewer` 补一轮 UI 评审
 
 ## DocWeave 里不建议拆太细的任务
 
@@ -203,6 +222,16 @@
 1. `docweave-ui-planner` 先定义页面清单、每页目标和状态规格
 2. 主 agent 或实现 agent 根据规格落地页面
 3. `docweave-ui-reviewer` 对照规格和设计基线做 UI 评审
+
+### 模式二点七：页面规划 + 架构守门 + 实现 + UI / 代码评审
+
+适合页面大改版、`router.tsx` 拆分、布局重构，或用户明确担心 AI 把前端继续做乱的场景。
+
+1. `docweave-ui-planner` 先定义页面清单、每页目标和状态规格
+2. `docweave-frontend-architect` 检查路由树、目录树和模块边界
+3. 主 agent 根据页面规格和实现架构落地改动
+4. `docweave-reviewer` 做行为与回归审查
+5. `docweave-ui-reviewer` 做页面体验与设计基线评审
 
 ### 模式三：研究 + 探索 + 实现
 
