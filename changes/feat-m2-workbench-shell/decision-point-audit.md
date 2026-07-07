@@ -1,8 +1,8 @@
 # Decision-Point Audit Report
 
 **变更**: feat-m2-workbench-shell  
-**生成时间**: 2026-07-07T02:07:05.877Z  
-**当前状态**: exploring  
+**生成时间**: 2026-07-07T02:28:37.541Z  
+**当前状态**: closing  
 
 ## 汇总表
 
@@ -12,12 +12,12 @@
 | DP-1 | 需求确认 | confirmed: auth/current-user and workbench-shell requirements define the real M2 product loop acceptance behavior | 2026-07-07T01:45:03Z |
 | DP-2 | 工件审查 | approved: proposal, specs, design, and tasks establish the M2 auth/workbench/document product loop scope and implementation batches | 2026-07-07T01:44:51Z |
 | DP-3 | 契约批准 | approved: execution contract locks scope to real auth, protected workbench shell, space-tree navigation, and preserved document save flow | 2026-07-07T01:46:28Z |
-| DP-4 | 执行模式选择 | not recorded | — |
+| DP-4 | 执行模式选择 | SDD: 3 execution batches across api auth boundary, web auth shell, and workbench tree/document flow | 2026-07-07T02:07:29Z |
 | DP-5 | 调试升级 | not recorded | — |
-| DP-6 | 验证失败 | not recorded | — |
-| DP-7 | 归档确认 | not recorded | — |
+| DP-6 | 验证失败 | pass: auth workbench functional test passed, workspace typecheck passed, web build passed, api build passed, and the development seed now provides a usable login account | 2026-07-07T02:08:05Z |
+| DP-7 | 归档确认 | confirmed: real login, current user, protected workbench shell, space-tree navigation, and document save entry are implemented and archive-ready | 2026-07-07T02:08:05Z |
 
-**统计**: 4/8 已记录，4/8 未记录。
+**统计**: 7/8 已记录，1/8 未记录。
 
 ## 逐决策点说明
 
@@ -47,9 +47,9 @@
 
 ### DP-4: 执行模式选择
 
-- **结果**: not recorded
-- **时间戳**: —
-- **解读**: 该决策点尚未记录结果。如果工作流已经经过该阶段，请检查是否漏记。
+- **结果**: SDD: 3 execution batches across api auth boundary, web auth shell, and workbench tree/document flow
+- **时间戳**: 2026-07-07T02:07:29Z
+- **解读**: 决策点 DP-4 已记录为 "SDD: 3 execution batches across api auth boundary, web auth shell, and workbench tree/document flow"。
 
 ### DP-5: 调试升级
 
@@ -59,15 +59,15 @@
 
 ### DP-6: 验证失败
 
-- **结果**: not recorded
-- **时间戳**: —
-- **解读**: 该决策点尚未记录结果。如果工作流已经经过该阶段，请检查是否漏记。
+- **结果**: pass: auth workbench functional test passed, workspace typecheck passed, web build passed, api build passed, and the development seed now provides a usable login account
+- **时间戳**: 2026-07-07T02:08:05Z
+- **解读**: 决策点 DP-6 已记录为 "pass: auth workbench functional test passed, workspace typecheck passed, web build passed, api build passed, and the development seed now provides a usable login account"。
 
 ### DP-7: 归档确认
 
-- **结果**: not recorded
-- **时间戳**: —
-- **解读**: 该决策点尚未记录结果。如果工作流已经经过该阶段，请检查是否漏记。
+- **结果**: confirmed: real login, current user, protected workbench shell, space-tree navigation, and document save entry are implemented and archive-ready
+- **时间戳**: 2026-07-07T02:08:05Z
+- **解读**: 决策点 DP-7 已记录为 "confirmed: real login, current user, protected workbench shell, space-tree navigation, and document save entry are implemented and archive-ready"。
 
 ---
 

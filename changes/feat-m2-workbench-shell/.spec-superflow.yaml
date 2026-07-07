@@ -6,7 +6,7 @@ state: closing
 workflow: full
 
 # === Hashes (fast staleness detection) ===
-artifacts_hash: sha256:3ee3b37f4052045cef7bf21cd250a8033ea8558052745ea0f4065f0f73e67ca1
+artifacts_hash: sha256:02e4afe933b6edbd3f51b3c3693f142e689107f1afbb1b243572fdf8c623c1c2
 contract_hash: sha256:6751d09b0144f02ade04ce22f7931880e002b1a8f95a2ad7a062de92a29e2be4
 
 # === Execution progress ===
