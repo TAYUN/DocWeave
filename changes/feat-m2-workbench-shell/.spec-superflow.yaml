@@ -2,7 +2,7 @@
 # Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
 
 # === Core state ===
-state: exploring
+state: closing
 workflow: full
 
 # === Hashes (fast staleness detection) ===
@@ -10,15 +10,15 @@ artifacts_hash: sha256:3ee3b37f4052045cef7bf21cd250a8033ea8558052745ea0f4065f0f7
 contract_hash: sha256:6751d09b0144f02ade04ce22f7931880e002b1a8f95a2ad7a062de92a29e2be4
 
 # === Execution progress ===
-execution_mode: null
+execution_mode: SDD
 batches_completed: 3
 test_result: pass
 
 # === Metadata ===
 change_name: feat-m2-workbench-shell
-last_transition: 2026-07-07T01:46:28.917Z
-last_transition_from: null
-last_transition_to: null
+last_transition: 2026-07-07T02:08:05Z
+last_transition_from: executing
+last_transition_to: closing
 
 # === Decision points ===
 dp_0_decisions: Change name: feat-m2-workbench-shell; intent: complete the true M2 product loop so a user can log in, enter the workbench, navigate the space tree, open a real document, and save edits; constraints: keep scope to auth/session, current user, workbench entry, space tree navigation, and protected document editing without pulling in collaboration, AI, RAG, or fine-grained permission design.
