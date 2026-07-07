@@ -35,6 +35,25 @@
    - `execution-contract.md`
 4. 在 `execution-contract.md` 明确批准后，再进入实现阶段。
 
+## 现阶段适不适合用 HANDOFF / 续跑机制
+
+对 `DocWeave` 来说，`spec-superflow` 主工作流本身是默认应该使用的；这里讨论的是是否要额外补充 `HANDOFF` / `PROGRESS` 这层会话交接机制。
+
+推荐补充启用这层机制的情况：
+
+- 中等复杂度以上改动，需要经历探索、设计、实现、验证几个阶段。
+- 改动会跨 `apps/web`、`apps/api`、`packages/*` 或多个文档工件。
+- 任务可能被中断，需要切 session、切 agent，或者需要独立实验后再回主流程。
+
+可以继续只用常规 `spec-superflow` 工件、暂不额外引入 `HANDOFF` / `PROGRESS` 的情况：
+
+- 单文件修补、局部样式调整、小范围文案或配置修改。
+- 目标清晰、改动短、可以在一个会话里快速完成。
+
+实操判断标准可以简化为一条：
+
+- 如果你预计改动会超过半小时，或者很可能中途切 session，就优先补上 `HANDOFF.md` 或 `PROGRESS.md`。
+
 ## 完整阶段
 
 在 `DocWeave` 中，`spec-superflow` 的完整主线阶段如下：
@@ -78,6 +97,24 @@
 - 不额外拆成更重的 SDD 子流程
 - 直接在当前线程里按 batch 顺序推进
 - 但仍然要保留验证和执行痕迹
+
+## 跨 session 交接与断点续传
+
+当前 `spec-superflow` 还没有官方内建的 `handoff` / `checkpoint` 协议，但 `DocWeave` 已经可以先用轻量模板补齐这层协作。
+
+推荐在每个需要暂停或恢复的 change 目录里按需添加：
+
+- [HANDOFF.md](D:/code-my/DocWeave/changes/templates/HANDOFF.md)
+- [HANDOFF_RESULT.md](D:/code-my/DocWeave/changes/templates/HANDOFF_RESULT.md)
+- [PROGRESS.md](D:/code-my/DocWeave/changes/templates/PROGRESS.md)
+
+建议约定如下：
+
+1. 主 session 暂停前，先把 `proposal.md`、`design.md`、`tasks.md` 和 `.spec-superflow.yaml` 更新到最新。
+2. 如果要开实验 session，就复制 `HANDOFF.md`，明确实验边界、输入约束和期望产出。
+3. 实验 session 完成后，用 `HANDOFF_RESULT.md` 记录结论，再由主 session 回写正式工件。
+4. 如果只是上下文太长需要续跑，就复制 `PROGRESS.md`，记录做到哪里、当前卡点和下一步。
+5. 新 session 进入 change 目录后，先运行 `workflow-start`，再结合模板文件继续推进。
 
 ## 收口阶段怎么走
 
