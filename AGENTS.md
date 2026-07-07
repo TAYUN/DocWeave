@@ -8,9 +8,20 @@
 - 让实现、研究、审查三类工作有清晰分工
 - 让产出的代码、文档与设计口径保持统一
 
+## 运行时环境
+
+当前 agent 运行在 **Reasonix**（v1.6.0-rc.1）下，项目级配置在 [`reasonix.toml`](./reasonix.toml)：
+
+| 配置项 | 说明 |
+|--------|------|
+| `[skills].paths` | 指向 pnpm 全局安装的 `spec-superflow` 的 `skills/` 目录，提供 9 个 spec-superflow 工作流 skill |
+| `[[plugins]]` | 注册了 `docweave-mcp`（AdonisJS MCP 服务），启动命令 `pnpm --dir apps/api mcp:start` |
+
+项目本地额外技能在 `.agents/skills/`（`spec-superflow-closing`、`mantine-ui-docs`、`blocknote-docs`、`adonis-mcp`），与 pnpm 全局的 skills 互补。
+
 ## 默认协作模式
 
-DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
+DocWeave 默认采用"主 agent 收口，子 agent 辅助"的模式：
 
 - 主 agent：负责理解需求、落地实现、运行验证、整理结果
 - 子 agent：负责探索、资料研究、独立 review
@@ -24,7 +35,7 @@ DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
 - 需求横跨 `apps/web`、`apps/api`、`apps/collab`、`apps/worker` 或多个 `packages/*`
 - 需要同时梳理代码现状和官方文档口径
 - 需要一个独立视角检查回归风险、接口契约或测试缺口
-- 子任务可以一句话说清，例如“定位文档保存链路”或“确认 Mantine 官方推荐接入方式”
+- 子任务可以一句话说清，例如"定位文档保存链路"或"确认 Mantine 官方推荐接入方式"
 
 ## 什么时候不要拆
 
@@ -45,7 +56,17 @@ DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
 
 1. `Mantine` 相关问题优先看官方文档，尤其是 Getting Started、`MantineProvider`、theme object、Styles API
 2. `BlockNote` 相关问题优先看官方文档和示例
-3. `AdonisJS`、MCP、OpenAI / Codex 等接入问题优先查官方资料
+3. `AdonisJS`、MCP、`@jrmc/adonis-mcp`、OpenAI / Codex 等接入问题优先查官方资料
+
+### MCP 工具
+
+当需要读取或写入 DocWeave 的空间/文档数据时，可通过 `docweave-mcp` 直接调用后端能力：
+
+- `list_spaces` / `create_space` / `get_space_tree` — 空间管理
+- `create_document` / `get_document` / `update_document` — 文档 CRUD
+- `search_knowledge` — RAG 知识检索
+
+MCP 服务注册在 `reasonix.toml` 的 `[[plugins]]` 中，启动命令为 `pnpm --dir apps/api mcp:start`。
 
 ## 前端设计约定
 
@@ -54,7 +75,7 @@ DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
 - `Mantine` 默认主题下的实现规则、props 使用与 CSS 落地边界统一以 [`docs/workflow/frontend-mantine-implementation-guide.md`](./docs/workflow/frontend-mantine-implementation-guide.md) 为入口
 - `apps/web` 与 `apps/api` 之间的类型安全 API 调用、Tuyau 接入和后续扩展流程统一以 [`docs/workflow/frontend-adonis-api-client-guide.md`](./docs/workflow/frontend-adonis-api-client-guide.md) 为入口
 - 当前代码事实来源以 `apps/web/src/main.tsx` 中的 `MantineProvider` 和页面实现为准
-- 新增界面时，优先按“`Mantine` 组件默认行为 -> 必要时显式 props -> Styles API / `classNames` / `styles` -> CSS Modules”的顺序落地
+- 新增界面时，优先按"`Mantine` 组件默认行为 -> 必要时显式 props -> Styles API / `classNames` / `styles` -> CSS Modules"的顺序落地
 - `Tailwind CSS v4` 仅作为布局和细节补充，不用于重做按钮、表单、弹层、导航等本该由 `Mantine` 统一的组件层
 - 涉及 `Mantine` 的用法、样式机制或覆盖方式时，优先查官方文档，尤其是 `MantineProvider`、theme object、Mantine styles 与 Styles API
 
@@ -63,15 +84,35 @@ DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
 - `README.md`：项目介绍与导航入口
 - `ROADMAP.md`：阶段路线与工程推进顺序
 - `DESIGN.md`：设计系统与视觉规范入口
+- `reasonix.toml`：Reasonix 项目级配置（skills 路径、MCP 插件等）
 - `docs/`：详细的决策、架构、规划与协作资料
 
-## spec-superflow 收口约定
+## spec-superflow 工作流
+
+当仓库中存在 `.spec-superflow.yaml`、`changes/`、`proposal.md`、`specs/`、`design.md`、`tasks.md` 或 `execution-contract.md` 时，优先按 spec-superflow 工作流推进，并主动选择合适的 skill。
+
+9 个 spec-superflow skill 来自 pnpm 全局安装的 `spec-superflow` 包，通过 `reasonix.toml` 的 `[skills].paths` 注册：
+
+| Skill | 阶段 | 职责 |
+|-------|------|------|
+| `workflow-start` | 入口 | 内容级状态检测、8 状态路由、阻止非法跳转 |
+| `need-explorer` | 探索 | 一次一问 + 方案对比 + 推荐 |
+| `spec-writer` | 规格 | 产出 proposal/specs/design/tasks |
+| `contract-builder` | 桥接 | 提取工件 → execution-contract.md |
+| `build-executor` | 执行 | TDD 铁律 + SDD 子代理驱动 |
+| `bug-investigator` | 调试 | 4 阶段根因分析，3+ 修复失败 → 质疑架构 |
+| `code-reviewer` | 审查 | 结构化审查，三级问题分级 |
+| `release-archivist` | 收口 | 验证 + 归档 + 风险总结 |
+| `spec-merger` | 同步 | Delta Spec → 主规范智能合并 |
+
+### spec-superflow 约定
 
 - 只要任务明确要求按 `spec-superflow` 推进，进入 `closing` 时默认必须参考 [`docs/workflow/spec-superflow-closing-sop.md`](./docs/workflow/spec-superflow-closing-sop.md)，不能只口头宣布完成。
 - `closing` 前，`changes/<change-name>/tasks.md` 中不应保留任何 `- [ ]`。
 - 修改过 `proposal.md`、`specs/`、`design.md`、`tasks.md` 后，进入 `closing` 前默认先执行 `ssf state rebuild "<absolute-change-dir>"`。
-- 进入 `closing` 时，优先执行 [`.agents/skills/spec-superflow-closing/scripts/close-change.mjs`](./.agents/skills/spec-superflow-closing/scripts/close-change.mjs)；它会检查任务是否勾完、校验 `.spec-superflow.yaml` 关键字段，并刷新 `audit`。
+- 进入 `closing` 时，执行项目本地 skill [`.agents/skills/spec-superflow-closing/scripts/close-change.mjs`](./.agents/skills/spec-superflow-closing/scripts/close-change.mjs)；它会检查任务是否勾完、校验 `.spec-superflow.yaml` 关键字段，并刷新 `audit`。
 - `ssf state transition`、`ssf state rebuild`、`ssf audit` 涉及 change 路径时，优先使用绝对路径，避免 Windows / guard 误判工件缺失。
+- 注意：pnpm 全局包中的技能仍包含 `${CLAUDE_PLUGIN_ROOT}` 引用（Claude Code 环境变量），在 Reasonix 中不会展开。相关脚本路径请按实际仓库位置自行推断或使用 `ssf` CLI 替代。
 
 ## 推荐执行顺序
 
@@ -85,4 +126,4 @@ DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
 
 ## 一句话原则
 
-在 DocWeave 里，多 agent 的价值不在于“很多人一起写”，而在于“把探索、研究、审查从主实现链路里解耦出来，再由主 agent 统一收口”。
+在 DocWeave 里，多 agent 的价值不在于"很多人一起写"，而在于"把探索、研究、审查从主实现链路里解耦出来，再由主 agent 统一收口"。
