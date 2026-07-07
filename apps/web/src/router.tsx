@@ -75,15 +75,29 @@ function MutationNotice({ message }: { message: string | null }) {
 function LoadingState({ label }: { label: string }) {
   return (
     <Paper className="panel loading-panel" p="xl" withBorder>
-      <Text className="eyebrow">Loading</Text>
+      <Text className="eyebrow">加载中</Text>
       <Title order={2} mt="xs">
         {label}
       </Title>
       <Text className="hero-copy" mt="md">
-        The workbench is syncing the current product state.
+        工作台正在同步当前的产品数据，请稍候。
       </Text>
     </Paper>
   )
+}
+
+function getDocumentStatusLabel(status: string) {
+  // 页面层统一把后端状态值映射成中文，避免接口英文枚举直接暴露给用户。
+  switch (status) {
+    case 'draft':
+      return '草稿'
+    case 'published':
+      return '已发布'
+    case 'archived':
+      return '已归档'
+    default:
+      return status
+  }
 }
 
 function RootLayout() {
@@ -103,8 +117,8 @@ function LoginPage() {
       setError(null)
       notifications.show({
         color: 'green',
-        message: 'The workbench is ready.',
-        title: 'Sign in',
+        message: '工作台已就绪。',
+        title: '登录成功',
       })
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['current-user'] }),
@@ -114,7 +128,7 @@ function LoginPage() {
       navigate({ to: '/' })
     },
     onError: (mutationError) => {
-      setError(mutationError instanceof Error ? mutationError.message : 'Unable to sign in')
+      setError(mutationError instanceof Error ? mutationError.message : '登录失败，请稍后重试')
     },
   })
 
@@ -131,21 +145,20 @@ function LoginPage() {
           <div>
             <Text className="eyebrow">DocWeave M2</Text>
             <Title order={1} mt="xs">
-              Sign in to the real workbench
+              登录真实工作台
             </Title>
             <Text className="hero-copy" mt="md">
-              This entry now gates the actual space tree and document editing flow instead of
-              dropping into the old demo shell.
+              这里现在接入了真实的空间树和文档编辑链路，不再进入旧的演示壳层。
             </Text>
           </div>
 
           <Paper className="hint-card" p="lg" withBorder>
-            <Text fw={700}>Development account</Text>
+            <Text fw={700}>开发账号</Text>
             <Text className="stack-support" mt={6} size="sm">
-              Email: <code>owner@docweave.dev</code>
+              邮箱：<code>owner@docweave.dev</code>
             </Text>
             <Text className="stack-support" size="sm">
-              Password: <code>docweave123</code>
+              密码：<code>docweave123</code>
             </Text>
           </Paper>
 
@@ -163,21 +176,21 @@ function LoginPage() {
             }}
           >
             <TextInput
-              label="Email"
+              label="邮箱"
               onChange={(event) => setEmail(event.currentTarget.value)}
               required
               type="email"
               value={email}
             />
             <TextInput
-              label="Password"
+              label="密码"
               onChange={(event) => setPassword(event.currentTarget.value)}
               required
               type="password"
               value={password}
             />
             <Button loading={loginMutation.isPending} type="submit">
-              {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
+              {loginMutation.isPending ? '登录中...' : '登录'}
             </Button>
             <MutationNotice message={error} />
           </Stack>
@@ -218,8 +231,8 @@ function WorkbenchShell() {
       queryClient.clear()
       notifications.show({
         color: 'blue',
-        message: 'You have exited the workbench.',
-        title: 'Signed out',
+        message: '你已退出工作台。',
+        title: '已退出登录',
       })
       await navigate({ to: '/login' })
     },
@@ -246,25 +259,25 @@ function WorkbenchShell() {
   }, [firstAuthError, navigate, queryClient])
 
   if (!hasAccessToken()) {
-    return <LoadingState label="Redirecting to sign in" />
+    return <LoadingState label="正在跳转到登录页" />
   }
 
   if (currentUserQuery.isPending || spacesQuery.isPending) {
-    return <LoadingState label="Loading the workbench shell" />
+    return <LoadingState label="正在加载工作台" />
   }
 
   if (currentUserQuery.isError || spacesQuery.isError || !currentUserQuery.data) {
     return (
       <Paper className="panel" p="xl" withBorder>
-        <Text className="eyebrow">Workbench blocked</Text>
+        <Text className="eyebrow">工作台异常</Text>
         <Title order={2} mt="xs">
-          Unable to load the signed-in shell
+          无法加载已登录的工作台
         </Title>
         <Text className="hero-copy" mt="md">
-          {(firstAuthError as Error | null)?.message ?? 'The current user context could not be resolved.'}
+          {(firstAuthError as Error | null)?.message ?? '当前用户上下文解析失败。'}
         </Text>
         <Button mt="lg" onClick={() => currentUserQuery.refetch()}>
-          Retry
+          重试
         </Button>
       </Paper>
     )
@@ -286,18 +299,17 @@ function WorkbenchShell() {
             <div>
               <Text className="eyebrow">DocWeave</Text>
               <Title className="sidebar-title" order={1}>
-                Product workbench
+                产品工作台
               </Title>
               <Text className="sidebar-copy" mt="md">
-                The shell now reflects the real M2 chain: signed-in user, real space tree, and
-                protected document entrypoints.
+                这里展示的是真实的 M2 链路：已登录用户、真实空间树，以及受保护的文档入口。
               </Text>
             </div>
 
             <Paper className="user-card" p="lg" withBorder>
               <Group justify="space-between" align="flex-start">
                 <div>
-                  <Text className="status-label">Current user</Text>
+                  <Text className="status-label">当前用户</Text>
                   <Text className="status-value" fw={700} mt={6}>
                     {user.fullName ?? user.email}
                   </Text>
@@ -317,7 +329,7 @@ function WorkbenchShell() {
                 onClick={() => logoutMutation.mutate()}
                 variant="light"
               >
-                Sign out
+                退出登录
               </Button>
             </Paper>
 
@@ -329,12 +341,12 @@ function WorkbenchShell() {
                 onClick={() => navigate({ to: '/' })}
                 variant={pathname === '/' ? 'filled' : 'light'}
               >
-                Workbench
+                工作台
               </Button>
             </Stack>
 
             <Stack className="tree-list" gap="sm">
-              <Text className="status-label">Space tree</Text>
+              <Text className="status-label">空间树</Text>
               {treeEntries.map(({ space, tree, isPending }) => (
                 <Paper key={space.id} className="tree-space" p="md" withBorder>
                   <Button
@@ -352,7 +364,7 @@ function WorkbenchShell() {
                   <Stack gap={6} mt="md">
                     {isPending ? (
                       <Text className="stack-support" size="sm">
-                        Loading space tree...
+                        正在加载空间树...
                       </Text>
                     ) : tree && tree.children.length > 0 ? (
                       tree.children.map((document) => (
@@ -374,7 +386,7 @@ function WorkbenchShell() {
                       ))
                     ) : (
                       <Text className="stack-support" size="sm">
-                        No documents in this space yet.
+                        这个空间里还没有文档。
                       </Text>
                     )}
                   </Stack>
@@ -382,16 +394,16 @@ function WorkbenchShell() {
               ))}
               {treeEntries.length === 0 ? (
                 <Paper className="tree-space" p="md" withBorder>
-                  <Text fw={700}>No spaces yet</Text>
+                  <Text fw={700}>还没有空间</Text>
                   <Text className="stack-support" mt={6} size="sm">
-                    Create a space from the workbench home to start the M2 flow.
+                    先在工作台首页创建一个空间，再开始 M2 流程。
                   </Text>
                 </Paper>
               ) : null}
             </Stack>
 
             <Paper className="status-card" p="lg" withBorder>
-              <Text className="status-label">Current route</Text>
+              <Text className="status-label">当前路由</Text>
               <Text className="status-value" fw={700} mt={6}>
                 {pathname}
               </Text>
@@ -425,13 +437,13 @@ function WorkbenchHome() {
       setError(null)
       notifications.show({
         color: 'green',
-        message: 'Space created successfully.',
-        title: 'Create space',
+        message: '空间创建成功。',
+        title: '创建空间',
       })
       await queryClient.invalidateQueries({ queryKey: ['spaces'] })
     },
     onError: (mutationError) => {
-      setError(mutationError instanceof Error ? mutationError.message : 'Unable to create space')
+      setError(mutationError instanceof Error ? mutationError.message : '创建空间失败，请稍后重试')
     },
   })
 
@@ -440,13 +452,12 @@ function WorkbenchHome() {
       <Paper className="hero-panel" p="xl" withBorder>
         <Group justify="space-between" align="flex-start" gap="xl">
           <div>
-            <Text className="eyebrow">Workbench</Text>
+            <Text className="eyebrow">工作台</Text>
             <Title order={2} mt="xs">
-              Enter a real space before opening documents
+              先进入真实空间，再打开文档
             </Title>
             <Text className="hero-copy" mt="md">
-              The old demo shortcuts are gone. Use the authenticated shell and real space tree to
-              move from workspace entry to document editing.
+              旧的演示快捷入口已经移除。请通过已认证的工作台和真实空间树进入文档编辑流程。
             </Text>
           </div>
           <LayoutDashboard size={28} />
@@ -457,9 +468,9 @@ function WorkbenchHome() {
         <Paper className="panel" p="xl" withBorder>
           <Group className="panel-header" justify="space-between" align="flex-start">
             <div>
-              <Text className="panel-kicker">Create space</Text>
+              <Text className="panel-kicker">创建空间</Text>
               <Title order={3} mt="xs">
-                Open a new workspace domain
+                新建一个工作空间
               </Title>
             </div>
             <FolderOpen size={18} />
@@ -479,23 +490,23 @@ function WorkbenchHome() {
             }}
           >
             <TextInput
-              label="Name"
+              label="名称"
               onChange={(event) => setSpaceName(event.currentTarget.value)}
-              placeholder="Research Workspace"
+              placeholder="例如：研究工作区"
               required
               value={spaceName}
             />
             <Textarea
               autosize
-              label="Summary"
+              label="简介"
               minRows={3}
               onChange={(event) => setSpaceSummary(event.currentTarget.value)}
-              placeholder="Track experiments, findings, and next actions."
+              placeholder="填写这个空间的用途、阶段目标和后续动作。"
               required
               value={spaceSummary}
             />
             <Button loading={createSpaceMutation.isPending} type="submit">
-              {createSpaceMutation.isPending ? 'Creating...' : 'Create space'}
+              {createSpaceMutation.isPending ? '创建中...' : '创建空间'}
             </Button>
             <MutationNotice message={error} />
           </Stack>
@@ -504,9 +515,9 @@ function WorkbenchHome() {
         <Paper className="panel" p="xl" withBorder>
           <Group className="panel-header" justify="space-between" align="flex-start">
             <div>
-              <Text className="panel-kicker">Spaces</Text>
+              <Text className="panel-kicker">空间</Text>
               <Title order={3} mt="xs">
-                Active workbench domains
+                当前可用的工作空间
               </Title>
             </div>
             <Badge className="badge">{spacesQuery.data.length}</Badge>
@@ -528,15 +539,15 @@ function WorkbenchHome() {
                       {space.summary}
                     </Text>
                   </div>
-                  <Badge>{space.rootDocuments.length} docs</Badge>
+                  <Badge>{space.rootDocuments.length} 篇文档</Badge>
                 </Group>
               </Paper>
             ))}
             {spacesQuery.data.length === 0 ? (
               <Paper className="stack-row empty-row" p="lg" withBorder>
-                <Text fw={700}>No spaces yet</Text>
+                <Text fw={700}>还没有空间</Text>
                 <Text className="stack-support" mt={4} size="sm">
-                  Create a space to unlock the next step in the M2 flow.
+                  创建一个空间后，才能继续下一步 M2 流程。
                 </Text>
               </Paper>
             ) : null}
@@ -547,9 +558,9 @@ function WorkbenchHome() {
       <Paper className="panel" p="xl" withBorder>
         <Group className="panel-header" justify="space-between" align="flex-start">
           <div>
-            <Text className="panel-kicker">Documents</Text>
+            <Text className="panel-kicker">文档</Text>
             <Title order={3} mt="xs">
-              Recent product threads
+              最近的产品文档
             </Title>
           </div>
           <Badge className="badge">{documentsQuery.data.length}</Badge>
@@ -573,15 +584,15 @@ function WorkbenchHome() {
                     {document.summary}
                   </Text>
                 </div>
-                <Badge style={{ textTransform: 'capitalize' }}>{document.status}</Badge>
+                <Badge>{getDocumentStatusLabel(document.status)}</Badge>
               </Group>
             </Paper>
           ))}
           {documentsQuery.data.length === 0 ? (
             <Paper className="stack-row empty-row" p="lg" withBorder>
-              <Text fw={700}>No documents yet</Text>
+              <Text fw={700}>还没有文档</Text>
               <Text className="stack-support" mt={4} size="sm">
-                Enter a space and create a document to continue the M2 chain.
+                进入一个空间并创建文档后，才能继续 M2 链路。
               </Text>
             </Paper>
           ) : null}
@@ -610,8 +621,8 @@ function SpacePage() {
       setError(null)
       notifications.show({
         color: 'green',
-        message: 'Document created successfully.',
-        title: 'Create document',
+        message: '文档创建成功。',
+        title: '创建文档',
       })
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['documents'] }),
@@ -620,7 +631,7 @@ function SpacePage() {
       ])
     },
     onError: (mutationError) => {
-      setError(mutationError instanceof Error ? mutationError.message : 'Unable to create document')
+      setError(mutationError instanceof Error ? mutationError.message : '创建文档失败，请稍后重试')
     },
   })
 
@@ -630,12 +641,12 @@ function SpacePage() {
   if (!space) {
     return (
       <Paper className="panel" p="xl" withBorder>
-        <Text className="eyebrow">Missing space</Text>
+        <Text className="eyebrow">空间缺失</Text>
         <Title order={2} mt="xs">
-          Workspace not found
+          未找到对应空间
         </Title>
         <Text className="hero-copy" mt="md">
-          The requested space does not exist in the current database.
+          当前数据库中不存在你访问的这个空间。
         </Text>
       </Paper>
     )
@@ -646,7 +657,7 @@ function SpacePage() {
       <Paper className="hero-panel compact" p="xl" withBorder>
         <Group justify="space-between" align="flex-start" gap="xl">
           <div>
-            <Text className="eyebrow">Space</Text>
+            <Text className="eyebrow">空间</Text>
             <Title order={2} mt="xs">
               {space.name}
             </Title>
@@ -661,9 +672,9 @@ function SpacePage() {
       <Paper className="panel" p="xl" withBorder>
         <Group className="panel-header" justify="space-between" align="flex-start">
           <div>
-            <Text className="panel-kicker">Create document</Text>
+            <Text className="panel-kicker">创建文档</Text>
             <Title order={3} mt="xs">
-              Seed a document in this space
+              在这个空间中新增文档
             </Title>
           </div>
           <FileText size={18} />
@@ -684,23 +695,23 @@ function SpacePage() {
           }}
         >
           <TextInput
-            label="Title"
+            label="标题"
             onChange={(event) => setTitle(event.currentTarget.value)}
-            placeholder="New document"
+            placeholder="例如：新的产品文档"
             required
             value={title}
           />
           <Textarea
             autosize
-            label="Summary"
+            label="摘要"
             minRows={3}
             onChange={(event) => setSummary(event.currentTarget.value)}
-            placeholder="Describe the intent of this document."
+            placeholder="简要说明这篇文档的目标和内容。"
             required
             value={summary}
           />
           <Button loading={createDocumentMutation.isPending} type="submit">
-            {createDocumentMutation.isPending ? 'Creating...' : 'Create document'}
+            {createDocumentMutation.isPending ? '创建中...' : '创建文档'}
           </Button>
           <MutationNotice message={error} />
         </Stack>
@@ -709,9 +720,9 @@ function SpacePage() {
       <Paper className="panel" p="xl" withBorder>
         <Group className="panel-header" justify="space-between" align="flex-start">
           <div>
-            <Text className="panel-kicker">Documents</Text>
+            <Text className="panel-kicker">文档</Text>
             <Title order={3} mt="xs">
-              Documents in this workspace
+              这个空间下的文档
             </Title>
           </div>
           <Badge className="badge">{documents.length}</Badge>
@@ -736,7 +747,7 @@ function SpacePage() {
                   </Text>
                 </div>
                 <Group gap="sm" wrap="nowrap">
-                  <Badge style={{ textTransform: 'capitalize' }}>{document.status}</Badge>
+                  <Badge>{getDocumentStatusLabel(document.status)}</Badge>
                   <ArrowRight size={16} />
                 </Group>
               </Group>
@@ -744,9 +755,9 @@ function SpacePage() {
           ))}
           {documents.length === 0 ? (
             <Paper className="stack-row empty-row" p="lg" withBorder>
-              <Text fw={700}>No documents yet</Text>
+              <Text fw={700}>还没有文档</Text>
               <Text className="stack-support" mt={4} size="sm">
-                This space exists, but it does not have any documents in the current database.
+                这个空间已经创建，但当前数据库里还没有任何文档。
               </Text>
             </Paper>
           ) : null}
@@ -782,8 +793,8 @@ function DocumentPage() {
       setError(null)
       notifications.show({
         color: 'green',
-        message: 'Document saved.',
-        title: 'Save document',
+        message: '文档已保存。',
+        title: '保存文档',
       })
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['document', documentId] }),
@@ -793,7 +804,7 @@ function DocumentPage() {
       ])
     },
     onError: (mutationError) => {
-      setError(mutationError instanceof Error ? mutationError.message : 'Unable to update document')
+      setError(mutationError instanceof Error ? mutationError.message : '保存文档失败，请稍后重试')
     },
   })
 
@@ -815,7 +826,7 @@ function DocumentPage() {
       <Paper className="hero-panel compact" p="xl" withBorder>
         <Group justify="space-between" align="flex-start" gap="xl">
           <div>
-            <Text className="eyebrow">{document.status}</Text>
+            <Text className="eyebrow">{getDocumentStatusLabel(document.status)}</Text>
             <Title order={2} mt="xs">
               {title || document.title}
             </Title>
@@ -846,9 +857,9 @@ function DocumentPage() {
         >
           <Group className="panel-header" justify="space-between" align="flex-start">
             <div>
-              <Text className="panel-kicker">Document</Text>
+              <Text className="panel-kicker">文档</Text>
               <Title order={3} mt="xs">
-                Edit title, summary, and body
+                编辑标题、摘要和正文
               </Title>
             </div>
             <LayoutDashboard size={18} />
@@ -856,14 +867,14 @@ function DocumentPage() {
 
           <Stack className="form-stack" gap="md" mt="lg">
             <TextInput
-              label="Title"
+              label="标题"
               onChange={(event) => setTitle(event.currentTarget.value)}
               required
               value={title}
             />
             <Textarea
               autosize
-              label="Summary"
+              label="摘要"
               minRows={4}
               onChange={(event) => setSummary(event.currentTarget.value)}
               required
@@ -877,39 +888,39 @@ function DocumentPage() {
               />
             </Paper>
             <Button loading={updateDocumentMutation.isPending} type="submit">
-              {updateDocumentMutation.isPending ? 'Saving...' : 'Save document'}
+              {updateDocumentMutation.isPending ? '保存中...' : '保存文档'}
             </Button>
             <MutationNotice message={error} />
           </Stack>
         </Paper>
 
         <Paper className="panel metadata-card" p="xl" withBorder>
-          <Text className="panel-kicker">Metadata</Text>
+          <Text className="panel-kicker">元数据</Text>
           <Title order={3} mt="xs">
-            Current document context
+            当前文档上下文
           </Title>
           <Stack className="details" gap="md" mt="lg">
             <Paper className="detail-row" p="md" withBorder>
-              <Text fw={700}>Document ID</Text>
+              <Text fw={700}>文档 ID</Text>
               <Text className="stack-support" mt={4} size="sm">
                 {document.id}
               </Text>
             </Paper>
             <Paper className="detail-row" p="md" withBorder>
-              <Text fw={700}>Space</Text>
+              <Text fw={700}>所属空间</Text>
               <Text className="stack-support" mt={4} size="sm">
                 {document.spaceId}
               </Text>
             </Paper>
             <Paper className="detail-row" p="md" withBorder>
-              <Text fw={700}>Updated</Text>
+              <Text fw={700}>更新时间</Text>
               <Text className="stack-support" mt={4} size="sm">
                 {document.updatedAt}
               </Text>
             </Paper>
           </Stack>
           <Text className="sidebar-copy" mt="lg">
-            This document is now being entered through the real authenticated workbench path.
+            这篇文档现在通过真实的认证工作台链路进入和编辑。
           </Text>
         </Paper>
       </SimpleGrid>
@@ -920,7 +931,7 @@ function DocumentPage() {
 const defaultDocumentContent: DocumentEditorContent = [
   {
     type: 'paragraph',
-    content: 'Start writing your document here.',
+    content: '从这里开始编写你的文档。',
   },
 ]
 

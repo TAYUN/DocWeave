@@ -54,7 +54,7 @@ function toRequestError(error: unknown, fallback: string) {
 
     // 让路由壳层和 query 可以统一识别“需要重新登录”的分支，而不是把它混进普通请求失败。
     if (error.isStatus(401)) {
-      return new AuthError(message ?? 'Authentication required')
+      return new AuthError(message ?? '需要重新登录后才能继续访问')
     }
 
     return new Error(message ?? fallback)
@@ -86,10 +86,10 @@ async function requestJson<T>(path: string, init: RequestInit, fallback: string)
   })
   const payload = (await response.json().catch(() => ({}))) as ApiErrorPayload & T
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new AuthError(payload.message ?? 'Authentication required')
-    }
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new AuthError(payload.message ?? '需要重新登录后才能继续访问')
+      }
 
     throw new Error(payload.message ?? fallback)
   }
@@ -104,7 +104,7 @@ export async function login(input: LoginInput): Promise<LoginPayload['data']> {
       method: 'POST',
       body: JSON.stringify(input),
     },
-    'Failed to sign in',
+    '登录失败，请稍后重试',
   )
 
   return payload.data
@@ -116,7 +116,7 @@ export async function logout(): Promise<LogoutPayload> {
     {
       method: 'POST',
     },
-    'Failed to sign out',
+    '退出登录失败，请稍后重试',
   )
 }
 
@@ -126,7 +126,7 @@ export async function getCurrentUser(): Promise<CurrentUserPayload['data']> {
     {
       method: 'GET',
     },
-    'Failed to load current user',
+    '加载当前用户失败，请稍后重试',
   )
 
   return payload.data
@@ -137,7 +137,7 @@ export async function listSpaces(): Promise<SpacesIndexPayload['data']> {
     const payload = await tuyau.api.spaces.index({})
     return (payload as SpacesIndexPayload).data
   } catch (error) {
-    throw toRequestError(error, 'Failed to load spaces')
+    throw toRequestError(error, '加载空间列表失败，请稍后重试')
   }
 }
 
@@ -150,7 +150,7 @@ export async function getSpaceTree(spaceId: string): Promise<SpaceTreePayload['d
     })
     return (payload as SpaceTreePayload).data
   } catch (error) {
-    throw toRequestError(error, 'Failed to load space tree')
+    throw toRequestError(error, '加载空间树失败，请稍后重试')
   }
 }
 
@@ -159,7 +159,7 @@ export async function listDocuments(): Promise<DocumentsIndexPayload['data']> {
     const payload = await tuyau.api.documents.index({})
     return (payload as DocumentsIndexPayload).data
   } catch (error) {
-    throw toRequestError(error, 'Failed to load documents')
+    throw toRequestError(error, '加载文档列表失败，请稍后重试')
   }
 }
 
@@ -172,7 +172,7 @@ export async function getDocumentById(documentId: string): Promise<DocumentShowP
     })
     return (payload as DocumentShowPayload).data
   } catch (error) {
-    throw toRequestError(error, 'Failed to load document')
+    throw toRequestError(error, '加载文档失败，请稍后重试')
   }
 }
 
@@ -183,7 +183,7 @@ export async function createSpace(input: CreateSpaceInput): Promise<SpaceStorePa
     })
     return (payload as SpaceStorePayload).data
   } catch (error) {
-    throw toRequestError(error, 'Failed to create space')
+    throw toRequestError(error, '创建空间失败，请稍后重试')
   }
 }
 
@@ -194,7 +194,7 @@ export async function createDocument(input: CreateDocumentInput): Promise<Docume
     })
     return (payload as DocumentStorePayload).data
   } catch (error) {
-    throw toRequestError(error, 'Failed to create document')
+    throw toRequestError(error, '创建文档失败，请稍后重试')
   }
 }
 
@@ -214,6 +214,6 @@ export async function updateDocument(
     })
     return (payload as DocumentUpdatePayload).data
   } catch (error) {
-    throw toRequestError(error, 'Failed to update document')
+    throw toRequestError(error, '保存文档失败，请稍后重试')
   }
 }
