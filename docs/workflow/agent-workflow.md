@@ -119,6 +119,37 @@
 - 在 review 还没完成前直接推动大改
 - 用概述替代 findings
 
+### `docweave-ui-reviewer`
+
+适合的任务：
+
+- 评审页面方案、线框说明和前端页面实现
+- 检查页面主任务、信息层级、主次操作与状态完整性
+- 检查页面是否偏离 [`DESIGN.md`](../../DESIGN.md) 的工作台气质
+- 检查实现是否偏离 [`frontend-mantine-implementation-guide.md`](./frontend-mantine-implementation-guide.md) 的 Mantine 默认边界
+- 识别 AI 生成页面里常见的“结构没问题看起来却不对”或“看起来很满但不可用”的问题
+
+不适合的任务：
+
+- 在页面目标还没定义前直接替产品拍板
+- 用个人审美偏好否定已有明确设计约束
+- 在没有页面上下文时只看局部样式做过度结论
+
+### `docweave-ui-planner`
+
+适合的任务：
+
+- 把功能需求整理成页面清单、页面目标和页面流转关系
+- 为新增页面或页面改造补齐信息架构、主次操作和状态规格
+- 判断某个需求应该新增页面、扩展现有页面，还是只补一个局部交互
+- 在 AI 开始写页面前，先产出 `docs/ui/pages/` 风格的文本级规格
+
+不适合的任务：
+
+- 直接跳过页面定义进入视觉发挥或代码实现
+- 在已有页面规格明确时重复发明另一套结构
+- 只根据审美偏好增加区块、入口或页面层级
+
 ## DocWeave 里适合开子 Agent 的任务
 
 以下任务适合多 agent 辅助：
@@ -132,8 +163,10 @@
 
 1. `docweave-explorer` 先摸底
 2. 必要时 `docweave-docs-researcher` 查资料
-3. 主 agent 实现
-4. `docweave-reviewer` 做收尾检查
+3. 涉及页面设计时，由 `docweave-ui-planner` 先产出页面规格
+4. 主 agent 实现
+5. `docweave-reviewer` 做行为与回归检查
+6. 涉及页面体验时，由 `docweave-ui-reviewer` 补一轮 UI 评审
 
 ## DocWeave 里不建议拆太细的任务
 
@@ -162,6 +195,14 @@
 1. `docweave-explorer` 做代码摸底
 2. 主 agent 实现
 3. `docweave-reviewer` 做回归审查
+
+### 模式二点五：页面规划 + 实现 + UI 评审
+
+适合新增页面、页面大改版，或用户明确表示“AI 生成页面总是不满意”的场景。
+
+1. `docweave-ui-planner` 先定义页面清单、每页目标和状态规格
+2. 主 agent 或实现 agent 根据规格落地页面
+3. `docweave-ui-reviewer` 对照规格和设计基线做 UI 评审
 
 ### 模式三：研究 + 探索 + 实现
 
