@@ -70,7 +70,7 @@ DocWeave 默认采用“主 agent 收口，子 agent 辅助”的模式：
 - 只要任务明确要求按 `spec-superflow` 推进，进入 `closing` 时默认必须参考 [`docs/workflow/spec-superflow-closing-sop.md`](./docs/workflow/spec-superflow-closing-sop.md)，不能只口头宣布完成。
 - `closing` 前，`changes/<change-name>/tasks.md` 中不应保留任何 `- [ ]`。
 - 修改过 `proposal.md`、`specs/`、`design.md`、`tasks.md` 后，进入 `closing` 前默认先执行 `ssf state rebuild "<absolute-change-dir>"`。
-- 进入 `closing` 时，优先执行 [`tools/spec-superflow/close-change.ps1`](./tools/spec-superflow/close-change.ps1)；它会检查任务是否勾完、校验 `.spec-superflow.yaml` 关键字段，并刷新 `audit`。
+- 进入 `closing` 时，优先执行 [`.agents/skills/spec-superflow-closing/scripts/close-change.mjs`](./.agents/skills/spec-superflow-closing/scripts/close-change.mjs)；它会检查任务是否勾完、校验 `.spec-superflow.yaml` 关键字段，并刷新 `audit`。
 - `ssf state transition`、`ssf state rebuild`、`ssf audit` 涉及 change 路径时，优先使用绝对路径，避免 Windows / guard 误判工件缺失。
 
 ## 推荐执行顺序

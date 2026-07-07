@@ -39,7 +39,7 @@
 继续 `changes/<change-name>`。
 按 spec-superflow 进入 closing 收口。
 先补齐验证与 dp 记录，再执行：
-powershell -ExecutionPolicy Bypass -File "D:\code-my\DocWeave\tools\spec-superflow\close-change.ps1" "D:\code-my\DocWeave\changes\<change-name>"
+node "D:\code-my\DocWeave\.agents\skills\spec-superflow-closing\scripts\close-change.mjs" "D:\code-my\DocWeave\changes\<change-name>"
 不要跳过 tasks.md、state rebuild、state check 和 audit。
 ```
 

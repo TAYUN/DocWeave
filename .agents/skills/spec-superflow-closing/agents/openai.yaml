@@ -1,0 +1,4 @@
+interface:
+  display_name: "spec-superflow Closing"
+  short_description: "按仓库 SOP 收口 spec-superflow change"
+  default_prompt: "Use $spec-superflow-closing to close a DocWeave spec-superflow change with the repository closing SOP and Node closing script."

@@ -46,7 +46,25 @@ ssf state transition "<absolute-change-dir>" executing
 ssf state transition "<absolute-change-dir>" closing
 ```
 
-## 6. 生成审计报告
+## 6. 优先走统一收口脚本
+
+在 DocWeave 仓库里，进入 `closing` 时优先直接执行 Node 收口脚本，而不是手工拆着跑：
+
+```bash
+node "D:\code-my\DocWeave\.agents\skills\spec-superflow-closing\scripts\close-change.mjs" "D:\code-my\DocWeave\changes\<change-name>"
+```
+
+这个脚本会统一检查：
+
+- `tasks.md` 是否还残留 `- [ ]`
+- `.spec-superflow.yaml` 是否补齐 `test_result` 与关键 `dp_*` 字段
+- `ssf state rebuild`
+- `ssf state check`
+- `ssf audit`
+
+只有在脚本执行成功后，才应把当前 change 视为完成了 closing 收口。
+
+## 7. 生成审计报告
 
 ```bash
 ssf audit "<change-dir>"

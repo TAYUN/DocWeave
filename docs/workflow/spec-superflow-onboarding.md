@@ -86,10 +86,10 @@
 收口时请直接参考：
 
 - [spec-superflow Closing SOP](D:/code-my/DocWeave/docs/workflow/spec-superflow-closing-sop.md)
-- [close-change.ps1](D:/code-my/DocWeave/tools/spec-superflow/close-change.ps1)
+- [close-change.mjs](D:/code-my/DocWeave/.agents/skills/spec-superflow-closing/scripts/close-change.mjs)
 
 这份 SOP 记录了本仓库里真正会卡住 closing 的几个关键步骤。
-如无特殊情况，优先直接运行 `close-change.ps1`，而不是手工跳过其中某一步。
+如无特殊情况，优先直接运行 `close-change.mjs`，而不是手工跳过其中某一步。
 
 ## 目录命名建议
 
@@ -119,7 +119,7 @@
 5. 进入 `closing` 时，优先执行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "D:\code-my\DocWeave\tools\spec-superflow\close-change.ps1" "D:\code-my\DocWeave\changes\<change-name>"
+node "D:\code-my\DocWeave\.agents\skills\spec-superflow-closing\scripts\close-change.mjs" "D:\code-my\DocWeave\changes\<change-name>"
 ```
 
 这样可以同时检查 `tasks.md` 是否全部勾完、`.spec-superflow.yaml` 是否补齐关键字段，并刷新审计报告。
