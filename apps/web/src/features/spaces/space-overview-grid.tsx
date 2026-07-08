@@ -1,11 +1,11 @@
 import { ActionIcon, Badge, Button, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core'
 import { ArrowRight, BookOpenText, FolderOpen } from 'lucide-react'
 import type { ApiDocumentSummary, ApiSpace } from '../../lib/api'
-
-function formatUpdatedAt(value: string | null | undefined) {
-  if (!value) return '暂无更新'
-  return new Date(value).toLocaleDateString('zh-CN')
-}
+import {
+  formatDocumentUpdatedAtShort,
+  pickRecentSpaceDocuments,
+  toSpaceSummaryViewModel,
+} from './lib'
 
 export function SpaceOverviewGrid({
   spaces,
@@ -36,17 +36,11 @@ export function SpaceOverviewGrid({
   return (
     <SimpleGrid cols={{ base: 1, xl: 2 }} spacing="md" verticalSpacing="md">
       {spaces.map((space) => {
-        const relatedDocuments = documents
-          .filter((document) => document.spaceId === space.id)
-          .sort((left, right) => {
-            const leftTime = left.updatedAt ? new Date(left.updatedAt).getTime() : 0
-            const rightTime = right.updatedAt ? new Date(right.updatedAt).getTime() : 0
-            return rightTime - leftTime
-          })
-          .slice(0, 3)
+        const view = toSpaceSummaryViewModel(space)
+        const relatedDocuments = pickRecentSpaceDocuments(space.id, documents)
 
         return (
-          <Paper key={space.id} className="space-overview-card" p={{ base: 'lg', md: 'xl' }} withBorder>
+          <Paper key={view.id} className="space-overview-card" p={{ base: 'lg', md: 'xl' }} withBorder>
             <Stack gap="lg">
               <Group justify="space-between" align="flex-start" wrap="nowrap">
                 <Group gap="md" wrap="nowrap" align="flex-start">
@@ -56,14 +50,14 @@ export function SpaceOverviewGrid({
                   <Stack gap={4} miw={0}>
                     <Group gap="xs" wrap="wrap">
                       <Text fw={700} size="lg" truncate>
-                        {space.name}
+                        {view.name}
                       </Text>
                       <Badge size="sm" variant="light" className="status-badge status-badge--info">
-                        {space.rootDocuments.length} 篇文档
+                        {view.documentCountText}
                       </Badge>
                     </Group>
                     <Text className="section-description" size="sm" lineClamp={2}>
-                      {space.summary || '这个知识空间还没有补充简介。'}
+                      {view.summaryText}
                     </Text>
                   </Stack>
                 </Group>
@@ -71,8 +65,8 @@ export function SpaceOverviewGrid({
                 <ActionIcon
                   variant="subtle"
                   color="gray"
-                  onClick={() => onOpenSpace(space.id)}
-                  aria-label={`打开空间 ${space.name}`}
+                  onClick={() => onOpenSpace(view.id)}
+                  aria-label={`打开空间 ${view.name}`}
                 >
                   <ArrowRight size={16} />
                 </ActionIcon>
@@ -81,7 +75,7 @@ export function SpaceOverviewGrid({
               <Stack gap="xs">
                 <Group justify="space-between" align="center">
                   <Text className="section-eyebrow">最近文档</Text>
-                  <Button variant="subtle" size="compact-sm" onClick={() => onOpenSpace(space.id)}>
+                  <Button variant="subtle" size="compact-sm" onClick={() => onOpenSpace(view.id)}>
                     进入空间
                   </Button>
                 </Group>
@@ -103,7 +97,7 @@ export function SpaceOverviewGrid({
                             </Text>
                           </Group>
                           <Text className="section-count" flex="none">
-                            {formatUpdatedAt(document.updatedAt)}
+                            {formatDocumentUpdatedAtShort(document.updatedAt)}
                           </Text>
                         </Group>
                       </button>

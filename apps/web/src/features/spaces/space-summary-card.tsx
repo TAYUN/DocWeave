@@ -1,6 +1,7 @@
 import { Button, Group, Paper, Stack, Text, Title } from '@mantine/core'
 import { FilePlus } from 'lucide-react'
 import type { ApiSpace } from '../../lib/api'
+import { toSpaceSummaryViewModel } from './lib'
 
 export function SpaceSummaryCard({
   space,
@@ -11,6 +12,8 @@ export function SpaceSummaryCard({
   documentCount: number
   onCreateDocument: () => void
 }) {
+  const view = toSpaceSummaryViewModel(space)
+
   return (
     <Paper
       className="soft-panel"
@@ -23,8 +26,8 @@ export function SpaceSummaryCard({
             <div className="leading-dot" />
             <Text className="section-eyebrow">空间</Text>
           </Group>
-          <Title order={2}>{space.name}</Title>
-          <Text className="section-description" mt={4} maw={640}>{space.summary}</Text>
+          <Title order={2}>{view.name}</Title>
+          <Text className="section-description" mt={4} maw={640}>{view.summaryText}</Text>
           <Text className="section-count" mt={8}>{documentCount} 篇文档</Text>
         </Stack>
         <Button leftSection={<FilePlus size={16} />} onClick={onCreateDocument}>

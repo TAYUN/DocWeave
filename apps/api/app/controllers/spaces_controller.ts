@@ -1,4 +1,5 @@
 import { createSpace } from '#application/spaces/create_space'
+import { getSpaceTree } from '#application/spaces/get_space_tree'
 import { listSpaces } from '#application/spaces/list_spaces'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import { createSpaceValidator } from '#validators/spaces'
@@ -14,7 +15,7 @@ export default class SpacesController {
   }
 
   async tree({ params, response }: HttpContext) {
-    const tree = await this.catalog.getSpaceTree(params.spaceId)
+    const tree = await getSpaceTree(params.spaceId, this.catalog)
 
     if (!tree) {
       return response.status(404).send({

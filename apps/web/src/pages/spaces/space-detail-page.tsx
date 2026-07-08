@@ -5,6 +5,10 @@ import { FilePlus, FolderOpen, MoreHorizontal } from 'lucide-react'
 import { useAppShellData } from '../../features/shell/app-shell-data'
 import { DocumentDirectoryList } from '../../features/documents/document-directory-list'
 import { CreateDocumentForm } from '../../features/documents/create-document-form'
+import {
+  sortDocumentsByUpdatedAt,
+  toSpaceSummaryViewModel,
+} from '../../features/spaces/lib'
 import { NotFoundStatePanel, RestrictedStatePanel } from '../../features/shared/state-panels'
 
 function isRestrictedMessage(message: string) {
@@ -17,6 +21,7 @@ export function SpaceDetailPage({ spaceId }: { spaceId: string }) {
   const [createDocumentOpenSignal, setCreateDocumentOpenSignal] = useState(0)
   const space = spaces.find((entry) => entry.id === spaceId) ?? null
   const spaceDocuments = documents.filter((entry) => entry.spaceId === spaceId)
+  const spaceView = space ? toSpaceSummaryViewModel(space) : null
 
   if (!space) {
     return (
@@ -49,14 +54,14 @@ export function SpaceDetailPage({ spaceId }: { spaceId: string }) {
               </div>
               <Stack gap="md" miw={0}>
                 <div>
-                  <Title order={1}>{space.name}</Title>
+                  <Title order={1}>{spaceView?.name}</Title>
                   <Group gap="md" mt={10}>
                     <Text fw={600}>{spaceDocuments.length} 文档</Text>
-                    <Text className="section-description">{space.rootDocuments.length} 篇根文档</Text>
+                    <Text className="section-description">{spaceView?.rootDocumentCountText}</Text>
                   </Group>
                 </div>
                 <Text className="section-description" maw={720} size="md">
-                  {space.summary || '这个知识空间还没有补充说明。你可以把专题、项目和团队知识都组织在这里。'}
+                  {spaceView?.detailSummaryText}
                 </Text>
               </Stack>
             </Group>
@@ -114,11 +119,7 @@ export function SpaceDetailPage({ spaceId }: { spaceId: string }) {
           ) : null}
 
           <DocumentDirectoryList
-            documents={[...spaceDocuments].sort((left, right) => {
-              const leftTime = left.updatedAt ? new Date(left.updatedAt).getTime() : 0
-              const rightTime = right.updatedAt ? new Date(right.updatedAt).getTime() : 0
-              return rightTime - leftTime
-            })}
+            documents={sortDocumentsByUpdatedAt(spaceDocuments)}
             emptyMessage="这个空间里还没有文档。"
             error={null}
             onOpenDocument={(documentId) =>
