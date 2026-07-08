@@ -32,24 +32,25 @@
 当前实现事实来源按优先级排序如下：
 
 1. [apps/web/src/main.tsx](../../apps/web/src/main.tsx)
-2. `MantineProvider`
-3. `@mantine/core@9.4.1` 默认主题实现
-4. 页面组件代码
-5. 页面级 CSS
+2. [apps/web/src/theme.ts](../../apps/web/src/theme.ts)
+3. `MantineProvider`
+4. `@mantine/core@9.4.1` 默认主题实现
+5. 页面组件代码
+6. 页面级 CSS
 
 当前约定：
 
-- 不向 `MantineProvider` 传入自定义 `theme`
-- 不覆盖 `primaryColor`
-- 不覆盖 `defaultRadius`
-- 不覆盖默认字体栈
-- 不覆盖默认阴影 scale
+- `MantineProvider` 允许传入 [apps/web/src/theme.ts](../../apps/web/src/theme.ts)
+- `theme.ts` 的首要职责是显式镜像当前安装版本的 Mantine 默认主题值
+- 如果只是为了“看见默认值”，允许把默认值完整写在 `theme.ts` 中
+- 如果要偏离 Mantine 默认值，必须把“哪些值偏离了、为什么偏离”说清楚
+- `main.tsx`、`theme.ts` 与当前 `@mantine/core` 版本三者需要保持一致
 
 ---
 
 ## 2. Default Theme Tokens
 
-以下值以当前安装版本 `@mantine/core@9.4.1` 的默认主题为准：
+以下值以当前安装版本 `@mantine/core@9.4.1` 的默认主题为准，并已经显式写在 [apps/web/src/theme.ts](../../apps/web/src/theme.ts) 中：
 
 - `primaryColor`: `blue`
 - `primaryShade`: `light: 6`，`dark: 8`
@@ -67,12 +68,18 @@
 
 - 默认主题提供 `shadow` token，但不代表代码里默认应显式写 `shadow`
 - 更贴近官方默认的做法是：默认不传 `shadow`
+- `theme.ts` 可以把这些值显式写出来，目的是降低“默认值不可见”的理解成本，不是要求页面层把这些 props 全部显式传一遍
 
 ---
 
 ## 3. Default-First Props Policy
 
 DocWeave 前端实现遵循 `default-first` 原则。
+
+这里的 `default-first` 需要区分两层：
+
+1. `theme.ts` 层可以显式写出默认主题值，作为默认事实清单
+2. 页面和组件使用层仍然优先依赖组件默认行为，不因为 `theme.ts` 已经写出来，就把 props 到处写死
 
 默认情况下，先不传以下 props：
 
@@ -242,6 +249,8 @@ DocWeave 前端实现遵循 `default-first` 原则。
 
 ### 7.1 Theme Handles
 
+即使当前已经有 `theme.ts`，也要区分“显式镜像默认值”和“真正做主题定制”。
+
 如果未来确实需要进入 theme 自定义，应该放进 theme 的内容包括：
 
 - `primaryColor`
@@ -251,7 +260,7 @@ DocWeave 前端实现遵循 `default-first` 原则。
 - 组件默认 props
 - 共享组件覆写
 
-当前阶段默认不做这些改动。
+当前阶段允许保留一份“显式默认值版 `theme.ts`”，但默认不应该借此顺手引入新的品牌化覆写。
 
 ### 7.2 Mantine Props Handle
 
@@ -285,12 +294,13 @@ DocWeave 前端实现遵循 `default-first` 原则。
 
 当 agent 修改 DocWeave 前端时，按下面顺序执行：
 
-1. 先确认当前仍在使用 Mantine 默认主题
+1. 先确认 [apps/web/src/theme.ts](../../apps/web/src/theme.ts) 是否仍与当前 `@mantine/core` 版本默认值一致
 2. 优先使用 Mantine 原生组件
 3. 默认不传 `color/radius/shadow/size/variant`
 4. 必须传时，优先使用 Mantine 默认 token
 5. 页面级 CSS 只做结构，不做风格重塑
 6. 如果偏离默认 Mantine 风格，必须说明原因
+7. 升级 `Mantine` 版本后，如默认值变化，应同步更新 `theme.ts` 和本文档
 
 一句话规则：
 

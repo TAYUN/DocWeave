@@ -1,0 +1,115 @@
+:root {
+  /*
+   * TODO(theme):
+   * 1. 把中性层级继续语义化：补齐 page / panel / card / subtle-surface / toolbar / sidebar 等背景与边框 token，
+   *    减少 global.css / app.css 里反复直接写 color-mix。
+   * 2. 把交互态继续语义化：补齐 interactive hover / focus / active 的 bg / border / text / shadow token，
+   *    让 nav、list-button、toolbar-button、directory-row 共用一套配方。
+   * 3. 把状态色继续补全到“容器 + 文本 + 图标 + 边框 + badge + 轻量按钮”六层，
+   *    后续可统一 Alert、Badge、Notice、Empty state、轻量操作按钮。
+   * 4. 补一套数据/内容状态 token：draft / published / archived / restricted / loading，
+   *    避免业务状态继续借用 info / success / warning 的通用语义。
+   * 5. 评估是否迁移到 Mantine cssVariablesResolver 输出自定义语义变量，
+   *    让 theme.ts 与 CSS token 来源更统一。
+   * 6. 为亮色模式做一次对比度审查，尤其检查浅底上的 warning / info / muted 文本，
+   *    避免再次出现“暗色正常、亮色发虚”的问题。
+   * 7. 整理品牌专项 token：brand gradient / glow / hero ambient / icon-box accent，
+   *    让登录页与工作台首页的装饰色不再散落在 app.css。
+   */
+  --color-pure-white: #ffffff;
+  --color-green: #1aae39;
+  --color-orange: #dd5b00;
+  --color-link-light-blue: #62aef0;
+  --color-focus-blue: #097fe8;
+  --color-badge-blue-bg: #f2f9ff;
+  --color-badge-blue-text: #097fe8;
+  --color-background: #ffffff;
+  --color-surface: #f6f5f4;
+  --color-ink: rgba(0,0,0,0.95);
+  --color-ink-muted: #615d59;
+  --color-accent: #0075de;
+  --color-accent-alt: #005bab;
+  --color-border: rgba(0,0,0,0.1);
+  --color-link: #0075de;
+  --status-warning-text: #9a5a22;
+  --status-warning-icon: #c87423;
+  --status-warning-border: color-mix(in srgb, var(--color-orange) 18%, var(--color-border));
+  --status-warning-bg: color-mix(in srgb, var(--color-orange) 7%, var(--color-surface));
+  --status-warning-badge-border: color-mix(in srgb, var(--color-orange) 26%, var(--color-border));
+  --status-warning-badge-bg: color-mix(in srgb, var(--color-orange) 12%, var(--color-background));
+  --status-error-text: #b02a2a;
+  --status-error-icon: #d64545;
+  --status-error-border: color-mix(in srgb, var(--mantine-color-red-6) 24%, var(--color-border));
+  --status-error-bg: color-mix(in srgb, var(--mantine-color-red-1) 76%, var(--color-background));
+  --status-error-badge-border: color-mix(in srgb, var(--mantine-color-red-6) 24%, var(--color-border));
+  --status-error-badge-bg: color-mix(in srgb, var(--mantine-color-red-1) 72%, var(--color-background));
+  --status-success-text: #167c2c;
+  --status-success-icon: #299a42;
+  --status-success-border: color-mix(in srgb, var(--color-green) 24%, var(--color-border));
+  --status-success-bg: color-mix(in srgb, var(--color-green) 10%, var(--color-background));
+  --status-success-badge-border: var(--status-success-border);
+  --status-success-badge-bg: var(--status-success-bg);
+  --status-info-text: #0d5ea8;
+  --status-info-icon: #1977c8;
+  --status-info-border: color-mix(in srgb, var(--color-accent) 18%, var(--color-border));
+  --status-info-bg: color-mix(in srgb, var(--color-accent) 8%, var(--color-background));
+  --status-info-badge-border: color-mix(in srgb, var(--color-accent) 22%, var(--color-border));
+  --status-info-badge-bg: color-mix(in srgb, var(--color-accent) 10%, var(--color-background));
+  --font-badge-size: 0.75rem;
+  --font-badge-weight: 600;
+  --font-badge-letter-spacing: 0.125px;
+  --shadow-sm: rgba(0,0,0,0.04) 0px 4px 18px, rgba(0,0,0,0.027) 0px 2.025px 7.84688px, rgba(0,0,0,0.02) 0px 0.8px 2.925px, rgba(0,0,0,0.01) 0px 0.175px 1.04062px;
+  --shadow-md: rgba(0,0,0,0.01) 0px 1px 3px, rgba(0,0,0,0.02) 0px 3px 7px, rgba(0,0,0,0.02) 0px 7px 15px, rgba(0,0,0,0.04) 0px 14px 28px, rgba(0,0,0,0.05) 0px 23px 52px;
+}
+
+/* DARK_TOKENS_START */
+[data-mantine-color-scheme="dark"] {
+  /*
+   * 暗色 token 由脚本按 OKLCH 生成：
+   * 1. 保留 hue，让亮暗模式共享同一品牌色相；
+   * 2. 按语义角色重映射 lightness，而不是简单反相；
+   * 3. 在深背景中收窄 chroma，避免强调色过亮、过饱和。
+   */
+  --color-pure-white: #1d1d1d;
+  --color-green: #69bf6f;
+  --color-orange: #f68956;
+  --color-link-light-blue: #77beff;
+  --color-focus-blue: #6abeff;
+  --color-badge-blue-bg: #2f3132;
+  --color-badge-blue-text: #74bbff;
+  --color-background: #1d1d1d;
+  --color-surface: #272626;
+  --color-ink: rgba(232,232,232,0.95);
+  --color-ink-muted: #a6a4a3;
+  --color-accent: #5da7ff;
+  --color-accent-alt: #548fd4;
+  --color-border: rgba(255,255,255,0.08);
+  --color-link: #64adff;
+  --status-warning-text: #f1d7bb;
+  --status-warning-icon: #e6a15f;
+  --status-warning-border: color-mix(in srgb, var(--color-orange) 22%, var(--color-border));
+  --status-warning-bg: color-mix(in srgb, var(--color-orange) 10%, var(--color-surface));
+  --status-warning-badge-border: color-mix(in srgb, var(--color-orange) 30%, var(--color-border));
+  --status-warning-badge-bg: color-mix(in srgb, var(--color-orange) 16%, var(--color-surface));
+  --status-error-text: #f1c1c1;
+  --status-error-icon: #f08c8c;
+  --status-error-border: color-mix(in srgb, var(--mantine-color-red-5) 28%, var(--color-border));
+  --status-error-bg: color-mix(in srgb, var(--mantine-color-red-9) 26%, var(--color-surface));
+  --status-error-badge-border: color-mix(in srgb, var(--mantine-color-red-5) 28%, var(--color-border));
+  --status-error-badge-bg: color-mix(in srgb, var(--mantine-color-red-9) 22%, var(--color-surface));
+  --status-success-text: #8fd49a;
+  --status-success-icon: #72c780;
+  --status-success-border: color-mix(in srgb, var(--color-green) 26%, var(--color-border));
+  --status-success-bg: color-mix(in srgb, var(--color-green) 14%, var(--color-surface));
+  --status-success-badge-border: var(--status-success-border);
+  --status-success-badge-bg: var(--status-success-bg);
+  --status-info-text: #c6ddfb;
+  --status-info-icon: #85bbf9;
+  --status-info-border: color-mix(in srgb, var(--color-accent) 22%, var(--color-border));
+  --status-info-bg: color-mix(in srgb, var(--color-accent) 15%, var(--color-surface));
+  --status-info-badge-border: color-mix(in srgb, var(--color-accent) 26%, var(--color-border));
+  --status-info-badge-bg: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
+  --shadow-sm: rgba(0,0,0,0.2) 0px 4px 18px, rgba(0,0,0,0.16) 0px 2.025px 7.84688px, rgba(0,0,0,0.11) 0px 0.8px 2.925px, rgba(0,0,0,0.08) 0px 0.175px 1.04062px;
+  --shadow-md: rgba(0,0,0,0.16) 0px 1px 3px, rgba(0,0,0,0.2) 0px 3px 7px, rgba(0,0,0,0.2) 0px 7px 15px, rgba(0,0,0,0.26) 0px 14px 28px, rgba(0,0,0,0.3) 0px 23px 52px;
+}
+/* DARK_TOKENS_END */

@@ -1,0 +1,19 @@
+.navLink {
+  --interactive-hover-bg: var(--sidebar-active-bg);
+  --interactive-focus-bg: var(--sidebar-active-bg);
+  --interactive-hover-color: inherit;
+  --interactive-focus-color: inherit;
+  border-radius: 8px;
+}
+
+.primaryNavLink {
+  min-height: var(--shell-section-height);
+  display: flex;
+  align-items: center;
+}
+
+.navLink[data-active] {
+  background-color: var(--sidebar-active-bg);
+  color: var(--color-accent);
+  font-weight: 600;
+}

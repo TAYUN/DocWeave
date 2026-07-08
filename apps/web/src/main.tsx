@@ -6,16 +6,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
-import './index.css'
+import './styles/index.css'
+import { theme } from './theme'
 import { router } from './router'
 
 const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {/* 在应用入口统一挂载 Mantine，保证产品 UI 与 BlockNote 适配层共享同一套官方默认设计基线。 */}
-    <MantineProvider>
-      <Notifications position="top-right" />
+    <MantineProvider theme={theme} defaultColorScheme="light">
+      <Notifications position="bottom-right" />
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
