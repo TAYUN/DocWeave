@@ -1,96 +1,62 @@
 import { randomUUID } from 'node:crypto'
+import type {
+  CreateDocumentInput,
+  CreateSpaceInput,
+  DocumentDetailDto,
+  DocumentSummaryDto,
+  SpaceDto,
+  SpaceTreeDto,
+  UpdateDocumentInput,
+} from '@docweave/contracts'
+import {
+  createDefaultDocumentContent,
+  serializeDocumentContent,
+  toDocumentDetailDto,
+  toDocumentSummaryDto,
+  toSpaceDto,
+  toSpaceTreeDto,
+} from '@docweave/adapters'
 import Document from '#models/document'
 import Space from '#models/space'
 
-type SpaceInput = {
-  name: string
-  summary: string
-}
-
-type DocumentInput = {
-  spaceId: string
-  title: string
-  summary: string
-}
-
-const DEFAULT_DOCUMENT_CONTENT = JSON.stringify([
-  {
-    type: 'paragraph',
-    content: 'Start writing your document here.',
-  },
-])
-
 export default class DocweaveCatalogService {
-  // Keep persistence access centralized so controllers stay focused on API semantics.
-  async listSpaces() {
+  // 统一把持久化访问收口在 service，controller 只表达接口语义；DTO 转换则继续下沉到 adapter。
+  async listSpaces(): Promise<SpaceDto[]> {
     const spaces = await Space.query().preload('documents')
 
-    return spaces.map((space) => ({
-      id: space.id,
-      name: space.name,
-      summary: space.summary,
-      rootDocuments: space.documents.map((document) => document.id),
-    }))
+    return spaces.map((space) => toSpaceDto(space))
   }
 
-  async listDocuments() {
+  async listDocuments(): Promise<DocumentSummaryDto[]> {
     const documents = await Document.query().orderBy('updated_at', 'desc')
 
-    return documents.map((document) => ({
-      id: document.id,
-      title: document.title,
-      status: document.status,
-      summary: document.summary,
-      content: document.content,
-      spaceId: document.spaceId,
-      updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
-    }))
+    return documents.map((document) => toDocumentSummaryDto(document))
   }
 
-  async getSpaceTree(spaceId: string) {
+  async getSpaceTree(spaceId: string): Promise<SpaceTreeDto | null> {
     const space = await Space.query().where('id', spaceId).preload('documents').first()
 
     if (!space) {
       return null
     }
 
-    return {
-      space: {
-        id: space.id,
-        name: space.name,
-        summary: space.summary,
-      },
-      children: space.documents.map((document) => ({
-        id: document.id,
-        title: document.title,
-        kind: 'document',
-        status: document.status,
-      })),
-    }
+    return toSpaceTreeDto(space)
   }
 
-  async getDocument(documentId: string) {
+  async getDocument(documentId: string): Promise<DocumentDetailDto | null> {
     const document = await Document.find(documentId)
 
     if (!document) {
       return null
     }
 
-    return {
-      id: document.id,
-      title: document.title,
-      status: document.status,
-      summary: document.summary,
-      content: document.content,
-      spaceId: document.spaceId,
-      updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
-    }
+    return toDocumentDetailDto(document)
   }
 
   async updateDocument(
     documentId: string,
-    patch: Partial<Pick<Document, 'title' | 'summary' | 'content'>>,
-  ) {
+    patch: UpdateDocumentInput,
+  ): Promise<DocumentDetailDto | null> {
     const document = await Document.find(documentId)
 
     if (!document) {
@@ -100,33 +66,20 @@ export default class DocweaveCatalogService {
     document.merge(patch)
     await document.save()
 
-    return {
-      id: document.id,
-      title: document.title,
-      status: document.status,
-      summary: document.summary,
-      content: document.content,
-      spaceId: document.spaceId,
-      updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
-    }
+    return toDocumentDetailDto(document)
   }
 
-  async createSpace(input: SpaceInput) {
+  async createSpace(input: CreateSpaceInput): Promise<SpaceDto> {
     const space = await Space.create({
       id: this.toId(input.name),
       name: input.name,
       summary: input.summary,
     })
 
-    return {
-      id: space.id,
-      name: space.name,
-      summary: space.summary,
-      rootDocuments: [],
-    }
+    return toSpaceDto(space)
   }
 
-  async createDocument(input: DocumentInput) {
+  async createDocument(input: CreateDocumentInput): Promise<DocumentDetailDto | null> {
     const space = await Space.find(input.spaceId)
 
     if (!space) {
@@ -138,19 +91,11 @@ export default class DocweaveCatalogService {
       spaceId: input.spaceId,
       title: input.title,
       summary: input.summary,
-      content: DEFAULT_DOCUMENT_CONTENT,
+      content: serializeDocumentContent(createDefaultDocumentContent()),
       status: 'draft',
     })
 
-    return {
-      id: document.id,
-      title: document.title,
-      status: document.status,
-      summary: document.summary,
-      content: document.content,
-      spaceId: document.spaceId,
-      updatedAt: document.updatedAt?.toISO() ?? document.createdAt.toISO(),
-    }
+    return toDocumentDetailDto(document)
   }
 
   private toId(value: string) {

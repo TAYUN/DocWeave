@@ -1,3 +1,9 @@
+import { createDocument } from '#application/documents/create_document'
+import { getDocument } from '#application/documents/get_document'
+import {
+  EmptyDocumentPatchError,
+  updateDocument,
+} from '#application/documents/update_document'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import {
   createDocumentValidator,
@@ -17,11 +23,11 @@ export default class DocumentsController {
   async store({ request, response }: HttpContext) {
     const payload = await request.validateUsing(createDocumentValidator)
 
-    const document = await this.catalog.createDocument({
+    const document = await createDocument({
       spaceId: payload.spaceId,
       title: payload.title,
       summary: payload.summary,
-    })
+    }, this.catalog)
 
     if (!document) {
       return response.status(404).send({
@@ -38,7 +44,7 @@ export default class DocumentsController {
   }
 
   async show({ params, response }: HttpContext) {
-    const document = await this.catalog.getDocument(params.documentId)
+    const document = await getDocument(params.documentId, this.catalog)
 
     if (!document) {
       return response.status(404).send({
@@ -54,27 +60,31 @@ export default class DocumentsController {
   async update({ params, request, response }: HttpContext) {
     const patch = await request.validateUsing(updateDocumentValidator)
 
-    // Vine 负责字段级约束，这里保留“至少提交一个可编辑字段”的业务边界。
-    if (patch.title === undefined && patch.summary === undefined && patch.content === undefined) {
-      return response.status(422).send({
-        message: 'At least one editable field is required',
-      })
-    }
+    try {
+      const document = await updateDocument(
+        params.documentId,
+        patch,
+        this.catalog,
+      )
 
-    const document = await this.catalog.updateDocument(
-      params.documentId,
-      patch,
-    )
+      if (!document) {
+        return response.status(404).send({
+          message: 'Document not found',
+        })
+      }
 
-    if (!document) {
-      return response.status(404).send({
-        message: 'Document not found',
-      })
-    }
+      return {
+        message: 'Document updated',
+        data: document,
+      }
+    } catch (error) {
+      if (error instanceof EmptyDocumentPatchError) {
+        return response.status(422).send({
+          message: error.message,
+        })
+      }
 
-    return {
-      message: 'Document updated',
-      data: document,
+      throw error
     }
   }
 }

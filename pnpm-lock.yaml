@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  '@jrmc/adonis-mcp':
-    hash: 791ecee8f4e66183363c01220ffa6a5eaaf64c6a132ebe7e1aca15efe056fa73
-    path: patches/@jrmc__adonis-mcp.patch
-
 importers:
 
   .: {}
@@ -33,12 +28,18 @@ importers:
       '@adonisjs/shield':
         specifier: ^9.0.0
         version: 9.0.0(1a0bc4a37bc930c29c38adea4dc18227)
+      '@docweave/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
+      '@docweave/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@japa/api-client':
         specifier: ^3.2.1
         version: 3.2.1(@japa/assert@4.2.0(@japa/runner@5.3.0))(@japa/runner@5.3.0)
       '@jrmc/adonis-mcp':
         specifier: ^1.0.4
-        version: 1.0.4(patch_hash=791ecee8f4e66183363c01220ffa6a5eaaf64c6a132ebe7e1aca15efe056fa73)
+        version: 1.0.4
       '@tuyau/core':
         specifier: ^1.2.2
         version: 1.2.2(@adonisjs/assembler@8.4.0(typescript@6.0.3))(@adonisjs/core@7.3.4(@adonisjs/assembler@8.4.0(typescript@6.0.3))(@vinejs/vine@4.4.0)(pino-pretty@13.1.3)(youch@4.1.1))
@@ -106,9 +107,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@docweave/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
       '@docweave/api':
         specifier: workspace:*
         version: link:../api
+      '@docweave/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@docweave/editor':
         specifier: workspace:*
         version: link:../../packages/editor
@@ -171,6 +178,18 @@ importers:
         specifier: ^8.1.1
         version: 8.1.3(@types/node@24.13.2)(jiti@2.7.0)
 
+  packages/adapters:
+    dependencies:
+      '@docweave/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+
+  packages/contracts:
+    dependencies:
+      '@blocknote/core':
+        specifier: ^0.51.4
+        version: 0.51.4(@types/hast@3.0.4)
+
   packages/editor:
     dependencies:
       '@blocknote/core':
@@ -182,6 +201,9 @@ importers:
       '@blocknote/react':
         specifier: ^0.51.4
         version: 0.51.4(@floating-ui/dom@1.7.6)(@types/hast@3.0.4)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@docweave/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@mantine/core':
         specifier: ^9.4.1
         version: 9.4.1(@mantine/hooks@9.4.1(react@19.2.7))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -4280,7 +4302,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@jrmc/adonis-mcp@1.0.4(patch_hash=791ecee8f4e66183363c01220ffa6a5eaaf64c6a132ebe7e1aca15efe056fa73)': {}
+  '@jrmc/adonis-mcp@1.0.4': {}
 
   '@mantine/core@9.4.1(@mantine/hooks@9.4.1(react@19.2.7))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:

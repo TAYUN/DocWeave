@@ -25,6 +25,11 @@
 3. `apps/api/.adonisjs/client/*`：Adonis + Tuyau 自动生成的 registry，不手改。
 4. `apps/web/src/lib/tuyau-client.ts`：前端唯一的 Tuyau client 创建入口。
 5. `apps/web/src/lib/api.ts`：前端统一 API 封装层，页面和查询逻辑只从这里取能力。
+6. `packages/contracts`：跨边界稳定 DTO / input 定义层。
+7. `packages/adapters`：DTO、内容结构与兼容转换的统一适配层。
+8. `apps/web/src/features/*/lib/*view-model.ts`：页面展示友好结构的统一收口点。
+
+更完整的边界说明，见 [数据契约与适配层设计](../architecture/02.%20数据契约与适配层设计.md)。
 
 ## 前端编译配置注意点
 
@@ -49,6 +54,7 @@
 1. 在 `apps/api/app/validators/*` 中定义 Vine validator。
 2. 控制器使用 `request.validateUsing(...)` 获取 payload。
 3. 再让前端通过 `apps/web/src/lib/api.ts` 暴露调用函数。
+4. 若接口跨边界 shape 有变化，优先先调整 `packages/contracts` 与 `packages/adapters`，不要直接让页面吃新的原始返回结构。
 
 ## 推荐工作流
 
@@ -89,7 +95,8 @@ pnpm --dir apps/api build
 
 1. `tuyau-client.ts` 只负责创建 client，不放业务逻辑。
 2. `api.ts` 负责把 route name、params、body、错误转换封装成稳定函数。
-3. 页面、路由 loader、TanStack Query hooks 只依赖 `api.ts` 暴露的函数。
+3. `api.ts` 优先对齐 `packages/contracts` 定义的 input / DTO，而不是把页面直接暴露给 Tuyau 推导出的偶然 shape。
+4. 页面、路由 loader、TanStack Query hooks 只依赖 `api.ts` 暴露的函数。
 
 这样做的目的，是把“后端路由细节变化”和“页面业务调用方式”隔开。
 
@@ -102,6 +109,7 @@ pnpm --dir apps/api build
 1. 路由命名调整时，页面无需全仓一起改。
 2. 错误消息转换逻辑只维护一份。
 3. 后续接入 `@tuyau/react-query` 时可以平滑迁移，不会影响页面语义。
+4. 页面仍然可以优先消费 `view-model`，而不是直接消费 transport 层 DTO。
 
 ## 当前约束
 
@@ -109,6 +117,7 @@ pnpm --dir apps/api build
 2. 不要在 `apps/web` 页面组件里重新拼 `/api/...` 字符串。
 3. 不要在没有 validator 的前提下，期望 Tuyau 自动推断出准确的 body 类型。
 4. 新增 API 时，优先延续统一响应外形，减少前端分支判断。
+5. 不要把 Tuyau 推导类型误当成业务 contract；两者职责不同。
 
 ## 推荐检查命令
 

@@ -1,3 +1,4 @@
+import { createSpace } from '#application/spaces/create_space'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import { createSpaceValidator } from '#validators/spaces'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -29,10 +30,10 @@ export default class SpacesController {
     // 统一走 Vine 校验，既能收口服务端约束，也能让 registry 生成准确的 body 类型。
     const payload = await request.validateUsing(createSpaceValidator)
 
-    const space = await this.catalog.createSpace({
+    const space = await createSpace({
       name: payload.name,
       summary: payload.summary,
-    })
+    }, this.catalog)
 
     response.status(201)
 

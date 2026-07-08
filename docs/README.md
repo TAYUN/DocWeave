@@ -11,6 +11,12 @@
 5. `ui/`：页面清单、单页规格、导航流转和 UI 相关索引。
 6. `tem/`：早期草稿、讨论记录和未收口材料。
 
+当前与数据边界最相关的文档入口如下：
+
+1. [`architecture/01. 整体架构设计`](./architecture/01.%20整体架构设计.md)：整体运行时边界与包职责。
+2. [`architecture/02. 数据契约与适配层设计`](./architecture/02.%20数据契约与适配层设计.md)：跨边界 DTO、adapter、view-model 与 Tuyau 的分工。
+3. [`workflow/frontend-adonis-api-client-guide`](./workflow/frontend-adonis-api-client-guide.md)：`apps/web` 如何通过 Tuyau 消费后端 API。
+
 前端相关文档当前按下面方式分工：
 
 1. 根目录 [`DESIGN.md`](../DESIGN.md)：只负责设计规范与视觉语言。
@@ -26,11 +32,11 @@
 
 1. [最终技术方案确认](./decisions/01.%20最终技术方案确认.md)
 2. [整体架构设计](./architecture/01.%20整体架构设计.md)
-3. [当前实施路线图](./planning/00.%20当前实施路线图.md)
-4. [第一阶段验收标准与测试策略](./planning/10.%20第一阶段验收标准与测试策略.md)
-5. [Monorepo 初始化与目录落地方案](./planning/11.%20Monorepo%20初始化与目录落地方案.md)
-6. [RAG 与 Citation 设计](./architecture/20.%20RAG%20与%20Citation%20设计.md)
-7. [spec-superflow 工作流接入说明](./planning/12.%20spec-superflow%20工作流接入说明.md)
+3. [数据契约与适配层设计](./architecture/02.%20数据契约与适配层设计.md)
+4. [当前实施路线图](./planning/00.%20当前实施路线图.md)
+5. [第一阶段验收标准与测试策略](./planning/10.%20第一阶段验收标准与测试策略.md)
+6. [Monorepo 初始化与目录落地方案](./planning/11.%20Monorepo%20初始化与目录落地方案.md)
+7. [RAG 与 Citation 设计](./architecture/20.%20RAG%20与%20Citation%20设计.md)
 8. [Agent Workflow Guide](./workflow/agent-workflow.md)
 9. [页面总览地图](./ui/page-inventory.md)
 10. [应用壳层布局规格](./ui/app-shell-layout.md)
@@ -64,6 +70,7 @@
 11. 主业务数据库为 `PostgreSQL`，缓存与后续队列基线为 `Redis`。
 12. 对象存储统一按 `S3-compatible` 抽象设计，本地默认 `MinIO`。
 13. 第一阶段先保留任务抽象和数据库轮询 worker，不急于引入 `BullMQ`。
+14. 跨边界数据默认先过 `contract`，兼容差异默认优先进入 `adapter`，页面默认优先消费 `view-model`。
 
 ## 文档之间的优先级
 

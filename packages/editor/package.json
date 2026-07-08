@@ -8,6 +8,7 @@
     "./document-editor": "./src/document-editor.tsx"
   },
   "dependencies": {
+    "@docweave/contracts": "workspace:*",
     "@blocknote/core": "^0.51.4",
     "@blocknote/react": "^0.51.4",
     "@blocknote/mantine": "^0.51.4",
