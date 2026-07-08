@@ -1,14 +1,16 @@
 import type { Data } from '@docweave/api/data'
+import type { CurrentUserDto } from '@docweave/contracts/auth'
 import type {
   CreateDocumentInput,
-  CreateSpaceInput,
-  CurrentUserDto,
   DocumentDetailDto,
   DocumentSummaryDto,
+  UpdateDocumentInput,
+} from '@docweave/contracts/document'
+import type {
+  CreateSpaceInput,
   SpaceDto,
   SpaceTreeDto,
-  UpdateDocumentInput,
-} from '@docweave/contracts'
+} from '@docweave/contracts/space'
 import { TuyauError } from '@tuyau/core/client'
 import { getAccessToken } from './auth'
 import { tuyau } from './tuyau-client'

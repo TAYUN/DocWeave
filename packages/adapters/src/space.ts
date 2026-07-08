@@ -1,9 +1,9 @@
 import type {
-  DocumentStatus,
   SpaceDto,
   SpaceTreeDocumentDto,
   SpaceTreeDto,
-} from '@docweave/contracts'
+} from '@docweave/contracts/space'
+import type { DocumentStatus } from '@docweave/contracts/document'
 
 export type SpaceDocumentSource = {
   id: string

@@ -1,5 +1,6 @@
 import { createDocument } from '#application/documents/create_document'
 import { getDocument } from '#application/documents/get_document'
+import { listDocuments } from '#application/documents/list_documents'
 import {
   EmptyDocumentPatchError,
   updateDocument,
@@ -16,7 +17,7 @@ export default class DocumentsController {
 
   async index() {
     return {
-      data: await this.catalog.listDocuments(),
+      data: await listDocuments(this.catalog),
     }
   }
 

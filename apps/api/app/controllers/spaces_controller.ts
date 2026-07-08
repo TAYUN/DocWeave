@@ -1,4 +1,5 @@
 import { createSpace } from '#application/spaces/create_space'
+import { listSpaces } from '#application/spaces/list_spaces'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import { createSpaceValidator } from '#validators/spaces'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -8,7 +9,7 @@ export default class SpacesController {
 
   async index() {
     return {
-      data: await this.catalog.listSpaces(),
+      data: await listSpaces(this.catalog),
     }
   }
 

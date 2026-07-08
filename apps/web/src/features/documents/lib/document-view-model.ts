@@ -3,7 +3,7 @@ import type {
   DocumentContent,
   DocumentDetailDto,
   DocumentSummaryDto,
-} from '@docweave/contracts'
+} from '@docweave/contracts/document'
 
 export type DocumentPreviewViewModel = {
   id: string

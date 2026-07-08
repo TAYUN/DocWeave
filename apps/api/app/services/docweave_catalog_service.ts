@@ -1,13 +1,15 @@
 import { randomUUID } from 'node:crypto'
 import type {
   CreateDocumentInput,
-  CreateSpaceInput,
   DocumentDetailDto,
   DocumentSummaryDto,
+  UpdateDocumentInput,
+} from '@docweave/contracts/document'
+import type {
+  CreateSpaceInput,
   SpaceDto,
   SpaceTreeDto,
-  UpdateDocumentInput,
-} from '@docweave/contracts'
+} from '@docweave/contracts/space'
 import {
   createDefaultDocumentContent,
   serializeDocumentContent,

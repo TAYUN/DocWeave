@@ -2,7 +2,7 @@ import type {
   DocumentDetailDto,
   DocumentStatus,
   DocumentSummaryDto,
-} from '@docweave/contracts'
+} from '@docweave/contracts/document'
 import { createDefaultDocumentContent, serializeDocumentContent } from './content.js'
 
 type IsoDateLike = {

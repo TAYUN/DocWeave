@@ -1,4 +1,4 @@
-import type { DocumentDetailDto, UpdateDocumentInput } from '@docweave/contracts'
+import type { DocumentDetailDto, UpdateDocumentInput } from '@docweave/contracts/document'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 
 export class EmptyDocumentPatchError extends Error {

@@ -1,4 +1,4 @@
-import type { DocumentContent } from '@docweave/contracts'
+import type { DocumentContent } from '@docweave/contracts/document'
 
 export function createDefaultDocumentContent(): DocumentContent {
   return [
