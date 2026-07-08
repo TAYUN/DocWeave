@@ -29,7 +29,7 @@
 7. `packages/adapters`：DTO、内容结构与兼容转换的统一适配层。
 8. `apps/web/src/features/*/lib/*view-model.ts`：页面展示友好结构的统一收口点。
 
-更完整的边界说明，见 [数据契约与适配层设计](../architecture/02.%20数据契约与适配层设计.md)。
+更完整的边界说明，见 [数据契约与适配层设计](../architecture/05.%20数据契约与适配层设计.md)。
 
 ## 前端编译配置注意点
 

@@ -12,11 +12,11 @@
 | P02 | 工作台首页 | `/` | ✅ 已实现（待改造） | M2 基线 |
 | P03 | 空间详情页 | `/spaces/:spaceId` | ✅ 已实现（待改造） | M2 基线 |
 | P04 | 文档编辑页 | `/documents/:documentId` | ✅ 已实现（待改造） | M2 基线 |
-| P05 | 注册页 | `/register` | ○ 第一阶段待实现 | M2 扩展 |
-| P06 | 搜索页 | `/search` | ○ 第一阶段待实现 | M7 RAG 搜索 |
-| P07 | RAG 问答/聊天页 | `/chat` | ○ 第一阶段待实现 | M7 RAG 问答 |
-| P08 | 设置页 | `/settings/*` | △ 后续阶段 | M2 扩展 |
-| P09 | AI 助手页 | `/ai` | △ 后续阶段 | M5 编辑器 AI |
+| P05 | 注册页 | `/register` | ○ 仅规格占位，未实现 | M2 扩展 |
+| P06 | 搜索页 | `/search` | ○ 仅规格占位，未实现 | M7 RAG 搜索 |
+| P07 | RAG 问答/聊天页 | `/chat` | ○ 仅规格占位，未实现 | M7 RAG 问答 |
+| P08 | 设置页 | `/settings/*` | △ 路由规划中，未实现 | M2 扩展 |
+| P09 | AI 助手页 | `/ai` | △ 规格已定义，未实现 | M5 编辑器 AI |
 | P10 | 回收站 | `/trash` | △ 后续阶段 | 延后 |
 | P11 | 收藏页 | `/favorites` | △ 后续阶段 | 延后 |
 | P12 | 公开分享页 | `/share/:shareId/d/:docId` | △ 后续阶段 | 延后 |
@@ -27,17 +27,17 @@
 ## 导航结构
 
 ```text
-/login          （公开，PublicLayout）
+/login          （公开，PublicLayout，已实现）
   ↓ 登录成功
 
 /               （需登录，AppLayout 外壳）
-├── /           （工作台首页 → 空间概览 + 文档总览）
-├── /spaces/:spaceId （空间详情 → 文档列表）
-├── /documents/:documentId （文档编辑 → 编辑器 + 元数据）
-├── /search     （🔜 知识库搜索，M7）
-├── /chat       （🔜 RAG 问答，M7）
-├── /settings/* （🔜 设置页，延后）
-└── /ai         （🔜 AI 助手，M5）
+├── /           （工作台首页 → 空间概览 + 文档总览，已实现）
+├── /spaces/:spaceId （空间详情 → 文档列表，已实现）
+├── /documents/:documentId （文档编辑 → 编辑器 + 元数据，已实现）
+├── /search     （🔜 知识库搜索，规格已定义）
+├── /chat       （🔜 RAG 问答，规格已定义）
+├── /settings/* （🔜 设置页，路由规划中）
+└── /ai         （🔜 AI 助手，规格已定义）
 ```
 
 ## 前端实现分层入口
@@ -55,17 +55,17 @@
   ↓
 /login → 登录成功 → /
 
-/（工作台首页）
+/（工作台首页，已实现）
   → 点击空间卡片 → /spaces/:spaceId
   → 点击文档卡片 → /documents/:documentId
   → 点击搜索 → /search（M7）
   → 创建空间 → 刷新工作台
 
-/spaces/:spaceId（空间详情）
+/spaces/:spaceId（空间详情，已实现）
   → 点击文档 → /documents/:documentId
   → 创建文档 → 刷新空间
 
-/documents/:documentId（文档编辑）
+/documents/:documentId（文档编辑，已实现）
   → 保存文档 → 刷新文档
   → 面包屑空间名 → /spaces/:spaceId
   → 版本历史 → Modal（M4）
@@ -83,7 +83,7 @@
 | P2 - 重要支撑 | RAG 问答页 | 知识库问答主场景 |
 | P3 - 补充完整 | 设置页 | 成员/AI 配置管理 |
 | P3 - 补充完整 | 注册页 | 新用户注册流程 |
-| P4 - 后续演进 | AI 助手页 | 需要编辑器 AI 能力支撑 |
+| P4 - 后续演进 | AI 助手页 | 需要编辑器 AI 能力支撑，当前主闭环仍优先在文档页 |
 | P4 - 后续演进 | 版本历史 | 需要快照系统支撑 |
 | P4 - 后续演进 | 回收站 | 需要软删除系统支撑 |
 | P4 - 后续演进 | 收藏页 | 需要收藏 API 支撑 |
@@ -118,6 +118,7 @@
 
 - 每个页面的详细规格：`docs/ui/pages/` 目录
 - 已补充：`p01-login.md` 到 `p09-ai-assistant.md`
+- 规格与当前实现的逐页核对：`docs/planning/48. 单页规格与当前实现逐页核对.md`
 - 应用壳层布局规格：`docs/ui/app-shell-layout.md`
 - 前端路由与页面代码组织：`docs/workflow/frontend-route-architecture.md`
 - 设计规范：`DESIGN.md`
