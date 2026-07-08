@@ -7,10 +7,15 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "theme:dark": "node ./scripts/generate-dark-tokens.mjs",
+    "theme:dark:soft": "node ./scripts/generate-dark-tokens.mjs --preset soft",
+    "theme:dark:contrast": "node ./scripts/generate-dark-tokens.mjs --preset contrast"
   },
   "dependencies": {
     "@docweave/api": "workspace:*",
+    "@docweave/adapters": "workspace:*",
+    "@docweave/contracts": "workspace:*",
     "@docweave/editor": "workspace:*",
     "@mantine/core": "9.4.1",
     "@mantine/hooks": "9.4.1",
