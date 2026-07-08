@@ -1,5 +1,5 @@
 import { Paper, Text } from '@mantine/core'
-import { SectionHeading } from './section-heading'
+import { SectionHeading } from '@/features/shared/section-heading'
 
 export function LoadingState({ label }: { label: string }) {
   return (

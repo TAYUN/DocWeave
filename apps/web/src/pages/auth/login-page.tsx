@@ -4,8 +4,8 @@ import { notifications } from '@mantine/notifications'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { AlertCircle, BookOpen, Lock, Share2, Sparkles } from 'lucide-react'
-import { AuthError, login } from '../../lib/api'
-import { saveAccessToken } from '../../lib/auth'
+import { saveAccessToken } from '@/lib/auth'
+import { AuthError, login } from '@/lib/api'
 
 function getLoginErrorMessage(error: unknown) {
   if (error instanceof AuthError) return '邮箱或密码不正确'

@@ -1,4 +1,4 @@
-import type { ApiDocumentSummary, ApiSpace } from '../../../lib/api'
+import type { ApiDocumentSummary, ApiSpace } from '@/lib/api'
 
 export type SpaceSummaryViewModel = {
   id: string

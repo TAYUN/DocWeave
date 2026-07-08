@@ -1,6 +1,6 @@
 import { Alert, Button, Paper, Stack, TextInput, Textarea } from '@mantine/core'
 import { DocumentEditor, type DocumentEditorContent } from '@docweave/editor'
-import { MutationNotice } from '../shared/mutation-notice'
+import { MutationNotice } from '@/features/shared/mutation-notice'
 
 export function DocumentEditorPanel({
   content,

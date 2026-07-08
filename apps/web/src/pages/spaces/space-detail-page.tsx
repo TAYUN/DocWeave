@@ -2,14 +2,14 @@ import { ActionIcon, Alert, Button, Container, Group, Paper, Stack, Text, Title 
 import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { FilePlus, FolderOpen, MoreHorizontal } from 'lucide-react'
-import { useAppShellData } from '../../features/shell/app-shell-data'
-import { DocumentDirectoryList } from '../../features/documents/document-directory-list'
-import { CreateDocumentForm } from '../../features/documents/create-document-form'
+import { CreateDocumentForm } from '@/features/documents/create-document-form'
+import { DocumentDirectoryList } from '@/features/documents/document-directory-list'
+import { useAppShellData } from '@/features/shell/app-shell-data'
+import { NotFoundStatePanel, RestrictedStatePanel } from '@/features/shared/state-panels'
 import {
   sortDocumentsByUpdatedAt,
   toSpaceSummaryViewModel,
-} from '../../features/spaces/lib'
-import { NotFoundStatePanel, RestrictedStatePanel } from '../../features/shared/state-panels'
+} from '@/features/spaces/lib'
 
 function isRestrictedMessage(message: string) {
   return /权限|禁止|forbidden|restricted/i.test(message)

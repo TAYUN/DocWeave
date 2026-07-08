@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { ApiDocumentSummary, ApiSpace, ApiSpaceTree, CurrentUser } from '../../lib/api'
+import type { ApiDocumentSummary, ApiSpace, ApiSpaceTree, CurrentUser } from '@/lib/api'
 
 export type AppShellTreeEntry = {
   space: ApiSpace

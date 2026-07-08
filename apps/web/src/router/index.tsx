@@ -1,11 +1,11 @@
 import { createRootRoute, createRouter } from '@tanstack/react-router'
-import { RootLayout } from './layouts/root-layout'
-import { publicLayoutRoute } from './routes/public/public-layout.route'
-import { appLayoutRoute } from './routes/app/app-layout.route'
-import { loginRoute } from './routes/public/login.route'
-import { homeRoute } from './routes/app/home.route'
-import { spaceDetailRoute } from './routes/app/spaces/space-detail.route'
-import { documentEditorRoute } from './routes/app/documents/document-editor.route'
+import { RootLayout } from '@/router/layouts/root-layout'
+import { appLayoutRoute } from '@/router/routes/app/app-layout.route'
+import { documentEditorRoute } from '@/router/routes/app/documents/document-editor.route'
+import { homeRoute } from '@/router/routes/app/home.route'
+import { spaceDetailRoute } from '@/router/routes/app/spaces/space-detail.route'
+import { loginRoute } from '@/router/routes/public/login.route'
+import { publicLayoutRoute } from '@/router/routes/public/public-layout.route'
 
 const rootRoute = createRootRoute({
   component: RootLayout,

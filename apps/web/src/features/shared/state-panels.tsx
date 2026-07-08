@@ -1,6 +1,6 @@
 import { Alert, Button, Group, Paper } from '@mantine/core'
 import { ArrowLeft, RefreshCw } from 'lucide-react'
-import { SectionHeading } from './section-heading'
+import { SectionHeading } from '@/features/shared/section-heading'
 
 export function ErrorStatePanel({
   title,

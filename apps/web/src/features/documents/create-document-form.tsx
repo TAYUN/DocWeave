@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { Button, Paper, Stack, TextInput, Textarea } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createDocument } from '../../lib/api'
-import { MutationNotice } from '../shared/mutation-notice'
-import { SectionHeading } from '../shared/section-heading'
+import { MutationNotice } from '@/features/shared/mutation-notice'
+import { SectionHeading } from '@/features/shared/section-heading'
+import { createDocument } from '@/lib/api'
 
 export function CreateDocumentForm({
   spaceId,

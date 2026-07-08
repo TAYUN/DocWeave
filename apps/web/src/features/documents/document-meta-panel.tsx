@@ -1,5 +1,5 @@
 import { Button, Paper, Stack, Text } from '@mantine/core'
-import { SectionHeading } from '../shared/section-heading'
+import { SectionHeading } from '@/features/shared/section-heading'
 
 export function DocumentMetaPanel({
   documentId,

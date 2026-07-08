@@ -1,5 +1,5 @@
 import { createRoute, type AnyRoute } from '@tanstack/react-router'
-import { SpaceDetailPage } from '../../../../pages/spaces/space-detail-page'
+import { SpaceDetailPage } from '@/pages/spaces/space-detail-page'
 
 export function spaceDetailRoute(parentRoute: AnyRoute) {
   const route = createRoute({

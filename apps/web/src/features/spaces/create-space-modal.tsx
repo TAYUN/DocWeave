@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { Box, Button, Modal, Stack, Text, TextInput, Textarea } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createSpace } from '../../lib/api'
-import { MutationNotice } from '../shared/mutation-notice'
+import { MutationNotice } from '@/features/shared/mutation-notice'
+import { createSpace } from '@/lib/api'
 
 export function CreateSpaceModal({
   buttonLabel = '新建空间',

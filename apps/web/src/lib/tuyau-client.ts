@@ -1,6 +1,6 @@
 import { registry } from '@docweave/api/registry'
 import { createTuyau } from '@tuyau/core/client'
-import { getAccessToken } from './auth'
+import { getAccessToken } from '@/lib/auth'
 
 /**
  * 统一通过同一个 Tuyau client 访问后端。

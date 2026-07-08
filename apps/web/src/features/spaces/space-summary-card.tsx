@@ -1,7 +1,7 @@
 import { Button, Group, Paper, Stack, Text, Title } from '@mantine/core'
 import { FilePlus } from 'lucide-react'
-import type { ApiSpace } from '../../lib/api'
-import { toSpaceSummaryViewModel } from './lib'
+import { toSpaceSummaryViewModel } from '@/features/spaces/lib'
+import type { ApiSpace } from '@/lib/api'
 
 export function SpaceSummaryCard({
   space,

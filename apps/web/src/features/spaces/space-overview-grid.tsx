@@ -1,11 +1,11 @@
 import { ActionIcon, Badge, Button, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core'
 import { ArrowRight, BookOpenText, FolderOpen } from 'lucide-react'
-import type { ApiDocumentSummary, ApiSpace } from '../../lib/api'
+import type { ApiDocumentSummary, ApiSpace } from '@/lib/api'
 import {
   formatDocumentUpdatedAtShort,
   pickRecentSpaceDocuments,
   toSpaceSummaryViewModel,
-} from './lib'
+} from '@/features/spaces/lib'
 
 export function SpaceOverviewGrid({
   spaces,

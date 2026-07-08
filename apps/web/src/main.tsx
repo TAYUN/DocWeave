@@ -6,9 +6,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
-import './styles/index.css'
-import { theme } from './theme'
-import { router } from './router'
+import '@/styles/index.css'
+import { router } from '@/router'
+import { theme } from '@/theme'
 
 const queryClient = new QueryClient()
 

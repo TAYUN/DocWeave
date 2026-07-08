@@ -1,6 +1,6 @@
 import { Alert, Badge, Box, Group, Loader, Paper, Stack, Text } from '@mantine/core'
-import type { ApiDocumentSummary } from '../../lib/api'
-import { toDocumentPreviewViewModel } from './lib/document-display'
+import { toDocumentPreviewViewModel } from '@/features/documents/lib/document-display'
+import type { ApiDocumentSummary } from '@/lib/api'
 
 export function RecentDocumentList({
   documents,

@@ -12,8 +12,8 @@ import type {
   SpaceTreeDto,
 } from '@docweave/contracts/space'
 import { TuyauError } from '@tuyau/core/client'
-import { getAccessToken } from './auth'
-import { tuyau } from './tuyau-client'
+import { getAccessToken } from '@/lib/auth'
+import { tuyau } from '@/lib/tuyau-client'
 
 type ApiErrorPayload = {
   message?: string

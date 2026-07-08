@@ -1,6 +1,6 @@
 import { Badge, Box, Group, Paper, Stack, Text } from '@mantine/core'
-import type { ApiSpace } from '../../lib/api'
-import { toSpaceSummaryViewModel } from './lib'
+import { toSpaceSummaryViewModel } from '@/features/spaces/lib'
+import type { ApiSpace } from '@/lib/api'
 
 export function SpaceList({
   spaces,

@@ -1,9 +1,9 @@
 import { Badge, Button, Container, Group, Paper, Stack, Text, Title } from '@mantine/core'
 import { useNavigate } from '@tanstack/react-router'
 import { FolderOpen, Sparkles } from 'lucide-react'
-import { useAppShellData } from '../../features/shell/app-shell-data'
-import { CreateSpaceModal } from '../../features/spaces/create-space-modal'
-import { SpaceOverviewGrid } from '../../features/spaces/space-overview-grid'
+import { useAppShellData } from '@/features/shell/app-shell-data'
+import { CreateSpaceModal } from '@/features/spaces/create-space-modal'
+import { SpaceOverviewGrid } from '@/features/spaces/space-overview-grid'
 
 export function WorkbenchHomePage() {
   const navigate = useNavigate()

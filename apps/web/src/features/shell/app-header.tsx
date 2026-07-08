@@ -1,8 +1,8 @@
 import { ActionIcon, Avatar, Box, Group, Menu, Text, TextInput, Tooltip, UnstyledButton, useMantineColorScheme } from '@mantine/core'
 import { useNavigate } from '@tanstack/react-router'
 import { LogOut, Moon, Search, Settings, Sun } from 'lucide-react'
-import type { CurrentUser } from '../../lib/api'
-import { CreateSpaceModal } from '../spaces/create-space-modal'
+import { CreateSpaceModal } from '@/features/spaces/create-space-modal'
+import type { CurrentUser } from '@/lib/api'
 
 function getUserInitial(currentUser: CurrentUser) {
   const source = currentUser.fullName?.trim() || currentUser.email.trim()

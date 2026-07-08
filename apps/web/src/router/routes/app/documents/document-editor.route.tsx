@@ -1,5 +1,5 @@
 import { createRoute, type AnyRoute } from '@tanstack/react-router'
-import { DocumentEditorPage } from '../../../../pages/documents/document-editor-page'
+import { DocumentEditorPage } from '@/pages/documents/document-editor-page'
 
 export function documentEditorRoute(parentRoute: AnyRoute) {
   const route = createRoute({

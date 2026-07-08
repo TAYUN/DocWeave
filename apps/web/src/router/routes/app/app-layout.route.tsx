@@ -1,6 +1,6 @@
 import { createRoute, redirect, type AnyRoute } from '@tanstack/react-router'
-import { hasAccessToken } from '../../../lib/auth'
-import { AppLayout } from '../../layouts/app-layout'
+import { hasAccessToken } from '@/lib/auth'
+import { AppLayout } from '@/router/layouts/app-layout'
 
 export function appLayoutRoute(parentRoute: AnyRoute) {
   return createRoute({

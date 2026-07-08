@@ -1,7 +1,7 @@
 import { Alert, Group, Paper, Stack, Text } from '@mantine/core'
 import { Clock3, FileText } from 'lucide-react'
-import type { ApiDocumentSummary } from '../../lib/api'
-import { formatDocumentUpdatedAt, toDocumentPreviewViewModel } from './lib/document-display'
+import type { ApiDocumentSummary } from '@/lib/api'
+import { formatDocumentUpdatedAt, toDocumentPreviewViewModel } from '@/features/documents/lib/document-display'
 
 export function DocumentDirectoryList({
   documents,
