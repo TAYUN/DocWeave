@@ -1,0 +1,41 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: exploring
+workflow: full
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: null
+contract_hash: null
+
+# === Execution progress ===
+execution_mode: null
+batches_completed: 0
+test_result: null
+
+# === Metadata ===
+change_name: feat-m4-stable-snapshot-baseline
+last_transition: null
+last_transition_from: null
+last_transition_to: null
+
+# === Decision points ===
+dp_0_decisions: Change name: feat-m4-stable-snapshot-baseline; intent: establish the M4 stable snapshot baseline so collaboration content can recover from server truth instead of front-end empty-room seeding, and create a durable snapshot path that later indexing can consume; constraints: keep current M3 collaboration baseline stable, do not expand this change into RAG or editor AI, prioritize snapshot truth and collaboration recovery before index jobs, and keep the first version as small as possible.
+dp_0_result: confirmed
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-09T00:00:00Z
+dp_1_result: null
+dp_1_timestamp: null
+dp_2_result: null
+dp_2_timestamp: null
+dp_3_result: null
+dp_3_timestamp: null
+dp_4_result: null
+dp_4_timestamp: null
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: null
+dp_6_timestamp: null
+dp_7_result: null
+dp_7_timestamp: null
