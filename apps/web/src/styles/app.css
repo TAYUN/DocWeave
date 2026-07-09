@@ -342,16 +342,28 @@
 /* 文档编辑与内容区 */
 .page-scroll-shell,
 .page-scroll-stack {
+  min-height: 0;
   overflow: hidden;
 }
 
+.page-scroll-shell--viewport {
+  height: calc(100dvh - var(--app-shell-header-offset, 48px));
+}
+
 .document-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   flex-shrink: 0;
   border-inline: none;
   border-top: none;
   border-bottom: 1px solid var(--color-border);
   border-radius: 0;
   background: color-mix(in srgb, var(--color-background) 90%, var(--color-surface));
+}
+
+.document-scroll-area {
+  min-height: 0;
 }
 
 .document-title-input {

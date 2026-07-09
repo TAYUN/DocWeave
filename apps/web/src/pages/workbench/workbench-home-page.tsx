@@ -27,7 +27,7 @@ export function WorkbenchHomePage() {
               <div>
                 <Title order={1} mb={6}>知识空间</Title>
                 <Text className="section-description" size="md">
-                  {currentUser.fullName ?? '你'} 的文档、专题和知识沉淀都从这里展开。先进入一个空间，再继续查看和编辑其中的文档。
+                  {currentUser?.fullName ?? '你'} 的文档、专题和知识沉淀都从这里展开。先进入一个空间，再继续查看和编辑其中的文档。
                 </Text>
               </div>
               <Group gap="sm">

@@ -4,7 +4,8 @@ import { LogOut, Moon, Search, Settings, Sun } from 'lucide-react'
 import { CreateSpaceModal } from '@/features/spaces/create-space-modal'
 import type { CurrentUser } from '@/lib/api'
 
-function getUserInitial(currentUser: CurrentUser) {
+function getUserInitial(currentUser: CurrentUser | null) {
+  if (!currentUser) return '…'
   const source = currentUser.fullName?.trim() || currentUser.email.trim()
   return source.slice(0, 1).toUpperCase()
 }
@@ -14,7 +15,7 @@ export function AppHeader({
   isLoggingOut,
   onLogout,
 }: {
-  currentUser: CurrentUser
+  currentUser: CurrentUser | null
   isLoggingOut: boolean
   onLogout: () => void
 }) {
@@ -75,7 +76,7 @@ export function AppHeader({
                   {getUserInitial(currentUser)}
                 </Avatar>
                 <Text visibleFrom="lg">
-                  {currentUser.fullName ?? currentUser.email}
+                  {currentUser ? currentUser.fullName ?? currentUser.email : '加载中...'}
                 </Text>
               </Group>
             </UnstyledButton>
@@ -83,7 +84,7 @@ export function AppHeader({
 
           <Menu.Dropdown>
             <Menu.Label>
-              {currentUser.fullName ?? '用户'} · {currentUser.email}
+              {currentUser ? `${currentUser.fullName ?? '用户'} · ${currentUser.email}` : '正在加载当前用户'}
             </Menu.Label>
             <Menu.Item leftSection={<Settings size={14} />} disabled>
               设置
@@ -93,7 +94,7 @@ export function AppHeader({
               color="red"
               leftSection={<LogOut size={14} />}
               onClick={onLogout}
-              disabled={isLoggingOut}
+              disabled={isLoggingOut || !currentUser}
             >
               {isLoggingOut ? '退出中...' : '退出登录'}
             </Menu.Item>

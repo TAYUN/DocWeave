@@ -1,4 +1,4 @@
-import { Alert, Badge, Button, Container, Flex, Group, Paper, ScrollArea, Stack, Text, TextInput, Textarea } from '@mantine/core'
+import { Badge, Button, Container, Flex, Group, Paper, ScrollArea, Skeleton, Stack, Text, TextInput, Textarea } from '@mantine/core'
 import { parseDocumentContent, serializeDocumentContent } from '@docweave/adapters'
 import { notifications } from '@mantine/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -7,7 +7,6 @@ import { ArrowLeft, ChevronRight, Clock } from 'lucide-react'
 import { DocumentEditor } from '@docweave/editor'
 import { useEffect, useMemo, useState } from 'react'
 import { toDocumentEditorViewModel } from '@/features/documents/lib/document-display'
-import { LoadingState } from '@/features/shared/loading-state'
 import { MutationNotice } from '@/features/shared/mutation-notice'
 import { ErrorStatePanel, NotFoundStatePanel, RestrictedStatePanel } from '@/features/shared/state-panels'
 import { getDocumentById, updateDocument } from '@/lib/api'
@@ -81,7 +80,18 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
     },
   })
 
-  if (documentQuery.isPending) return <LoadingState label="正在加载文档" />
+  if (documentQuery.isPending) {
+    return (
+      <Container size={1040} px={{ base: 'md', md: 'lg' }} py={{ base: 'md', md: 'xl' }}>
+        <Stack gap="md">
+          <Skeleton h={44} radius="sm" w="32%" />
+          <Skeleton h={18} radius="sm" w={160} />
+          <Skeleton h={56} radius="md" />
+          <Skeleton h={420} radius="lg" />
+        </Stack>
+      </Container>
+    )
+  }
   if (documentQuery.error instanceof Error) {
     const kind = getDocumentStateKind(documentQuery.error.message)
     if (kind === 'restricted')
@@ -99,7 +109,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
   }
 
   return (
-    <Flex h="100%" className="page-scroll-shell">
+    <Flex className="page-scroll-shell page-scroll-shell--viewport">
       <Stack flex={1} gap={0} className="page-scroll-stack">
         <Group
           className="document-toolbar"
@@ -134,12 +144,31 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                     {documentView?.statusLabel ?? document.status}
                   </Badge>
                 )}
+                {hasUnsavedChanges ? (
+                  <Text size="sm" c="dimmed">
+                    有未保存修改
+                  </Text>
+                ) : null}
+                <Button
+                  size="sm"
+                  disabled={!hasUnsavedChanges}
+                  loading={updateDocumentMutation.isPending}
+                  onClick={handleSave}
+                >
+                  {updateDocumentMutation.isPending ? '保存中...' : '保存文档'}
+                </Button>
               </Group>
             </Group>
           </Container>
         </Group>
 
-        <ScrollArea flex={1}>
+        {error ? (
+          <Container size={1040} px={{ base: 'md', md: 'lg' }} py="sm" w="100%">
+            <MutationNotice message={error} />
+          </Container>
+        ) : null}
+
+        <ScrollArea flex={1} className="document-scroll-area">
           <Container size={1040} px={{ base: 'md', md: 'lg' }} py={{ base: 'md', md: 'xl' }}>
             <Stack gap="md">
               <TextInput
@@ -167,21 +196,12 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
               />
 
               <Paper p="md" withBorder className="editor-surface">
-                <DocumentEditor key={document.id} initialContent={draftContent} onChange={setDraftContent} />
+                <DocumentEditor
+                  key={document.id}
+                  initialContent={initialContent}
+                  onChange={setDraftContent}
+                />
               </Paper>
-
-              {hasUnsavedChanges ? (
-                <Alert className="status-alert status-alert--warning" color="yellow" variant="light">
-                  有未保存的修改。离开页面前请先保存。
-                </Alert>
-              ) : null}
-
-              <Group justify="space-between" align="center">
-                <Button disabled={!hasUnsavedChanges} loading={updateDocumentMutation.isPending} onClick={handleSave}>
-                  {updateDocumentMutation.isPending ? '保存中...' : '保存文档'}
-                </Button>
-                <MutationNotice message={error} />
-              </Group>
             </Stack>
           </Container>
         </ScrollArea>

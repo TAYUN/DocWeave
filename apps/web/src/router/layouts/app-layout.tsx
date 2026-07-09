@@ -76,10 +76,6 @@ export function AppLayout() {
     return <LoadingState label="登录态已失效，正在返回登录页" />
   }
 
-  if (currentUserQuery.isPending || spacesQuery.isPending || documentsQuery.isPending || !currentUserQuery.data) {
-    return <LoadingState label="正在加载工作台" />
-  }
-
   if (currentUserQuery.isError || spacesQuery.isError) {
     return (
       <ErrorStatePanel
@@ -103,7 +99,7 @@ export function AppLayout() {
   return (
     <AppShellDataProvider
       value={{
-        currentUser: currentUserQuery.data,
+        currentUser: currentUserQuery.data ?? null,
         documents: documentsQuery.data ?? [],
         documentsError: documentsQuery.error instanceof Error ? documentsQuery.error : null,
         documentsPending: documentsQuery.isPending,
@@ -118,7 +114,7 @@ export function AppLayout() {
       >
         <AppShell.Header>
           <AppHeader
-            currentUser={currentUserQuery.data}
+            currentUser={currentUserQuery.data ?? null}
             isLoggingOut={logoutMutation.isPending}
             onLogout={() => logoutMutation.mutate()}
           />

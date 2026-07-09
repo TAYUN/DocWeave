@@ -9,7 +9,7 @@ export type AppShellTreeEntry = {
 }
 
 export type AppShellData = {
-  currentUser: CurrentUser
+  currentUser: CurrentUser | null
   documents: ApiDocumentSummary[]
   documentsError: Error | null
   documentsPending: boolean
