@@ -3,7 +3,12 @@ import type {
   DocumentStatus,
   DocumentSummaryDto,
 } from '@docweave/contracts/document'
-import { createDefaultDocumentContent, serializeDocumentContent } from './content.js'
+import {
+  createDefaultDocumentContent,
+  extractTextPreview,
+  parseDocumentContent,
+  serializeDocumentContent,
+} from './content.js'
 
 type IsoDateLike = {
   toISO(): string | null
@@ -17,6 +22,7 @@ export type DocumentSummarySource = {
   status: DocumentStatus | string
   summary: string | null
   spaceId: string
+  content?: string | null
   createdAt?: DateValue
   updatedAt?: DateValue
 }
@@ -44,11 +50,17 @@ function toIsoString(value: DateValue): string | null {
 }
 
 export function toDocumentSummaryDto(document: DocumentSummarySource): DocumentSummaryDto {
+  const summary =
+    document.summary ??
+    (document.content
+      ? extractTextPreview(parseDocumentContent(document.content))
+      : null)
+
   return {
     id: document.id,
     title: document.title,
     status: normalizeDocumentStatus(document.status),
-    summary: document.summary,
+    summary,
     spaceId: document.spaceId,
     updatedAt: toIsoString(document.updatedAt) ?? toIsoString(document.createdAt),
   }

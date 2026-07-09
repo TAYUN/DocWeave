@@ -36,7 +36,6 @@ export function DocumentEditorPanel({
           label="摘要"
           minRows={4}
           onChange={(event) => onChangeSummary(event.currentTarget.value)}
-          required
           value={summary}
         />
         <Paper className="editor-surface" p={{ base: 'sm', md: 'md' }} withBorder>

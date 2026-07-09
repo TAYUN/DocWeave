@@ -8,7 +8,7 @@ import vine from '@vinejs/vine'
 type Schema = BaseSchema<{
   spaceId: { type: 'string' }
   title: { type: 'string' }
-  summary: { type: 'string' }
+  summary: { type: 'string'; optional: true }
 }>
 
 const createDocumentSchema = vine.object({
@@ -18,8 +18,8 @@ const createDocumentSchema = vine.object({
   title: vine.string().trim().meta({
     description: '新文档标题',
   }),
-  summary: vine.string().trim().meta({
-    description: '新文档摘要',
+  summary: vine.string().trim().optional().meta({
+    description: '新文档摘要（可选，不传时自动从正文截取预览）',
   }),
 })
 
@@ -32,7 +32,7 @@ export default class CreateDocumentTool extends Tool<Schema> {
 
   async handle({ args, response }: ToolContext<Schema>) {
     if (!args) {
-      return response.error('spaceId, title, and summary are required')
+      return response.error('spaceId and title are required')
     }
 
     // 创建动作直接复用现有服务，保证默认内容、默认状态等业务约束不会在 MCP 层分叉。

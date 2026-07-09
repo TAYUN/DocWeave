@@ -20,7 +20,7 @@ export type DocumentDetailDto = DocumentSummaryDto & {
 export type CreateDocumentInput = {
   spaceId: string
   title: string
-  summary: string
+  summary?: string
 }
 
 export type UpdateDocumentInput = {

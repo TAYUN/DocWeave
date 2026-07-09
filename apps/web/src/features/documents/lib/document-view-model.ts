@@ -34,7 +34,7 @@ export function toDocumentPreviewViewModel(
   return {
     id: document.id,
     title: document.title,
-    summaryText: document.summary || '还没有填写摘要。',
+    summaryText: document.summary || '',
     statusLabel: getDocumentStatusLabel(document.status),
     updatedAtText: formatDocumentUpdatedAt(document.updatedAt),
   }

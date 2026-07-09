@@ -1,5 +1,6 @@
 export {
   createDefaultDocumentContent,
+  extractTextPreview,
   parseDocumentContent,
   serializeDocumentContent,
 } from './content.js'

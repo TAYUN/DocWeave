@@ -6,7 +6,7 @@ import vine from '@vinejs/vine'
 export const createDocumentValidator = vine.create({
   spaceId: vine.string().trim().minLength(1),
   title: vine.string().trim().minLength(1),
-  summary: vine.string().trim().minLength(1),
+  summary: vine.string().trim().optional(),
 })
 
 /**

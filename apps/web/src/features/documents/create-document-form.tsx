@@ -96,12 +96,11 @@ export function CreateDocumentForm({
           minRows={3}
           onChange={(event) => setSummary(event.currentTarget.value)}
           placeholder="简要说明这篇文档的目标和内容。"
-          required
           value={summary}
         />
         <div className="action-row">
           <Button
-            disabled={!title.trim() || !summary.trim()}
+            disabled={!title.trim()}
             loading={createDocumentMutation.isPending}
             type="submit"
           >

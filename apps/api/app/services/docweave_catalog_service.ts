@@ -92,7 +92,7 @@ export default class DocweaveCatalogService {
       id: this.toId(input.title),
       spaceId: input.spaceId,
       title: input.title,
-      summary: input.summary,
+      summary: input.summary ?? '',
       content: serializeDocumentContent(createDefaultDocumentContent()),
       status: 'draft',
     })
