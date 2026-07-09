@@ -81,7 +81,7 @@ MCP 服务注册在 `reasonix.toml` 的 `[[plugins]]` 中，启动命令为 `pnp
 
 ## 数据规范设计
 
-- 涉及 `contracts`、`adapters`、`application`、`view-model` 与 `Tuyau` 边界时，统一以 [`docs/architecture/02. 数据契约与适配层设计.md`](./docs/architecture/02.%20数据契约与适配层设计.md) 为入口
+- 涉及 `contracts`、`adapters`、`application`、`view-model` 与 `Tuyau` 边界时，统一以 [`docs/architecture/05. 数据契约与适配层设计.md`](./docs/architecture/05.%20数据契约与适配层设计.md) 为入口
 - `apps/web` 与 `apps/api` 之间的类型安全 API 调用、Tuyau 接入和后续扩展流程统一以 [`docs/workflow/frontend-adonis-api-client-guide.md`](./docs/workflow/frontend-adonis-api-client-guide.md) 为入口
 
 ## 文档约定

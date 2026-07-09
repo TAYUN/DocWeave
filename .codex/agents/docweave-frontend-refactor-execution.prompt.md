@@ -11,7 +11,6 @@
 
 - [`../../docs/workflow/frontend-route-architecture.md`](../../docs/workflow/frontend-route-architecture.md)
 - [`../../docs/ui/page-inventory.md`](../../docs/ui/page-inventory.md)
-- [`../../docs/ui/app-shell-layout.md`](../../docs/ui/app-shell-layout.md)
 - [`../../docs/workflow/frontend-mantine-implementation-guide.md`](../../docs/workflow/frontend-mantine-implementation-guide.md)
 - [`../../DESIGN.md`](../../DESIGN.md)
 
@@ -68,7 +67,6 @@
 开始前请先阅读并遵守：
 - docs/workflow/frontend-route-architecture.md
 - docs/ui/page-inventory.md
-- docs/ui/app-shell-layout.md
 - docs/workflow/frontend-mantine-implementation-guide.md
 - DESIGN.md
 
@@ -132,7 +130,6 @@
 - page 文件只做页面编排
 - 可复用业务块下沉到 features
 - 遵守 docs/ui/page-inventory.md 的页面边界
-- 遵守 docs/ui/app-shell-layout.md 的壳层约束
 
 如果当前页面规格不完整，请先指出缺口，再按最小合理结构接入。
 ```

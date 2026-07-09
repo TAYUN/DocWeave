@@ -45,7 +45,6 @@
 页面信息架构和代码组织已经分开维护：
 
 - 本文档只负责页面清单、路由语义、导航流转、阶段状态和跨页面一致性约定。
-- 应用壳层 UI 规格见 [`./app-shell-layout.md`](./app-shell-layout.md)。
 - 前端路由拆分、目录树、`router.tsx` 迁移落点和实现边界，统一见 [`../workflow/frontend-route-architecture.md`](../workflow/frontend-route-architecture.md)。
 
 ## 页面流转关系
@@ -91,7 +90,6 @@
 
 ## 壳层布局入口
 
-- `AppHeader`、Sidebar 模式和应用壳层的详细 UI 规格，统一见 [`./app-shell-layout.md`](./app-shell-layout.md)。
 - 本文档只保留页面级导航语义：公开页挂 `PublicLayout`，已登录业务页挂 `AppLayout`，公开分享页挂 `ShareLayout`。
 
 ## 跨页面一致性约定
@@ -119,7 +117,6 @@
 - 每个页面的详细规格：`docs/ui/pages/` 目录
 - 已补充：`p01-login.md` 到 `p09-ai-assistant.md`
 - 规格与当前实现的逐页核对：`docs/planning/48. 单页规格与当前实现逐页核对.md`
-- 应用壳层布局规格：`docs/ui/app-shell-layout.md`
 - 前端路由与页面代码组织：`docs/workflow/frontend-route-architecture.md`
 - 设计规范：`DESIGN.md`
 - 前端实现规范：`docs/workflow/frontend-mantine-implementation-guide.md`

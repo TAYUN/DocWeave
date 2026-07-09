@@ -1,6 +1,6 @@
 # Frontend Route Architecture Guide
 
-本文档用于约定 `apps/web` 的前端路由拆分方式、页面代码组织边界，以及从当前单文件 `router.tsx` 迁移到可维护结构的落点。
+本文档用于约定 `apps/web` 的前端路由拆分方式、页面代码组织边界，以及当前可维护结构下的继续演进约束。
 
 它服务的是前端实现架构，不负责页面视觉规格、组件封装或产品级页面定义。
 
@@ -20,6 +20,26 @@
 - 适用：TanStack Router 的路由拆分、Layout 分层、页面目录规划、页面模块落点、后续 AI 实现约束。
 - 不适用：页面视觉样式、交互文案、单页信息层级。这些内容应回到页面规格和设计文档。
 
+## 当前状态说明
+
+当前 `apps/web` 已经完成第一轮路由拆分，不再处于“单文件 `router.tsx` 迁移中”的阶段。
+
+当前真实结构已经是：
+
+1. `router/index.tsx` 负责组装 `routeTree`
+2. `router/layouts/*` 承载 `RootLayout`、`PublicLayout`、`AppLayout`
+3. `router/routes/**/*` 承载 `createRoute`、`beforeLoad` 等路由定义
+4. `pages/*` 承载页面编排
+5. `features/*` 承载业务区块
+
+因此，本文档后续内容应理解为：
+
+1. 对当前结构的维护约束
+2. 对后续新增页面和新增子路由的接入规则
+3. 对仍未落地页面的目标代码树参考
+
+而不是再把当前实现当作“尚未开始拆分”的迁移对象。
+
 ## 规划原则
 
 - **保留当前 URL 语义**：本轮 UI 重构继续使用现有页面规格里的 `/`、`/spaces/:spaceId`、`/documents/:documentId`、`/search`、`/chat`、`/ai`。不建议在只做 UI 重构时同时改成 `/home`、`/s/:spaceSlug`、`/s/:spaceSlug/d/:docId`，否则会把视觉改造和信息架构迁移耦在一起。
@@ -29,7 +49,33 @@
 - **先拆模块，再决定是否切文件路由**：当前项目已经使用 TanStack Router 代码式建树，先把模块边界拆干净即可；没有必要为了“拆文件”立刻引入新的路由生成方案。
 - **公开页也必须有 Layout**：`PublicLayout` 虽然不显示 Sidebar，但它仍然是公开页的统一壳层；不允许把登录页之类的公开页重新做成“无 layout 特判页”。
 
-## 推荐 URL 页面树
+## 当前已落地 URL 页面树
+
+当前代码事实已经落地的页面树如下：
+
+```text
+RootLayout
+├── PublicLayout
+│   └── /login
+└── AppLayout
+    ├── /
+    ├── /spaces/:spaceId
+    └── /documents/:documentId
+```
+
+当前对应文件包括：
+
+1. `router/layouts/root-layout.tsx`
+2. `router/layouts/public-layout.tsx`
+3. `router/layouts/app-layout.tsx`
+4. `router/routes/public/login.route.tsx`
+5. `router/routes/app/home.route.tsx`
+6. `router/routes/app/spaces/space-detail.route.tsx`
+7. `router/routes/app/documents/document-editor.route.tsx`
+
+## 目标 URL 页面树
+
+下面这棵树表示“后续扩展时建议遵守的目标组织”，不是当前已全部实现的事实：
 
 ```text
 RootLayout
@@ -69,13 +115,58 @@ RootLayout
 - `/documents/:documentId` 继续保持顶层详情路由，而不是强行嵌到 `/spaces/:spaceId/*` 下。这样更符合当前后端以 `documentId` 直取详情的接口事实，也更利于直达、分享和后续协同深链。
 - `/chat/:chatId` 建议只作为未来扩展位保留，在对话持久化、历史列表和恢复会话需求明确前，不要先做假嵌套路由。
 
-## 推荐代码树
+## 当前已落地代码树
+
+当前 `apps/web/src` 的主要结构已经是：
 
 ```text
 apps/web/src
 ├── router/
 │   ├── index.tsx
-│   ├── route-tree.tsx
+│   ├── layouts/
+│   │   ├── root-layout.tsx
+│   │   ├── public-layout.tsx
+│   │   └── app-layout.tsx
+│   └── routes/
+│       ├── public/
+│       │   ├── public-layout.route.tsx
+│       │   └── login.route.tsx
+│       └── app/
+│           ├── app-layout.route.tsx
+│           ├── home.route.tsx
+│           ├── spaces/
+│           │   └── space-detail.route.tsx
+│           └── documents/
+│               └── document-editor.route.tsx
+├── pages/
+│   ├── auth/
+│   │   └── login-page.tsx
+│   ├── workbench/
+│   │   └── workbench-home-page.tsx
+│   ├── spaces/
+│   │   └── space-detail-page.tsx
+│   └── documents/
+│       └── document-editor-page.tsx
+├── features/
+│   ├── shell/
+│   ├── spaces/
+│   ├── documents/
+│   └── shared/
+└── lib/
+    ├── api.ts
+    ├── auth.ts
+    ├── tuyau-client.ts
+    └── workspace-data.ts
+```
+
+## 目标代码树
+
+下面这棵树表示后续扩展页面继续接入时的推荐方向，不代表当前仓库已经全部实现：
+
+```text
+apps/web/src
+├── router/
+│   ├── index.tsx
 │   ├── layouts/
 │   │   ├── root-layout.tsx
 │   │   ├── public-layout.tsx
@@ -181,42 +272,46 @@ apps/web/src
 ### WorkbenchHome
 
 - `features/shell/app-header/*`：顶栏品牌、搜索入口、新建入口、用户菜单
-- `features/spaces/create-space-form/*`：创建空间表单与提交状态
-- `features/spaces/space-list/*`：空间列表与空间卡片
-- `features/documents/recent-document-list/*`：最近文档列表
+- `features/spaces/create-space-modal.tsx`：创建空间入口、弹窗与提交状态
+- `features/spaces/space-overview-grid.tsx`：空间概览卡片与最近文档入口
+- `features/spaces/space-list.tsx`：空间列表
+- `features/documents/recent-document-list.tsx`：最近文档列表
 
 ### SpacePage
 
 - `features/spaces/space-summary-card/*`：空间名称、简介、元数据
-- `features/documents/create-document-form/*`：创建文档表单
-- `features/documents/document-list/*`：空间内文档列表
-- `features/spaces/space-switcher/*`：空间切换器
+- `features/documents/create-document-form.tsx`：创建文档表单
+- `features/documents/document-directory-list.tsx`：空间内文档目录
+- `features/spaces/lib/space-view-model.ts`：空间摘要、文档数与最近文档排序等页面友好字段
 
 ### DocumentPage
 
-- `features/documents/document-status-bar/*`：文档状态栏
-- `features/documents/document-meta-form/*`：标题、摘要编辑区
-- `features/documents/document-editor-panel/*`：BlockNote 编辑器面板
-- `features/documents/document-actions/*`：保存、分享、收藏、删除等动作区
+- `features/documents/document-status-bar.tsx`：文档状态栏
+- `features/documents/document-meta-panel.tsx`：标题、摘要和元信息相关区块
+- `features/documents/document-editor-panel.tsx`：BlockNote 编辑器面板
+- `features/documents/lib/document-view-model.ts`：状态文案、时间、内容解析等展示友好字段
 
 说明：
 
 - 以上清单是当前三大页面的最小推荐切块，不要求一步到位全部实现独立文件，但后续拆分时应沿这个方向推进。
 - 如果某块暂时不抽成独立组件，也应在页面文件内先按相同职责分段，避免继续堆成单一大组件。
 
-## 当前 `router.tsx` 的迁移落点
+## 已完成的拆分结果
 
-| 当前集中在 `router.tsx` 的内容 | 建议迁出位置 |
-|------|------|
-| `RootLayout` | `router/layouts/root-layout.tsx` |
-| 公开页壳层与重定向逻辑 | `router/layouts/public-layout.tsx` + `router/routes/public/*.route.tsx` |
-| `LoginPage` | `pages/auth/login-page.tsx` |
-| `WorkbenchShell` | `router/layouts/app-layout.tsx` + `features/shell/*` |
-| `WorkbenchHome` | `pages/workbench/workbench-home-page.tsx` |
-| `SpacePage` | `pages/spaces/space-detail-page.tsx` |
-| `DocumentPage` | `pages/documents/document-editor-page.tsx` |
-| `getDocumentStatusLabel`、`parseDocumentContent` 之类纯函数 | `features/documents/lib/*` 或 `pages/documents/lib/*` |
-| 顶层 `createRoute(...)` 定义 | `router/routes/**/*.route.tsx` |
+当前已经完成的关键拆分包括：
+
+1. `RootLayout` 已落到 `router/layouts/root-layout.tsx`
+2. 公开页壳层与重定向逻辑已落到 `router/layouts/public-layout.tsx` + `router/routes/public/*.route.tsx`
+3. `AppLayout` 已承载登录态守卫、导航级数据与工作台壳层
+4. `LoginPage`、`WorkbenchHomePage`、`SpaceDetailPage`、`DocumentEditorPage` 已落到 `pages/*`
+5. 文档与空间相关纯函数、view-model 与展示转换已下沉到 `features/*/lib`
+6. 顶层 `createRoute(...)` 定义已收口到 `router/routes/**/*.route.tsx`
+
+后续重点不再是“把 `router.tsx` 拆掉”，而是：
+
+1. 新页面继续按相同边界接入
+2. 已有页面继续把过大的 page 内逻辑下沉到 `features/*`
+3. 新增子路由时继续保持 route / page / feature 不串层
 
 ## 对 AI 实现的约束
 
