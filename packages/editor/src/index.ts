@@ -1,2 +1,6 @@
-export { DocumentEditor } from './document-editor'
-export type { DocumentEditorContent, DocumentEditorProps } from './document-editor'
+export { DocumentEditor, seedCollaborationFragment } from './document-editor'
+export type {
+  DocumentEditorCollaboration,
+  DocumentEditorContent,
+  DocumentEditorProps,
+} from './document-editor'

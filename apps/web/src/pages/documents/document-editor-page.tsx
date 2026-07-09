@@ -1,15 +1,31 @@
 import { Badge, Button, Container, Flex, Group, Paper, ScrollArea, Skeleton, Stack, Text, TextInput, Textarea } from '@mantine/core'
 import { parseDocumentContent, serializeDocumentContent } from '@docweave/adapters'
+import type {
+  CollaborationConnectionStatus,
+  CollaborationPresenceEntry,
+  CollaborationPresenceState,
+  CollaborationTokenPayload,
+} from '@docweave/contracts/collaboration'
 import { notifications } from '@mantine/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
+import { HocuspocusProvider } from '@hocuspocus/provider'
 import { ArrowLeft, ChevronRight, Clock } from 'lucide-react'
-import { DocumentEditor } from '@docweave/editor'
+import { DocumentEditor, seedCollaborationFragment } from '@docweave/editor'
 import { useEffect, useMemo, useState } from 'react'
+import * as Y from 'yjs'
 import { toDocumentEditorViewModel } from '@/features/documents/lib/document-display'
 import { MutationNotice } from '@/features/shared/mutation-notice'
 import { ErrorStatePanel, NotFoundStatePanel, RestrictedStatePanel } from '@/features/shared/state-panels'
-import { getDocumentById, updateDocument } from '@/lib/api'
+import {
+  getCollaborationToken,
+  getDocumentById,
+  readCollaborationTokenPayload,
+  updateDocument,
+} from '@/lib/api'
+
+const COLLAB_FRAGMENT_NAME = 'document-store'
+const COLLAB_BOOT_TIMEOUT_MS = 2500
 
 function getDocumentStateKind(message: string) {
   if (/权限|禁止|forbidden|restricted/i.test(message)) return 'restricted'
@@ -27,12 +43,28 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
   })
 
   const document = documentQuery.data
+  const collaborationTokenQuery = useQuery({
+    queryKey: ['collaboration-token', documentId],
+    queryFn: () => getCollaborationToken(documentId),
+    enabled: documentQuery.isSuccess,
+    retry: false,
+  })
   const documentView = useMemo(() => (document ? toDocumentEditorViewModel(document) : null), [document])
   const initialContent = useMemo(() => documentView?.content ?? parseDocumentContent(), [documentView])
   const [title, setTitle] = useState('')
   const [summary, setSummary] = useState('')
   const [draftContent, setDraftContent] = useState(initialContent)
   const [error, setError] = useState<string | null>(null)
+  const [collaborationStatus, setCollaborationStatus] =
+    useState<CollaborationConnectionStatus>('idle')
+  const [collaborationRuntime, setCollaborationRuntime] = useState<{
+    document: Y.Doc
+    fragment: Y.XmlFragment
+    payload: CollaborationTokenPayload
+    provider: HocuspocusProvider
+  } | null>(null)
+  const [presenceEntries, setPresenceEntries] = useState<CollaborationPresenceEntry[]>([])
+  const [useLocalFallback, setUseLocalFallback] = useState(false)
 
   useEffect(() => {
     if (!documentView) return
@@ -42,11 +74,118 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
     setError(null)
   }, [documentView])
 
+  useEffect(() => {
+    setCollaborationRuntime(null)
+    setPresenceEntries([])
+    setUseLocalFallback(false)
+    setCollaborationStatus(document ? 'connecting' : 'idle')
+  }, [document?.id])
+
+  useEffect(() => {
+    if (!document || !collaborationTokenQuery.data || useLocalFallback) {
+      return
+    }
+
+    const payload = readCollaborationTokenPayload(collaborationTokenQuery.data.token)
+    const yDoc = new Y.Doc()
+    const fragment = yDoc.getXmlFragment(COLLAB_FRAGMENT_NAME)
+    const provider = new HocuspocusProvider({
+      url: getCollaborationWebsocketUrl(),
+      name: collaborationTokenQuery.data.roomName,
+      document: yDoc,
+      token: collaborationTokenQuery.data.token,
+      onAuthenticationFailed: ({ reason }) => {
+        setCollaborationStatus('unauthorized')
+        setError(reason || '协同认证失败，已切换为本地降级编辑。')
+        setUseLocalFallback(true)
+      },
+      onStatus: ({ status }) => {
+        setCollaborationStatus(mapProviderStatus(status))
+      },
+      onSynced: ({ state }) => {
+        if (state) {
+          seedCollaborationFragment(yDoc, COLLAB_FRAGMENT_NAME, initialContent)
+          setCollaborationStatus('connected')
+        }
+      },
+    })
+
+    provider.setAwarenessField('presence', {
+      user: payload.user,
+      canEdit: payload.capabilities.canEdit,
+    } satisfies CollaborationPresenceState)
+    const syncPresence = () => {
+      const states = Array.from(provider.awareness?.getStates().values() ?? [])
+      const entries = states
+        .map((state) => toPresenceEntry(state, payload.user.id))
+        .filter((entry): entry is CollaborationPresenceEntry => Boolean(entry))
+
+      setPresenceEntries(
+        entries.length > 0
+          ? entries
+          : [
+              {
+                ...payload.user,
+                canEdit: payload.capabilities.canEdit,
+                isCurrentUser: true,
+              },
+            ],
+      )
+    }
+
+    syncPresence()
+    const presenceTimer = window.setInterval(syncPresence, 500)
+
+    const bootTimeout = window.setTimeout(() => {
+      setCollaborationStatus((currentStatus) => {
+        if (currentStatus === 'connected') {
+          return currentStatus
+        }
+
+        setError('协同服务暂时不可用，已切换为本地降级编辑。')
+        setUseLocalFallback(true)
+        provider.destroy()
+        yDoc.destroy()
+        return 'error'
+      })
+    }, COLLAB_BOOT_TIMEOUT_MS)
+
+    setCollaborationRuntime({
+      document: yDoc,
+      fragment,
+      payload,
+      provider,
+    })
+
+    return () => {
+      window.clearTimeout(bootTimeout)
+      window.clearInterval(presenceTimer)
+      provider.destroy()
+      yDoc.destroy()
+    }
+  }, [collaborationTokenQuery.data, document, useLocalFallback])
+
+  useEffect(() => {
+    if (collaborationTokenQuery.isError) {
+      setError(
+        collaborationTokenQuery.error instanceof Error
+          ? `${collaborationTokenQuery.error.message}，已切换为本地降级编辑。`
+          : '协同初始化失败，已切换为本地降级编辑。',
+      )
+      setUseLocalFallback(true)
+      setCollaborationStatus('error')
+    }
+  }, [collaborationTokenQuery.error, collaborationTokenQuery.isError])
+
+  const isCollaborationEditor =
+    Boolean(collaborationRuntime) && !useLocalFallback && collaborationStatus === 'connected'
+  const hasContentChanges = JSON.stringify(draftContent) !== JSON.stringify(initialContent)
+
   const hasUnsavedChanges =
     !!document &&
     (title !== document.title ||
       summary !== document.summary ||
-      JSON.stringify(draftContent) !== JSON.stringify(initialContent))
+      hasContentChanges)
 
   useEffect(() => {
     if (!hasUnsavedChanges) return
@@ -105,7 +244,12 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
 
   const handleSave = () => {
     setError(null)
-    updateDocumentMutation.mutate({ documentId, title, summary, content: serializeDocumentContent(draftContent) })
+    updateDocumentMutation.mutate({
+      documentId,
+      title,
+      summary,
+      ...(hasContentChanges ? { content: serializeDocumentContent(draftContent) } : {}),
+    })
   }
 
   return (
@@ -184,6 +328,14 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                 <Text size="xs" c="dimmed">
                   {documentView?.updatedAtText ?? '暂无更新时间'}
                 </Text>
+                <Badge size="sm" variant="light">
+                  {getCollaborationStatusLabel(collaborationStatus, useLocalFallback)}
+                </Badge>
+                {presenceEntries.length > 0 ? (
+                  <Text size="xs" c="dimmed">
+                    在线 {presenceEntries.length} 人
+                  </Text>
+                ) : null}
               </Group>
 
               <Textarea
@@ -196,11 +348,36 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
               />
 
               <Paper p="md" withBorder className="editor-surface">
-                <DocumentEditor
-                  key={document.id}
-                  initialContent={initialContent}
-                  onChange={setDraftContent}
-                />
+                {isCollaborationEditor && collaborationRuntime ? (
+                  <DocumentEditor
+                    key={`${document.id}:collaboration`}
+                    mode="collaboration"
+                    editable={collaborationRuntime.payload.capabilities.canEdit}
+                    onChange={setDraftContent}
+                    collaboration={{
+                      fragment: collaborationRuntime.fragment,
+                      provider: {
+                        awareness: collaborationRuntime.provider.awareness ?? undefined,
+                      },
+                      user: {
+                        name: getCollaborationDisplayName(collaborationRuntime.payload),
+                        color: getCollaborationColor(collaborationRuntime.payload.user.id),
+                      },
+                    }}
+                  />
+                ) : collaborationTokenQuery.isPending && !useLocalFallback ? (
+                  <Stack gap="sm">
+                    <Skeleton h={18} radius="sm" w="30%" />
+                    <Skeleton h={240} radius="md" />
+                  </Stack>
+                ) : (
+                  <DocumentEditor
+                    key={`${document.id}:standalone`}
+                    editable
+                    initialContent={initialContent}
+                    onChange={setDraftContent}
+                  />
+                )}
               </Paper>
             </Stack>
           </Container>
@@ -208,4 +385,63 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
       </Stack>
     </Flex>
   )
+}
+
+function getCollaborationWebsocketUrl() {
+  return import.meta.env.VITE_COLLAB_WS_URL ?? 'ws://127.0.0.1:3334'
+}
+
+function mapProviderStatus(status: 'connecting' | 'connected' | 'disconnected') {
+  if (status === 'connecting') return 'connecting'
+  if (status === 'connected') return 'connected'
+  return 'disconnected'
+}
+
+function getCollaborationStatusLabel(
+  status: CollaborationConnectionStatus,
+  useLocalFallback: boolean,
+) {
+  if (useLocalFallback) return '本地降级'
+  if (status === 'connecting') return '协同连接中'
+  if (status === 'connected') return '协同已连接'
+  if (status === 'unauthorized') return '协同未授权'
+  if (status === 'error') return '协同异常'
+  if (status === 'disconnected') return '协同已断开'
+  return '协同待机'
+}
+
+function getCollaborationDisplayName(payload: CollaborationTokenPayload) {
+  return payload.user.fullName?.trim() || payload.user.email
+}
+
+function getCollaborationColor(userId: number) {
+  const palette = ['#2667ff', '#0f9d58', '#d9480f', '#8e24aa', '#00838f', '#c62828']
+  return palette[Math.abs(userId) % palette.length]
+}
+
+function toPresenceEntry(
+  state: Record<string, unknown>,
+  currentUserId: number,
+): CollaborationPresenceEntry | null {
+  const presence =
+    state.presence && typeof state.presence === 'object'
+      ? (state.presence as Record<string, unknown>)
+      : state
+  const user = presence.user
+
+  if (!user || typeof user !== 'object') {
+    return null
+  }
+
+  const candidate = user as CollaborationTokenPayload['user']
+
+  if (typeof candidate.id !== 'number' || typeof candidate.email !== 'string') {
+    return null
+  }
+
+  return {
+    ...candidate,
+    canEdit: Boolean(presence.canEdit),
+    isCurrentUser: candidate.id === currentUserId,
+  }
 }

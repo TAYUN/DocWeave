@@ -7,6 +7,11 @@ import { AlertCircle, BookOpen, Lock, Share2, Sparkles } from 'lucide-react'
 import { saveAccessToken } from '@/lib/auth'
 import { AuthError, login } from '@/lib/api'
 
+const devAccounts = [
+  { label: 'Owner', email: 'owner@docweave.dev', password: 'docweave123' },
+  { label: 'Editor', email: 'editor@docweave.dev', password: 'docweave123' },
+]
+
 function getLoginErrorMessage(error: unknown) {
   if (error instanceof AuthError) return '邮箱或密码不正确'
   if (error instanceof TypeError) return '无法连接到服务器，请检查网络'
@@ -23,8 +28,8 @@ const features = [
 export function LoginPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [email, setEmail] = useState('owner@docweave.dev')
-  const [password, setPassword] = useState('docweave123')
+  const [email, setEmail] = useState(devAccounts[0].email)
+  const [password, setPassword] = useState(devAccounts[0].password)
   const [error, setError] = useState<string | null>(null)
 
   const loginMutation = useMutation({
@@ -117,10 +122,28 @@ export function LoginPage() {
                 radius="sm"
                 className="dev-account-panel"
               >
-                <Text size="sm" fw={600}>开发账号</Text>
-                <Text size="xs" c="dimmed">
-                  邮箱：owner@docweave.dev · 密码：docweave123
-                </Text>
+                <Stack gap="xs">
+                  <Text size="sm" fw={600}>开发账号</Text>
+                  <Group gap="xs">
+                    {devAccounts.map((account) => (
+                      <Button
+                        key={account.email}
+                        size="xs"
+                        variant={email === account.email ? 'filled' : 'light'}
+                        onClick={() => {
+                          setEmail(account.email)
+                          setPassword(account.password)
+                          setError(null)
+                        }}
+                      >
+                        {account.label}
+                      </Button>
+                    ))}
+                  </Group>
+                  <Text size="xs" c="dimmed">
+                    当前：{email} · 密码：{password}
+                  </Text>
+                </Stack>
               </Paper>
             ) : null}
 

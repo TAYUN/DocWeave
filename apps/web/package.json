@@ -13,10 +13,11 @@
     "theme:dark:contrast": "node ./scripts/generate-dark-tokens.mjs --preset contrast"
   },
   "dependencies": {
-    "@docweave/api": "workspace:*",
     "@docweave/adapters": "workspace:*",
+    "@docweave/api": "workspace:*",
     "@docweave/contracts": "workspace:*",
     "@docweave/editor": "workspace:*",
+    "@hocuspocus/provider": "^4.3.0",
     "@mantine/core": "9.4.1",
     "@mantine/hooks": "9.4.1",
     "@mantine/notifications": "9.4.1",
@@ -28,7 +29,8 @@
     "lucide-react": "1.23.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "tailwindcss": "4.3.2"
+    "tailwindcss": "4.3.2",
+    "yjs": "^13.6.31"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",

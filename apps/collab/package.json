@@ -1,0 +1,22 @@
+{
+  "name": "@docweave/collab",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env --import tsx ./src/index.ts",
+    "start": "node --env-file=.env --import tsx ./src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@docweave/contracts": "workspace:*",
+    "@hocuspocus/server": "^4.3.0",
+    "yjs": "^13.6.31"
+  },
+  "devDependencies": {
+    "@poppinss/ts-exec": "^1.4.4",
+    "@types/node": "^26.1.1",
+    "tsx": "^4.23.0",
+    "typescript": "^7.0.2"
+  }
+}

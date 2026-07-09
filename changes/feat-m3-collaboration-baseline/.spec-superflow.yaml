@@ -1,0 +1,41 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: closing
+workflow: full
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:83ed9435dedae6ce5b89d062b3b6d0cfb3956c0941a6056effc55b825d8f6e91
+contract_hash: sha256:ccff29f1b520d6f81328f50cc70c6b4ec5503a1609d36be52bdf1636ffa320bb
+
+# === Execution progress ===
+execution_mode: null
+batches_completed: 4
+test_result: pass
+
+# === Metadata ===
+change_name: feat-m3-collaboration-baseline
+last_transition: 2026-07-09T11:11:13.285Z
+last_transition_from: executing
+last_transition_to: closing
+
+# === Decision points ===
+dp_0_decisions: Change name: feat-m3-collaboration-baseline; intent: establish the M3 collaboration baseline with shared collaboration contracts, authenticated short-lived HMAC collaboration tokens, a minimal apps/collab Hocuspocus service, and web/editor integration planning; constraints: first correct the architecture docs type mismatch, keep workspaceId/documentId as string, keep user.id as number, do not introduce JWT, do not implement persistence in M3, and create packages/contracts/src/collaboration.ts as the shared contract source for api/collab/web.
+dp_0_result: confirmed
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-09T07:16:55Z
+dp_1_result: null
+dp_1_timestamp: null
+dp_2_result: approved: planning artifacts review completed for proposal, three capability specs, design, and tasks with scope narrowed to no rooms.ts, weaker onStoreDocument emphasis, preserved web/editor planning, and metadata -> token -> provider -> editor init order
+dp_2_timestamp: 2026-07-09T07:45:00Z
+dp_3_result: approved: execution contract approved for M3 collaboration baseline; proceed with Batch 1-4 under shared contracts, HMAC token, minimal collab runtime, and metadata -> token -> provider -> editor init order
+dp_3_timestamp: 2026-07-09T08:12:52Z
+dp_4_result: SDD: Batch 1 crosses contracts, api env/routes/service/controller, so it exceeds low-risk same-module inline limits
+dp_4_timestamp: 2026-07-09T08:14:34Z
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: verification passed: reran collaboration token functional test, typecheck:api, apps/collab tsc --noEmit, typecheck:web, build:web, and check:workspace; manual runtime validation confirmed two-browser sync, presence display, save behavior, and empty-room seed fallback
+dp_6_timestamp: 2026-07-09T11:35:00Z
+dp_7_result: closing requested and approved for feat-m3-collaboration-baseline after tasks synced, test_result set to pass, and deferred collaboration persistence recorded as follow-up changes
+dp_7_timestamp: 2026-07-09T11:40:00Z

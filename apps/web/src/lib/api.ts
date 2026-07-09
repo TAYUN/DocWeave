@@ -1,5 +1,6 @@
 import type { Data } from '@docweave/api/data'
 import type { CurrentUserDto } from '@docweave/contracts/auth'
+import type { CollaborationTokenPayload } from '@docweave/contracts/collaboration'
 import type {
   CreateDocumentInput,
   DocumentDetailDto,
@@ -29,12 +30,22 @@ type SpaceStorePayload = SuccessPayload<AwaitedRoute<typeof tuyau.api.spaces.sto
 type SpaceTreePayload = SuccessPayload<AwaitedRoute<typeof tuyau.api.spaces.tree>>
 type DocumentStorePayload = SuccessPayload<AwaitedRoute<typeof tuyau.api.documents.store>>
 type DocumentUpdatePayload = SuccessPayload<AwaitedRoute<typeof tuyau.api.documents.update>>
+type CollaborationTokenPayloadResponse = {
+  data: {
+    documentId: string
+    roomName: string
+    token: string
+    provider: 'apps/collab'
+    expiresInSeconds: number
+  }
+}
 
 export type ApiSpace = SpaceDto
 export type ApiDocumentSummary = DocumentSummaryDto
 export type ApiDocumentDetail = DocumentDetailDto
 export type ApiSpaceTree = SpaceTreeDto
 export type CurrentUser = CurrentUserDto
+export type ApiCollaborationSession = CollaborationTokenPayloadResponse['data']
 export type UpdateDocumentPatch = UpdateDocumentInput
 export type LoginInput = {
   email: string
@@ -226,4 +237,30 @@ export async function updateDocument(
   } catch (error) {
     throw toRequestError(error, '保存文档失败，请稍后重试')
   }
+}
+
+export async function getCollaborationToken(documentId: string): Promise<ApiCollaborationSession> {
+  const payload = await requestJson<CollaborationTokenPayloadResponse>(
+    '/api/collaboration/token',
+    {
+      method: 'POST',
+      body: JSON.stringify({ documentId }),
+    },
+    '加载协同令牌失败，请稍后重试',
+  )
+
+  return payload.data
+}
+
+export function readCollaborationTokenPayload(token: string): CollaborationTokenPayload {
+  const [encodedPayload] = token.split('.')
+
+  if (!encodedPayload) {
+    throw new Error('协同令牌格式不正确')
+  }
+
+  const base64 = encodedPayload.replace(/-/g, '+').replace(/_/g, '/')
+  const padded = `${base64}${'='.repeat((4 - (base64.length % 4)) % 4)}`
+
+  return JSON.parse(window.atob(padded)) as CollaborationTokenPayload
 }

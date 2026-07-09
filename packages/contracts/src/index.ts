@@ -6,6 +6,18 @@
  * `@docweave/contracts/auth`
  */
 export type { CurrentUserDto } from './auth.js'
+export {
+  buildDocumentRoomName,
+  parseDocumentRoomName,
+} from './collaboration.js'
+export type {
+  CollaborationAwarenessState,
+  CollaborationCapabilities,
+  CollaborationConnectionStatus,
+  CollaborationPresenceEntry,
+  CollaborationTokenPayload,
+  CollaborationUserIdentity,
+} from './collaboration.js'
 export type {
   CreateDocumentInput,
   DocumentContent,

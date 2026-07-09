@@ -6,13 +6,18 @@ import { BaseSeeder } from '@adonisjs/lucid/seeders'
 export default class extends BaseSeeder {
   async run() {
     // 为 M2 闭环提供稳定的开发态入口，避免登录页只能接到空数据库。
-    await User.updateOrCreate(
-      { email: 'owner@docweave.dev' },
+    await User.updateOrCreateMany('email', [
       {
+        email: 'owner@docweave.dev',
         fullName: 'DocWeave Owner',
         password: 'docweave123',
       },
-    )
+      {
+        email: 'editor@docweave.dev',
+        fullName: 'DocWeave Editor',
+        password: 'docweave123',
+      },
+    ])
 
     await Space.updateOrCreate(
       { id: 'product' },
