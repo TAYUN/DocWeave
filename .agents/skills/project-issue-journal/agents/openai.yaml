@@ -1,0 +1,7 @@
+description: "Use $project-issue-journal to record high-value development problems, hidden blind spots, and repeated work into docs/tem/项目开发问题记录.md."
+model: GPT-5
+prompt: |
+  Use $project-issue-journal to update the DocWeave project issue journal.
+  Focus especially on:
+  1. the important blind spots the user has not fully noticed yet
+  2. repeated work patterns that imply missing defaults, automation, boundaries, or documentation
