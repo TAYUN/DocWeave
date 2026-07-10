@@ -4,6 +4,7 @@
   "private": true,
   "packageManager": "pnpm@10.12.1",
   "scripts": {
+    "sync:spec-superflow-skills": "node scripts/sync-spec-superflow-skills.mjs",
     "dev:web": "pnpm --dir apps/web dev",
     "dev:api": "pnpm --dir apps/api dev",
     "dev:collab": "pnpm --dir apps/collab dev",

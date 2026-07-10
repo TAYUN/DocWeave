@@ -14,7 +14,7 @@
 
 | 配置项 | 说明 |
 |--------|------|
-| `[skills].paths` | 指向 pnpm 全局安装的 `spec-superflow` 的 `skills/` 目录，提供 9 个 spec-superflow 工作流 skill |
+| `[skills].paths` | 指向仓库内镜像的 `.reasonix/vendor/spec-superflow/skills`，由 `pnpm sync:spec-superflow-skills` 从全局 `spec-superflow` 同步并重写运行时路径 |
 | `[[plugins]]` | 注册了 `docweave-mcp`（AdonisJS MCP 服务），启动命令 `pnpm --dir apps/api mcp:start` |
 
 项目本地额外技能在 `.agents/skills/`（`spec-superflow-closing`、`mantine-ui-docs`、`blocknote-docs`、`adonis-mcp`），与 pnpm 全局的 skills 互补。
@@ -96,7 +96,7 @@ MCP 服务注册在 `reasonix.toml` 的 `[[plugins]]` 中，启动命令为 `pnp
 
 当仓库中存在 `.spec-superflow.yaml`、`changes/`、`proposal.md`、`specs/`、`design.md`、`tasks.md` 或 `execution-contract.md` 时，优先按 spec-superflow 工作流推进，并主动选择合适的 skill。
 
-9 个 spec-superflow skill 来自 pnpm 全局安装的 `spec-superflow` 包，通过 `reasonix.toml` 的 `[skills].paths` 注册：
+9 个 spec-superflow skill 来自全局安装的 `spec-superflow` 包，但通过 `pnpm sync:spec-superflow-skills` 同步到仓库内镜像后，再由 `reasonix.toml` 的 `[skills].paths` 注册：
 
 | Skill | 阶段 | 职责 |
 |-------|------|------|
