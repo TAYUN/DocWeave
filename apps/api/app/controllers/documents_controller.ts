@@ -1,10 +1,7 @@
 import { createDocument } from '#application/documents/create_document'
 import { getDocument } from '#application/documents/get_document'
 import { listDocuments } from '#application/documents/list_documents'
-import {
-  EmptyDocumentPatchError,
-  updateDocument,
-} from '#application/documents/update_document'
+import { EmptyDocumentPatchError, updateDocument } from '#application/documents/update_document'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import DocumentProcessingService, {
   MissingStableSnapshotError,
@@ -20,7 +17,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class DocumentsController {
   constructor(
     private catalog = new DocweaveCatalogService(),
-    private processing = new DocumentProcessingService(),
+    private processing = new DocumentProcessingService()
   ) {}
 
   async index() {
@@ -32,11 +29,14 @@ export default class DocumentsController {
   async store({ request, response }: HttpContext) {
     const payload = await request.validateUsing(createDocumentValidator)
 
-    const document = await createDocument({
-      spaceId: payload.spaceId,
-      title: payload.title,
-      summary: payload.summary,
-    }, this.catalog)
+    const document = await createDocument(
+      {
+        spaceId: payload.spaceId,
+        title: payload.title,
+        summary: payload.summary,
+      },
+      this.catalog
+    )
 
     if (!document) {
       return response.status(404).send({
@@ -70,11 +70,7 @@ export default class DocumentsController {
     const patch = await request.validateUsing(updateDocumentValidator)
 
     try {
-      const document = await updateDocument(
-        params.documentId,
-        patch,
-        this.catalog,
-      )
+      const document = await updateDocument(params.documentId, patch, this.catalog)
 
       if (!document) {
         return response.status(404).send({
@@ -116,7 +112,7 @@ export default class DocumentsController {
       const result = await this.processing.triggerIndex(
         params.documentId,
         auth.getUserOrFail().id,
-        payload,
+        payload
       )
 
       if (!result) {

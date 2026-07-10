@@ -81,13 +81,17 @@ test.group('document snapshot flow', () => {
       },
     })
 
-    const snapshots = await DocumentSnapshot.query().where('document_id', document.id).orderBy('version', 'asc')
+    const snapshots = await DocumentSnapshot.query()
+      .where('document_id', document.id)
+      .orderBy('version', 'asc')
     assert.lengthOf(snapshots, 1)
 
-    await document.merge({
-      content: '[{"type":"paragraph","content":"v2"}]',
-      updatedAt: DateTime.utc().plus({ minute: 1 }),
-    }).save()
+    await document
+      .merge({
+        content: '[{"type":"paragraph","content":"v2"}]',
+        updatedAt: DateTime.utc().plus({ minute: 1 }),
+      })
+      .save()
 
     const thirdResponse = await client
       .post(`/api/documents/${document.id}/snapshots`)

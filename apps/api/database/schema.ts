@@ -8,7 +8,18 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
 export class AuthAccessTokenSchema extends BaseModel {
-  static $columns = ['abilities', 'createdAt', 'expiresAt', 'hash', 'id', 'lastUsedAt', 'name', 'tokenableId', 'type', 'updatedAt'] as const
+  static $columns = [
+    'abilities',
+    'createdAt',
+    'expiresAt',
+    'hash',
+    'id',
+    'lastUsedAt',
+    'name',
+    'tokenableId',
+    'type',
+    'updatedAt',
+  ] as const
   $columns = AuthAccessTokenSchema.$columns
   @column()
   declare abilities: string
@@ -33,7 +44,15 @@ export class AuthAccessTokenSchema extends BaseModel {
 }
 
 export class DocumentSnapshotSchema extends BaseModel {
-  static $columns = ['content', 'contentFormat', 'createdAt', 'documentId', 'id', 'sourceDocumentUpdatedAt', 'version'] as const
+  static $columns = [
+    'content',
+    'contentFormat',
+    'createdAt',
+    'documentId',
+    'id',
+    'sourceDocumentUpdatedAt',
+    'version',
+  ] as const
   $columns = DocumentSnapshotSchema.$columns
   @column()
   declare content: string
@@ -52,7 +71,18 @@ export class DocumentSnapshotSchema extends BaseModel {
 }
 
 export class DocumentSchema extends BaseModel {
-  static $columns = ['content', 'createdAt', 'id', 'latestIndexedVersion', 'latestSnapshotVersion', 'spaceId', 'status', 'summary', 'title', 'updatedAt'] as const
+  static $columns = [
+    'content',
+    'createdAt',
+    'id',
+    'latestIndexedVersion',
+    'latestSnapshotVersion',
+    'spaceId',
+    'status',
+    'summary',
+    'title',
+    'updatedAt',
+  ] as const
   $columns = DocumentSchema.$columns
   @column()
   declare content: string
@@ -77,7 +107,22 @@ export class DocumentSchema extends BaseModel {
 }
 
 export class RagIndexJobSchema extends BaseModel {
-  static $columns = ['attemptCount', 'createdAt', 'documentId', 'errorCode', 'errorMessage', 'finishedAt', 'id', 'lockedAt', 'requestedByUserId', 'stage', 'startedAt', 'status', 'targetSnapshotVersion', 'updatedAt'] as const
+  static $columns = [
+    'attemptCount',
+    'createdAt',
+    'documentId',
+    'errorCode',
+    'errorMessage',
+    'finishedAt',
+    'id',
+    'lockedAt',
+    'requestedByUserId',
+    'stage',
+    'startedAt',
+    'status',
+    'targetSnapshotVersion',
+    'updatedAt',
+  ] as const
   $columns = RagIndexJobSchema.$columns
   @column()
   declare attemptCount: number

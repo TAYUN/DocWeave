@@ -17,10 +17,7 @@ type CreateCollaborationTokenInput = {
   user: CollaborationUserIdentity
 }
 
-export function signCollaborationToken(
-  payload: CollaborationTokenPayload,
-  secret: string,
-) {
+export function signCollaborationToken(payload: CollaborationTokenPayload, secret: string) {
   const encodedPayload = encodeBase64Url(JSON.stringify(payload))
   const signature = signValue(encodedPayload, secret)
   return `${encodedPayload}.${signature}`
@@ -51,7 +48,7 @@ export function verifyCollaborationToken(token: string, secret: string) {
 export default class CollaborationTokenService {
   constructor(
     private secret = env.get('COLLAB_SECRET').release(),
-    private ttlSeconds = COLLABORATION_TOKEN_TTL_SECONDS,
+    private ttlSeconds = COLLABORATION_TOKEN_TTL_SECONDS
   ) {}
 
   issueDocumentToken(input: CreateCollaborationTokenInput) {

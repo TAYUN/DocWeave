@@ -15,7 +15,7 @@ function hasEditableField(patch: UpdateDocumentInput) {
 export async function updateDocument(
   documentId: string,
   patch: UpdateDocumentInput,
-  catalog = new DocweaveCatalogService(),
+  catalog = new DocweaveCatalogService()
 ): Promise<DocumentDetailDto | null> {
   if (!hasEditableField(patch)) {
     throw new EmptyDocumentPatchError()

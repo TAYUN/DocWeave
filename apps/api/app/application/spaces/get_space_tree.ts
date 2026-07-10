@@ -3,7 +3,7 @@ import DocweaveCatalogService from '#services/docweave_catalog_service'
 
 export async function getSpaceTree(
   spaceId: string,
-  catalog = new DocweaveCatalogService(),
+  catalog = new DocweaveCatalogService()
 ): Promise<SpaceTreeDto | null> {
   return catalog.getSpaceTree(spaceId)
 }

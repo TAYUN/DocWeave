@@ -6,7 +6,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class CollaborationTokensController {
   constructor(
     private catalog = new DocweaveCatalogService(),
-    private tokens = new CollaborationTokenService(),
+    private tokens = new CollaborationTokenService()
   ) {}
 
   async store({ auth, request, response }: HttpContext) {

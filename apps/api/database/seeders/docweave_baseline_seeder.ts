@@ -24,7 +24,7 @@ export default class extends BaseSeeder {
       {
         name: 'Product Workspace',
         summary: 'Owns workspace UX, editor surfaces, and user-facing flows.',
-      },
+      }
     )
 
     await Space.updateOrCreate(
@@ -32,7 +32,7 @@ export default class extends BaseSeeder {
       {
         name: 'Architecture',
         summary: 'Owns service boundaries, contracts, and implementation sequencing.',
-      },
+      }
     )
 
     await Document.updateOrCreate(
@@ -42,7 +42,7 @@ export default class extends BaseSeeder {
         title: 'Editor Runtime Baseline',
         summary: 'Seed the editor page shell, route boundaries, and workspace navigation.',
         status: 'draft',
-      },
+      }
     )
 
     await Document.updateOrCreate(
@@ -52,7 +52,7 @@ export default class extends BaseSeeder {
         title: 'Collaboration Token Flow',
         summary: 'Map how api and collab exchange access tokens for Yjs sessions.',
         status: 'review',
-      },
+      }
     )
 
     await Document.updateOrCreate(
@@ -62,7 +62,7 @@ export default class extends BaseSeeder {
         title: 'RAG Snapshot Pipeline',
         summary: 'Track snapshot, chunking, embedding, and Qdrant indexing milestones.',
         status: 'ready',
-      },
+      }
     )
   }
 }

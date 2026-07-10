@@ -29,13 +29,13 @@ export default class HttpExceptionHandler extends ExceptionHandler {
 
       return ctx.response.status(status).send(
         errors.length > 0
-          ? {
+          ? ({
               message,
               errors,
-            } satisfies ErrorBody
-          : {
+            } satisfies ErrorBody)
+          : ({
               message,
-            } satisfies ErrorBody,
+            } satisfies ErrorBody)
       )
     }
 
@@ -60,7 +60,8 @@ function shouldSendJson(ctx: HttpContext) {
 
 function getErrorStatus(error: unknown) {
   if (typeof error === 'object' && error) {
-    const candidate = 'status' in error ? error.status : 'statusCode' in error ? error.statusCode : null
+    const candidate =
+      'status' in error ? error.status : 'statusCode' in error ? error.statusCode : null
 
     if (typeof candidate === 'number' && candidate >= 400 && candidate <= 599) {
       return candidate
@@ -70,11 +71,7 @@ function getErrorStatus(error: unknown) {
   return 500
 }
 
-function getErrorMessage(
-  error: unknown,
-  status: number,
-  errors: ErrorBody['errors'] = [],
-) {
+function getErrorMessage(error: unknown, status: number, errors: ErrorBody['errors'] = []) {
   const response = getObjectValue(error, 'response')
   const payloadMessage = getObjectValue(response, 'message')
 
@@ -82,9 +79,10 @@ function getErrorMessage(
     return payloadMessage
   }
 
-  const errorMessage = typeof getObjectValue(error, 'message') === 'string'
-    ? (getObjectValue(error, 'message') as string)
-    : null
+  const errorMessage =
+    typeof getObjectValue(error, 'message') === 'string'
+      ? (getObjectValue(error, 'message') as string)
+      : null
 
   if (status === 422 && errors.length > 0) {
     return 'Validation failed'
@@ -122,7 +120,9 @@ function extractValidationErrors(error: unknown): NonNullable<ErrorBody['errors'
 
     const issues = source
       .map((issue) => normalizeValidationIssue(issue))
-      .filter((issue): issue is NonNullable<ReturnType<typeof normalizeValidationIssue>> => issue !== null)
+      .filter(
+        (issue): issue is NonNullable<ReturnType<typeof normalizeValidationIssue>> => issue !== null
+      )
 
     if (issues.length > 0) {
       return issues

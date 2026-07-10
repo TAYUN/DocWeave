@@ -6,11 +6,21 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.string('id').primary()
-      table.string('document_id').notNullable().references('id').inTable('documents').onDelete('CASCADE')
+      table
+        .string('document_id')
+        .notNullable()
+        .references('id')
+        .inTable('documents')
+        .onDelete('CASCADE')
       table.integer('target_snapshot_version').notNullable()
       table.string('status', 32).notNullable()
       table.string('stage', 32).notNullable()
-      table.integer('requested_by_user_id').nullable().references('id').inTable('users').onDelete('SET NULL')
+      table
+        .integer('requested_by_user_id')
+        .nullable()
+        .references('id')
+        .inTable('users')
+        .onDelete('SET NULL')
       table.integer('attempt_count').notNullable().defaultTo(0)
       table.string('error_code', 120).nullable()
       table.text('error_message').nullable()

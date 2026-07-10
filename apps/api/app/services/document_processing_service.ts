@@ -72,7 +72,10 @@ function toIndexJobDto(job: RagIndexJob): DocumentIndexJobDto {
 export default class DocumentProcessingService {
   async createSnapshot(documentId: string): Promise<CreateDocumentSnapshotResultDto | null> {
     return db.transaction(async (trx) => {
-      const document = await Document.query({ client: trx }).where('id', documentId).forUpdate().first()
+      const document = await Document.query({ client: trx })
+        .where('id', documentId)
+        .forUpdate()
+        .first()
 
       if (!document) {
         return null
@@ -112,7 +115,7 @@ export default class DocumentProcessingService {
           contentFormat: 'blocknote_json',
           sourceDocumentUpdatedAt: document.updatedAt,
         },
-        { client: trx },
+        { client: trx }
       )
 
       await Document.query({ client: trx }).where('id', document.id).update({
@@ -130,10 +133,13 @@ export default class DocumentProcessingService {
   async triggerIndex(
     documentId: string,
     requestedByUserId: number | null,
-    input: CreateDocumentIndexJobInput,
+    input: CreateDocumentIndexJobInput
   ): Promise<CreateDocumentIndexJobResultDto | null> {
     return db.transaction(async (trx) => {
-      const document = await Document.query({ client: trx }).where('id', documentId).forUpdate().first()
+      const document = await Document.query({ client: trx })
+        .where('id', documentId)
+        .forUpdate()
+        .first()
 
       if (!document) {
         return null
@@ -188,7 +194,7 @@ export default class DocumentProcessingService {
           requestedByUserId,
           attemptCount: 0,
         },
-        { client: trx },
+        { client: trx }
       )
 
       return {

@@ -5,11 +5,7 @@ import type {
   DocumentSummaryDto,
   UpdateDocumentInput,
 } from '@docweave/contracts/document'
-import type {
-  CreateSpaceInput,
-  SpaceDto,
-  SpaceTreeDto,
-} from '@docweave/contracts/space'
+import type { CreateSpaceInput, SpaceDto, SpaceTreeDto } from '@docweave/contracts/space'
 import {
   createDefaultDocumentContent,
   serializeDocumentContent,
@@ -57,7 +53,7 @@ export default class DocweaveCatalogService {
 
   async updateDocument(
     documentId: string,
-    patch: UpdateDocumentInput,
+    patch: UpdateDocumentInput
   ): Promise<DocumentDetailDto | null> {
     const document = await Document.find(documentId)
 
