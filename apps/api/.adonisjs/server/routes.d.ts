@@ -15,6 +15,9 @@ export type ScannedRoutes = {
     'documents.store': { paramsTuple?: []; params?: {} }
     'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'documents.update': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'documents.create_snapshot': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'documents.trigger_index': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'documents.status': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'collaboration_tokens.store': { paramsTuple?: []; params?: {} }
     'ai_editor.store': { paramsTuple?: []; params?: {} }
     'rag.search': { paramsTuple?: []; params?: {} }
@@ -26,6 +29,7 @@ export type ScannedRoutes = {
     'spaces.tree': { paramsTuple: [ParamValue]; params: {'spaceId': ParamValue} }
     'documents.index': { paramsTuple?: []; params?: {} }
     'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'documents.status': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
   HEAD: {
     'auth.me': { paramsTuple?: []; params?: {} }
@@ -33,6 +37,7 @@ export type ScannedRoutes = {
     'spaces.tree': { paramsTuple: [ParamValue]; params: {'spaceId': ParamValue} }
     'documents.index': { paramsTuple?: []; params?: {} }
     'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'documents.status': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
   POST: {
     'mcp.post': { paramsTuple?: []; params?: {} }
@@ -40,6 +45,8 @@ export type ScannedRoutes = {
     'auth.logout': { paramsTuple?: []; params?: {} }
     'spaces.store': { paramsTuple?: []; params?: {} }
     'documents.store': { paramsTuple?: []; params?: {} }
+    'documents.create_snapshot': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'documents.trigger_index': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'collaboration_tokens.store': { paramsTuple?: []; params?: {} }
     'ai_editor.store': { paramsTuple?: []; params?: {} }
     'rag.search': { paramsTuple?: []; params?: {} }

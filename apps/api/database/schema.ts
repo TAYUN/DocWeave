@@ -32,8 +32,27 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class DocumentSnapshotSchema extends BaseModel {
+  static $columns = ['content', 'contentFormat', 'createdAt', 'documentId', 'id', 'sourceDocumentUpdatedAt', 'version'] as const
+  $columns = DocumentSnapshotSchema.$columns
+  @column()
+  declare content: string
+  @column()
+  declare contentFormat: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare documentId: string
+  @column({ isPrimary: true })
+  declare id: string
+  @column.dateTime()
+  declare sourceDocumentUpdatedAt: DateTime | null
+  @column()
+  declare version: number
+}
+
 export class DocumentSchema extends BaseModel {
-  static $columns = ['content', 'createdAt', 'id', 'spaceId', 'status', 'summary', 'title', 'updatedAt'] as const
+  static $columns = ['content', 'createdAt', 'id', 'latestIndexedVersion', 'latestSnapshotVersion', 'spaceId', 'status', 'summary', 'title', 'updatedAt'] as const
   $columns = DocumentSchema.$columns
   @column()
   declare content: string
@@ -41,6 +60,10 @@ export class DocumentSchema extends BaseModel {
   declare createdAt: DateTime
   @column({ isPrimary: true })
   declare id: string
+  @column()
+  declare latestIndexedVersion: number | null
+  @column()
+  declare latestSnapshotVersion: number | null
   @column()
   declare spaceId: string
   @column()
@@ -51,6 +74,39 @@ export class DocumentSchema extends BaseModel {
   declare title: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+}
+
+export class RagIndexJobSchema extends BaseModel {
+  static $columns = ['attemptCount', 'createdAt', 'documentId', 'errorCode', 'errorMessage', 'finishedAt', 'id', 'lockedAt', 'requestedByUserId', 'stage', 'startedAt', 'status', 'targetSnapshotVersion', 'updatedAt'] as const
+  $columns = RagIndexJobSchema.$columns
+  @column()
+  declare attemptCount: number
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare documentId: string
+  @column()
+  declare errorCode: string | null
+  @column()
+  declare errorMessage: string | null
+  @column.dateTime()
+  declare finishedAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column.dateTime()
+  declare lockedAt: DateTime | null
+  @column()
+  declare requestedByUserId: number | null
+  @column()
+  declare stage: string
+  @column.dateTime()
+  declare startedAt: DateTime | null
+  @column()
+  declare status: string
+  @column()
+  declare targetSnapshotVersion: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
 }
 
 export class SpaceSchema extends BaseModel {

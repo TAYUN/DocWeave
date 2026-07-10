@@ -20,6 +20,9 @@ export interface ApiDefinition {
     store: typeof routes['documents.store']
     show: typeof routes['documents.show']
     update: typeof routes['documents.update']
+    createSnapshot: typeof routes['documents.create_snapshot']
+    triggerIndex: typeof routes['documents.trigger_index']
+    status: typeof routes['documents.status']
   }
   collaborationTokens: {
     store: typeof routes['collaboration_tokens.store']

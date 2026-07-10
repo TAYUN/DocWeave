@@ -1,0 +1,13 @@
+{
+  "name": "@docweave/document",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@docweave/adapters": "workspace:*",
+    "@docweave/contracts": "workspace:*"
+  }
+}

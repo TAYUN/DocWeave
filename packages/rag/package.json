@@ -1,0 +1,23 @@
+{
+  "name": "@docweave/rag",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "tsx --test src/index_document_snapshot.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@docweave/document": "workspace:*",
+    "openai": "^6.6.0",
+    "@qdrant/js-client-rest": "^1.15.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}

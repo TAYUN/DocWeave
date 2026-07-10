@@ -2,17 +2,18 @@
 # Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
 
 # === Core state ===
-state: exploring
+state: implementing
 workflow: full
 
 # === Hashes (fast staleness detection) ===
-artifacts_hash: null
-contract_hash: null
+artifacts_hash: sha256:797b1945ea0de8393972afecb05367f730b9fdc9f9550c350cd1af487db0a534
+contract_hash: sha256:0e411ca2aaca7f51a2a707bf34382ec39e8482c71d9be349e5ac8de5a149cdd7
 
 # === Execution progress ===
-execution_mode: null
-batches_completed: 0
-test_result: null
+execution_mode: Batch Inline
+batches_completed: 4
+test_result: pass
+spec_merged: false
 
 # === Metadata ===
 change_name: feat-m4-stable-snapshot-baseline
@@ -29,13 +30,13 @@ dp_1_result: null
 dp_1_timestamp: null
 dp_2_result: null
 dp_2_timestamp: null
-dp_3_result: null
-dp_3_timestamp: null
-dp_4_result: null
-dp_4_timestamp: null
+dp_3_result: approved: execution-contract approved on latest master baseline; restore stash completed; proceed with M4 mainline batches for stable snapshots, index jobs, worker polling, and Bailian-compatible embedding baseline while keeping collaboration persistence out of scope
+dp_3_timestamp: 2026-07-10T08:00:30Z
+dp_4_result: implemented: batches 1-4 completed for stable snapshots, index jobs, packages/document, packages/rag, and plain-node worker polling baseline
+dp_4_timestamp: 2026-07-10T08:40:00Z
 dp_5_result: null
 dp_5_timestamp: null
-dp_6_result: null
-dp_6_timestamp: null
-dp_7_result: null
-dp_7_timestamp: null
+dp_6_result: verified: pnpm typecheck:api; pnpm --dir apps/api test --files tests/functional/document_snapshot_flow.spec.ts; pnpm --dir apps/api test --files tests/functional/document_index_job_flow.spec.ts; pnpm --dir packages/rag test; pnpm --dir apps/worker exec tsc --noEmit
+dp_6_timestamp: 2026-07-10T08:45:00Z
+dp_7_result: closing-ready: tasks checked, state rebuilt, awaiting final archive/merge decisions
+dp_7_timestamp: 2026-07-10T08:46:00Z

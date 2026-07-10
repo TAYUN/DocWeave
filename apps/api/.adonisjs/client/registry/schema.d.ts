@@ -139,6 +139,42 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'documents.create_snapshot': {
+    methods: ["POST"]
+    pattern: '/api/documents/:documentId/snapshots'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { documentId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['createSnapshot']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['createSnapshot']>>>
+    }
+  }
+  'documents.trigger_index': {
+    methods: ["POST"]
+    pattern: '/api/documents/:documentId/index'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/documents').triggerDocumentIndexValidator)>>
+      paramsTuple: [ParamValue]
+      params: { documentId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/documents').triggerDocumentIndexValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['triggerIndex']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['triggerIndex']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'documents.status': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/documents/:documentId/status'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { documentId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['status']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/documents_controller').default['status']>>>
+    }
+  }
   'collaboration_tokens.store': {
     methods: ["POST"]
     pattern: '/api/collaboration/token'

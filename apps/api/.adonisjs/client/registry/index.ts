@@ -72,6 +72,24 @@ const routes = {
     tokens: [{"old":"/api/documents/:documentId","type":0,"val":"api","end":""},{"old":"/api/documents/:documentId","type":0,"val":"documents","end":""},{"old":"/api/documents/:documentId","type":1,"val":"documentId","end":""}],
     types: placeholder as Registry['documents.update']['types'],
   },
+  'documents.create_snapshot': {
+    methods: ["POST"],
+    pattern: '/api/documents/:documentId/snapshots',
+    tokens: [{"old":"/api/documents/:documentId/snapshots","type":0,"val":"api","end":""},{"old":"/api/documents/:documentId/snapshots","type":0,"val":"documents","end":""},{"old":"/api/documents/:documentId/snapshots","type":1,"val":"documentId","end":""},{"old":"/api/documents/:documentId/snapshots","type":0,"val":"snapshots","end":""}],
+    types: placeholder as Registry['documents.create_snapshot']['types'],
+  },
+  'documents.trigger_index': {
+    methods: ["POST"],
+    pattern: '/api/documents/:documentId/index',
+    tokens: [{"old":"/api/documents/:documentId/index","type":0,"val":"api","end":""},{"old":"/api/documents/:documentId/index","type":0,"val":"documents","end":""},{"old":"/api/documents/:documentId/index","type":1,"val":"documentId","end":""},{"old":"/api/documents/:documentId/index","type":0,"val":"index","end":""}],
+    types: placeholder as Registry['documents.trigger_index']['types'],
+  },
+  'documents.status': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/documents/:documentId/status',
+    tokens: [{"old":"/api/documents/:documentId/status","type":0,"val":"api","end":""},{"old":"/api/documents/:documentId/status","type":0,"val":"documents","end":""},{"old":"/api/documents/:documentId/status","type":1,"val":"documentId","end":""},{"old":"/api/documents/:documentId/status","type":0,"val":"status","end":""}],
+    types: placeholder as Registry['documents.status']['types'],
+  },
   'collaboration_tokens.store': {
     methods: ["POST"],
     pattern: '/api/collaboration/token',

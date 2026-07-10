@@ -23,6 +23,8 @@ export type DocumentSummarySource = {
   summary: string | null
   spaceId: string
   content?: string | null
+  latestSnapshotVersion?: number | null
+  latestIndexedVersion?: number | null
   createdAt?: DateValue
   updatedAt?: DateValue
 }
@@ -62,6 +64,8 @@ export function toDocumentSummaryDto(document: DocumentSummarySource): DocumentS
     status: normalizeDocumentStatus(document.status),
     summary,
     spaceId: document.spaceId,
+    latestSnapshotVersion: document.latestSnapshotVersion ?? null,
+    latestIndexedVersion: document.latestIndexedVersion ?? null,
     updatedAt: toIsoString(document.updatedAt) ?? toIsoString(document.createdAt),
   }
 }

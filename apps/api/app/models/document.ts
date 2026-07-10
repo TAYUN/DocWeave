@@ -24,6 +24,12 @@ export default class Document extends BaseModel {
   @column()
   declare status: 'draft' | 'review' | 'ready'
 
+  @column()
+  declare latestSnapshotVersion: number | null
+
+  @column()
+  declare latestIndexedVersion: number | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

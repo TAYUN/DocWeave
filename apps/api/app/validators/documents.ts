@@ -18,3 +18,7 @@ export const updateDocumentValidator = vine.create({
   summary: vine.string().trim().optional(),
   content: vine.string().optional(),
 })
+
+export const triggerDocumentIndexValidator = vine.create({
+  snapshotVersion: vine.number().positive().withoutDecimals().optional(),
+})
