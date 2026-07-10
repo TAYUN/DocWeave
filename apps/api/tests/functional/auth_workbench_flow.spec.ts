@@ -57,7 +57,9 @@ test.group('auth workbench flow', () => {
       },
     })
 
-    const spacesResponse = await client.get('/api/spaces').header('authorization', `Bearer ${token}`)
+    const spacesResponse = await client
+      .get('/api/spaces')
+      .header('authorization', `Bearer ${token}`)
     spacesResponse.assertStatus(200)
     spacesResponse.assertBodyContains({
       data: [
@@ -72,7 +74,9 @@ test.group('auth workbench flow', () => {
       .header('authorization', `Bearer ${token}`)
     logoutResponse.assertStatus(200)
 
-    const staleTokenResponse = await client.get('/api/auth/me').header('authorization', `Bearer ${token}`)
+    const staleTokenResponse = await client
+      .get('/api/auth/me')
+      .header('authorization', `Bearer ${token}`)
     staleTokenResponse.assertStatus(401)
   })
 })

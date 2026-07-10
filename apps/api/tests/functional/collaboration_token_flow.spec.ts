@@ -62,15 +62,17 @@ test.group('collaboration token flow', () => {
 
     collabResponse.assertStatus(200)
 
-    const body = (collabResponse.body() as {
-      data: {
-        documentId: string
-        roomName: string
-        token: string
-        provider: string
-        expiresInSeconds: number
+    const body = (
+      collabResponse.body() as {
+        data: {
+          documentId: string
+          roomName: string
+          token: string
+          provider: string
+          expiresInSeconds: number
+        }
       }
-    }).data
+    ).data
 
     assert.equal(body.documentId, document.id)
     assert.equal(body.roomName, buildDocumentRoomName(space.id, document.id))
@@ -80,7 +82,7 @@ test.group('collaboration token flow', () => {
 
     const payload = verifyCollaborationToken(
       body.token,
-      process.env.COLLAB_SECRET!,
+      process.env.COLLAB_SECRET!
     ) as CollaborationTokenPayload
 
     assert.equal(payload.version, 'v1')
