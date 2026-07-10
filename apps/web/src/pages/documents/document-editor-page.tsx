@@ -51,6 +51,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
   })
   const documentView = useMemo(() => (document ? toDocumentEditorViewModel(document) : null), [document])
   const initialContent = useMemo(() => documentView?.content ?? parseDocumentContent(), [documentView])
+  const hasDocument = Boolean(document)
   const [title, setTitle] = useState('')
   const [summary, setSummary] = useState('')
   const [draftContent, setDraftContent] = useState(initialContent)
@@ -78,8 +79,8 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
     setCollaborationRuntime(null)
     setPresenceEntries([])
     setUseLocalFallback(false)
-    setCollaborationStatus(document ? 'connecting' : 'idle')
-  }, [document?.id])
+    setCollaborationStatus(hasDocument ? 'connecting' : 'idle')
+  }, [document?.id, hasDocument])
 
   useEffect(() => {
     if (!document || !collaborationTokenQuery.data || useLocalFallback) {
@@ -163,7 +164,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
       provider.destroy()
       yDoc.destroy()
     }
-  }, [collaborationTokenQuery.data, document, useLocalFallback])
+  }, [collaborationTokenQuery.data, document, initialContent, useLocalFallback])
 
   useEffect(() => {
     if (collaborationTokenQuery.isError) {
