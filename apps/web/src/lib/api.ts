@@ -18,6 +18,10 @@ import { tuyau } from '@/lib/tuyau-client'
 
 type ApiErrorPayload = {
   message?: string
+  errors?: Array<{
+    field?: string
+    message?: string
+  }>
 }
 
 type AwaitedRoute<T extends (...args: any[]) => PromiseLike<any>> = Awaited<ReturnType<T>>
@@ -69,17 +73,23 @@ type LogoutPayload = {
   message: string
 }
 
+function readErrorMessage(payload: ApiErrorPayload | undefined, fallback: string) {
+  const validationMessage = payload?.errors?.find((issue) => typeof issue.message === 'string')?.message
+  return payload?.message ?? validationMessage ?? fallback
+}
+
 function toRequestError(error: unknown, fallback: string) {
   // 在统一 API 层把服务端 message 收口成 Error，页面和 query 层就不用了解 Tuyau 的错误细节。
   if (error instanceof TuyauError) {
-    const message = (error.response as ApiErrorPayload | undefined)?.message
+    const response = error.response as ApiErrorPayload | undefined
+    const message = readErrorMessage(response, fallback)
 
     // 让路由壳层和 query 可以统一识别“需要重新登录”的分支，而不是把它混进普通请求失败。
     if (error.isStatus(401)) {
-      return new AuthError(message ?? '需要重新登录后才能继续访问')
+      return new AuthError(message)
     }
 
-    return new Error(message ?? fallback)
+    return new Error(message)
   }
 
   if (error instanceof Error) {
@@ -108,12 +118,14 @@ async function requestJson<T>(path: string, init: RequestInit, fallback: string)
   })
   const payload = (await response.json().catch(() => ({}))) as ApiErrorPayload & T
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new AuthError(payload.message ?? '需要重新登录后才能继续访问')
-      }
+  if (!response.ok) {
+    const message = readErrorMessage(payload, fallback)
 
-    throw new Error(payload.message ?? fallback)
+    if (response.status === 401) {
+      throw new AuthError(message)
+    }
+
+    throw new Error(message)
   }
 
   return payload as T

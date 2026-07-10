@@ -1,0 +1,41 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: closing
+workflow: full
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:ed30126e4c4bda5750273f7a633b26d435e95a07a6d55e8b495dc375023fab5a
+contract_hash: sha256:0f5fc3a78f55bd301ecabd5cf49fd6adaa2a6b323776afc30c46f1d385d24042
+
+# === Execution progress ===
+execution_mode: SDD
+batches_completed: 3
+test_result: pass
+
+# === Metadata ===
+change_name: refactor-api-response-envelope
+last_transition: 2026-07-10T03:32:00.347Z
+last_transition_from: executing
+last_transition_to: closing
+
+# === Decision points ===
+dp_0_decisions: Change name: refactor-api-response-envelope; intent: normalize DocWeave API response envelopes around HTTP status codes plus stable JSON body rules; constraints: do not introduce a code/data/msg protocol, keep envelope ownership in docs/controller/handler/api.ts instead of packages/contracts, and preserve TanStack Query friendly request semantics.
+dp_0_result: confirmed
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-10T03:07:00Z
+dp_1_result: confirmed: api-response-envelope-normalization requirements lock success envelopes, error envelopes, query-friendly web API behavior, and the responsibility boundary away from packages/contracts
+dp_1_timestamp: 2026-07-10T03:07:00Z
+dp_2_result: approved: proposal, specs, design, and tasks define the response-style normalization scope, non-goals, and implementation batches
+dp_2_timestamp: 2026-07-10T03:07:00Z
+dp_3_result: approved: execution contract locks the HTTP-status-first response policy, unified error envelope, controller/handler/api.ts entry points, and excludes a code/data/msg migration
+dp_3_timestamp: 2026-07-10T03:07:00Z
+dp_4_result: SDD: 3 execution batches across exception-envelope normalization, controller/request-validation cleanup, and web API error normalization
+dp_4_timestamp: 2026-07-10T03:20:00Z
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: pass: api response envelope functional coverage passed, auth and collaboration regression flows passed, api typecheck passed, and web production build passed after error normalization
+dp_6_timestamp: 2026-07-10T03:22:00Z
+dp_7_result: confirmed: response envelope rules are documented, API errors now normalize to message/errors, runtime validators cover bare scaffold endpoints, and web api.ts remains query-friendly
+dp_7_timestamp: 2026-07-10T03:22:00Z

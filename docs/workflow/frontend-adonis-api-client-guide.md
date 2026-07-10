@@ -67,6 +67,8 @@
 1. 字段级必填、类型、长度、格式约束优先放进 Vine validator。
 2. “至少传一个字段”“只有某状态允许更新”这类业务约束继续留在控制器或 service。
 3. 控制器返回结构尽量稳定，优先保持 `{ message?, data }` 这种统一外形。
+4. 推荐把成功响应收口成三种最小外形：读接口 `{ data }`、带 payload 的写接口 `{ message, data }`、无 payload 成功 `{ message }`。
+5. 错误响应优先统一为 `{ message, errors? }`，不要让页面和 Query 层直接消费框架默认异常 shape。
 
 ### 2. 刷新 registry
 
@@ -118,6 +120,7 @@ pnpm --dir apps/api build
 3. 不要在没有 validator 的前提下，期望 Tuyau 自动推断出准确的 body 类型。
 4. 新增 API 时，优先延续统一响应外形，减少前端分支判断。
 5. 不要把 Tuyau 推导类型误当成业务 contract；两者职责不同。
+6. `packages/contracts` 负责 `data` 内部 DTO / input shape，不默认承担 HTTP response envelope 约定。
 
 ## 推荐检查命令
 

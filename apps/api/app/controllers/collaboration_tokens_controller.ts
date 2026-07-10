@@ -1,5 +1,6 @@
 import CollaborationTokenService from '#services/collaboration_token_service'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
+import { collaborationTokenValidator } from '#validators/runtime'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class CollaborationTokensController {
@@ -9,15 +10,9 @@ export default class CollaborationTokensController {
   ) {}
 
   async store({ auth, request, response }: HttpContext) {
-    const documentId = `${request.input('documentId') ?? ''}`.trim()
+    const payload = await request.validateUsing(collaborationTokenValidator)
 
-    if (!documentId) {
-      return response.status(422).send({
-        message: 'documentId is required',
-      })
-    }
-
-    const document = await this.catalog.getDocument(documentId)
+    const document = await this.catalog.getDocument(payload.documentId)
 
     if (!document) {
       return response.status(404).send({

@@ -143,48 +143,48 @@ export interface Registry {
     methods: ["POST"]
     pattern: '/api/collaboration/token'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/runtime').collaborationTokenValidator)>>
       paramsTuple: []
       params: {}
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/runtime').collaborationTokenValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/collaboration_tokens_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/collaboration_tokens_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/collaboration_tokens_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'ai_editor.store': {
     methods: ["POST"]
     pattern: '/api/ai/editor'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/runtime').aiEditorRequestValidator)>>
       paramsTuple: []
       params: {}
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/runtime').aiEditorRequestValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'rag.search': {
     methods: ["POST"]
     pattern: '/api/rag/search'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/runtime').ragSearchValidator)>>
       paramsTuple: []
       params: {}
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/runtime').ragSearchValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['search']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['search']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['search']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'rag.chat': {
     methods: ["POST"]
     pattern: '/api/rag/chat'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#validators/runtime').ragChatValidator)>>
       paramsTuple: []
       params: {}
-      query: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/runtime').ragChatValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['chat']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['chat']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['chat']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
 }
