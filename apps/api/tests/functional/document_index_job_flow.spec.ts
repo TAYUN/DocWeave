@@ -5,6 +5,14 @@ import RagIndexJob from '#models/rag_index_job'
 import Space from '#models/space'
 import User from '#models/user'
 
+type IndexJobResponseBody = {
+  data: {
+    job: {
+      id: string
+    }
+  }
+}
+
 async function login(client: Parameters<typeof test>[0] extends never ? never : any, user: User) {
   const response = await client.post('/api/auth/login').json({
     email: user.email,
@@ -73,7 +81,7 @@ test.group('document index job flow', () => {
       })
 
     olderVersionResponse.assertStatus(200)
-    const olderJobId = olderVersionResponse.body().data.job.id as string
+    const olderJobId = (olderVersionResponse.body() as IndexJobResponseBody).data.job.id
 
     const duplicateJobResponse = await client
       .post(`/api/documents/${document.id}/index`)
@@ -83,7 +91,7 @@ test.group('document index job flow', () => {
       })
 
     duplicateJobResponse.assertStatus(200)
-    assert.equal(duplicateJobResponse.body().data.job.id, olderJobId)
+    assert.equal((duplicateJobResponse.body() as IndexJobResponseBody).data.job.id, olderJobId)
     assert.lengthOf(await RagIndexJob.query().where('document_id', document.id), 1)
 
     const newerVersionResponse = await client
@@ -129,7 +137,7 @@ test.group('document index job flow', () => {
           contentFormat: 'blocknote_json',
         },
         latestIndexJob: {
-          id: newerVersionResponse.body().data.job.id,
+          id: (newerVersionResponse.body() as IndexJobResponseBody).data.job.id,
           targetSnapshotVersion: 2,
           status: 'pending',
           stage: 'queued',
