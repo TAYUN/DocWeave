@@ -1,4 +1,5 @@
 import { test } from '@japa/runner'
+import type { ApiErrorResponse } from '@docweave/contracts/api'
 import User from '#models/user'
 import Space from '#models/space'
 import Document from '#models/document'
@@ -13,10 +14,7 @@ test.group('api response envelope', () => {
 
     response.assertStatus(401)
 
-    const body = response.body() as {
-      message?: string
-      errors?: unknown
-    }
+    const body = response.body() as ApiErrorResponse
 
     assert.isString(body.message)
     assert.isAbove(body.message!.length, 0)
@@ -53,13 +51,7 @@ test.group('api response envelope', () => {
 
     response.assertStatus(422)
 
-    const body = response.body() as {
-      message?: string
-      errors?: Array<{
-        field?: string
-        message?: string
-      }>
-    }
+    const body = response.body() as ApiErrorResponse
 
     assert.equal(body.message, 'Validation failed')
     assert.isArray(body.errors)
@@ -100,13 +92,7 @@ test.group('api response envelope', () => {
 
     response.assertStatus(422)
 
-    const body = response.body() as {
-      message?: string
-      errors?: Array<{
-        field?: string
-        message?: string
-      }>
-    }
+    const body = response.body() as ApiErrorResponse
 
     assert.equal(body.message, 'Validation failed')
     assert.isArray(body.errors)
@@ -118,21 +104,15 @@ test.group('api response envelope', () => {
     assert,
   }) => {
     const response = await client.post('/api/rag/search').json({
-      query: '',
+      searchText: '',
     })
 
     response.assertStatus(422)
 
-    const body = response.body() as {
-      message?: string
-      errors?: Array<{
-        field?: string
-        message?: string
-      }>
-    }
+    const body = response.body() as ApiErrorResponse
 
     assert.equal(body.message, 'Validation failed')
     assert.isArray(body.errors)
-    assert.equal(body.errors![0]?.field, 'query')
+    assert.equal(body.errors![0]?.field, 'searchText')
   })
 })

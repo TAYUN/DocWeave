@@ -6,3 +6,8 @@ export type CurrentUserDto = {
   updatedAt: string | null
   initials: string
 }
+
+export type LoginResultDto = {
+  user: CurrentUserDto
+  token: string
+}

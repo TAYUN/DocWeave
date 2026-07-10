@@ -1,7 +1,7 @@
+import type { HttpContext } from '@adonisjs/core/http'
 import CollaborationTokenService from '#services/collaboration_token_service'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import { collaborationTokenValidator } from '#validators/runtime'
-import type { HttpContext } from '@adonisjs/core/http'
 
 export default class CollaborationTokensController {
   constructor(
@@ -9,7 +9,7 @@ export default class CollaborationTokensController {
     private tokens = new CollaborationTokenService()
   ) {}
 
-  async store({ auth, request, response }: HttpContext) {
+  async store({ auth, request, response, serialize }: HttpContext) {
     const payload = await request.validateUsing(collaborationTokenValidator)
 
     const document = await this.catalog.getDocument(payload.documentId)
@@ -22,8 +22,8 @@ export default class CollaborationTokensController {
 
     const user = auth.getUserOrFail()
 
-    return {
-      data: this.tokens.issueDocumentToken({
+    return serialize(
+      this.tokens.issueDocumentToken({
         document,
         capabilities: {
           canRead: true,
@@ -35,7 +35,7 @@ export default class CollaborationTokensController {
           fullName: user.fullName,
           initials: user.initials,
         },
-      }),
-    }
+      })
+    )
   }
 }

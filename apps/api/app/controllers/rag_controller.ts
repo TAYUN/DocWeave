@@ -9,7 +9,7 @@ export default class RagController {
     const payload = await request.validateUsing(ragSearchValidator)
 
     return {
-      data: await this.rag.search(payload.query),
+      data: await this.rag.search(payload.searchText),
     }
   }
 

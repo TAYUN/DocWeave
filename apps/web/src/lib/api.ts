@@ -1,6 +1,13 @@
-import type { Data } from '@docweave/api/data'
-import type { CurrentUserDto } from '@docweave/contracts/auth'
-import type { CollaborationTokenPayload } from '@docweave/contracts/collaboration'
+import type {
+  ApiErrorResponse,
+  ApiMessageResponse,
+  ApiSuccessResponse,
+} from '@docweave/contracts/api'
+import type { CurrentUserDto, LoginResultDto } from '@docweave/contracts/auth'
+import type {
+  CollaborationSessionDto,
+  CollaborationTokenPayload,
+} from '@docweave/contracts/collaboration'
 import type {
   CreateDocumentInput,
   DocumentDetailDto,
@@ -16,14 +23,6 @@ import { TuyauError } from '@tuyau/core/client'
 import { getAccessToken } from '@/lib/auth'
 import { tuyau } from '@/lib/tuyau-client'
 
-type ApiErrorPayload = {
-  message?: string
-  errors?: Array<{
-    field?: string
-    message?: string
-  }>
-}
-
 type AwaitedRoute<T extends (...args: any[]) => PromiseLike<any>> = Awaited<ReturnType<T>>
 // Tuyau 会把非 2xx 分支折进联合类型里，这里只抽取成功响应，避免页面层反复处理 void / error 分支。
 type SuccessPayload<T> = Extract<T, { data: unknown }>
@@ -34,22 +33,13 @@ type SpaceStorePayload = SuccessPayload<AwaitedRoute<typeof tuyau.api.spaces.sto
 type SpaceTreePayload = SuccessPayload<AwaitedRoute<typeof tuyau.api.spaces.tree>>
 type DocumentStorePayload = SuccessPayload<AwaitedRoute<typeof tuyau.api.documents.store>>
 type DocumentUpdatePayload = SuccessPayload<AwaitedRoute<typeof tuyau.api.documents.update>>
-type CollaborationTokenPayloadResponse = {
-  data: {
-    documentId: string
-    roomName: string
-    token: string
-    provider: 'apps/collab'
-    expiresInSeconds: number
-  }
-}
 
 export type ApiSpace = SpaceDto
 export type ApiDocumentSummary = DocumentSummaryDto
 export type ApiDocumentDetail = DocumentDetailDto
 export type ApiSpaceTree = SpaceTreeDto
 export type CurrentUser = CurrentUserDto
-export type ApiCollaborationSession = CollaborationTokenPayloadResponse['data']
+export type ApiCollaborationSession = CollaborationSessionDto
 export type UpdateDocumentPatch = UpdateDocumentInput
 export type LoginInput = {
   email: string
@@ -58,22 +48,7 @@ export type LoginInput = {
 
 export class AuthError extends Error {}
 
-type LoginPayload = {
-  data: {
-    user: CurrentUser
-    token: string
-  }
-}
-
-type CurrentUserPayload = {
-  data: Data.User
-}
-
-type LogoutPayload = {
-  message: string
-}
-
-function readErrorMessage(payload: ApiErrorPayload | undefined, fallback: string) {
+function readErrorMessage(payload: ApiErrorResponse | undefined, fallback: string) {
   const validationMessage = payload?.errors?.find((issue) => typeof issue.message === 'string')?.message
   return payload?.message ?? validationMessage ?? fallback
 }
@@ -81,7 +56,7 @@ function readErrorMessage(payload: ApiErrorPayload | undefined, fallback: string
 function toRequestError(error: unknown, fallback: string) {
   // 在统一 API 层把服务端 message 收口成 Error，页面和 query 层就不用了解 Tuyau 的错误细节。
   if (error instanceof TuyauError) {
-    const response = error.response as ApiErrorPayload | undefined
+    const response = error.response as ApiErrorResponse | undefined
     const message = readErrorMessage(response, fallback)
 
     // 让路由壳层和 query 可以统一识别“需要重新登录”的分支，而不是把它混进普通请求失败。
@@ -116,7 +91,7 @@ async function requestJson<T>(path: string, init: RequestInit, fallback: string)
     ...init,
     headers,
   })
-  const payload = (await response.json().catch(() => ({}))) as ApiErrorPayload & T
+  const payload = (await response.json().catch(() => ({}))) as ApiErrorResponse & T
 
   if (!response.ok) {
     const message = readErrorMessage(payload, fallback)
@@ -131,8 +106,8 @@ async function requestJson<T>(path: string, init: RequestInit, fallback: string)
   return payload as T
 }
 
-export async function login(input: LoginInput): Promise<LoginPayload['data']> {
-  const payload = await requestJson<LoginPayload>(
+export async function login(input: LoginInput): Promise<LoginResultDto> {
+  const payload = await requestJson<ApiSuccessResponse<LoginResultDto>>(
     '/api/auth/login',
     {
       method: 'POST',
@@ -144,8 +119,8 @@ export async function login(input: LoginInput): Promise<LoginPayload['data']> {
   return payload.data
 }
 
-export async function logout(): Promise<LogoutPayload> {
-  return requestJson<LogoutPayload>(
+export async function logout(): Promise<ApiMessageResponse> {
+  return requestJson<ApiMessageResponse>(
     '/api/auth/logout',
     {
       method: 'POST',
@@ -155,7 +130,7 @@ export async function logout(): Promise<LogoutPayload> {
 }
 
 export async function getCurrentUser(): Promise<CurrentUser> {
-  const payload = await requestJson<CurrentUserPayload>(
+  const payload = await requestJson<ApiSuccessResponse<CurrentUserDto>>(
     '/api/auth/me',
     {
       method: 'GET',
@@ -163,7 +138,7 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     '加载当前用户失败，请稍后重试',
   )
 
-  return payload.data as CurrentUser
+  return payload.data
 }
 
 export async function listSpaces(): Promise<SpacesIndexPayload['data']> {
@@ -252,7 +227,7 @@ export async function updateDocument(
 }
 
 export async function getCollaborationToken(documentId: string): Promise<ApiCollaborationSession> {
-  const payload = await requestJson<CollaborationTokenPayloadResponse>(
+  const payload = await requestJson<ApiSuccessResponse<CollaborationSessionDto>>(
     '/api/collaboration/token',
     {
       method: 'POST',

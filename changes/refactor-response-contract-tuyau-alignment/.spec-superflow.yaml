@@ -1,0 +1,42 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: closing
+workflow: tweak
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:1309a42021bedc6fc89f6fa138e1298324d7d4ac6d09957b7da00b9bd993aec5
+contract_hash: sha256:d1ba2810e7bd726bb802016bb493bb2ff554b3a15abd2ac67d89d2a5fea1e7a5
+
+# === Execution progress ===
+execution_mode: Batch Inline
+batches_completed: 2
+test_result: pass
+spec_merged: false
+
+# === Metadata ===
+change_name: refactor-response-contract-tuyau-alignment
+last_transition: 2026-07-10T07:20:00Z
+last_transition_from: executing
+last_transition_to: closing
+
+# === Decision points ===
+dp_0_decisions: Change name: refactor-response-contract-tuyau-alignment; intent: supplement the response envelope refactor with shared contracts and a Tuyau registry compatibility fix after implementation landed; constraints: keep runtime HTTP envelope rules unchanged, scope only to contract/type alignment plus the RAG search request key rename, and do not mix in the separately committed document editor lint fix.
+dp_0_result: confirmed: supplement change scope, constraints, and tweak workflow were confirmed around the already-completed implementation.
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-10T07:00:00Z
+dp_1_result: confirmed: this is a post-implementation tweak change whose artifacts are stable enough to backfill and close.
+dp_1_timestamp: 2026-07-10T07:01:00Z
+dp_2_result: approved: proposal, design, tasks, and spec are sufficient to document and close the implemented contract-alignment work.
+dp_2_timestamp: 2026-07-10T07:02:00Z
+dp_3_result: approved: proceed with a tweak-style closeout covering shared response contracts, web/api test alignment, and the RAG search registry compatibility fix.
+dp_3_timestamp: 2026-07-10T07:03:00Z
+dp_4_result: implemented: shared API response contracts were added in packages/contracts, web/api/tests/docs were aligned, collaboration serializer usage was normalized, and RAG search body field was renamed to searchText to restore Tuyau typing.
+dp_4_timestamp: 2026-07-10T07:15:00Z
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: pass: verified with pnpm --dir apps/web exec tsc -b --pretty false; pnpm --dir apps/api typecheck; pnpm check:workspace; pnpm --dir apps/api exec node ace test --files tests/functional/api_response_envelope.spec.ts; pnpm --dir apps/api exec node ace test --files tests/functional/document_index_job_flow.spec.ts --files tests/functional/collaboration_token_flow.spec.ts
+dp_6_timestamp: 2026-07-10T07:18:00Z
+dp_7_result: confirmed: tasks are complete, verification is rerun, and the change is ready for closing rebuild/check/audit.
+dp_7_timestamp: 2026-07-10T07:19:00Z

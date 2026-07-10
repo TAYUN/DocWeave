@@ -1,11 +1,18 @@
 /**
  * 项目规范：默认应优先从领域子路径导入。
  * 例如：
+ * `@docweave/contracts/api`
  * `@docweave/contracts/document`
  * `@docweave/contracts/space`
  * `@docweave/contracts/auth`
  */
-export type { CurrentUserDto } from './auth.js'
+export type {
+  ApiErrorItem,
+  ApiErrorResponse,
+  ApiMessageResponse,
+  ApiSuccessResponse,
+} from './api.js'
+export type { CurrentUserDto, LoginResultDto } from './auth.js'
 export {
   buildDocumentRoomName,
   parseDocumentRoomName,
@@ -15,6 +22,7 @@ export type {
   CollaborationCapabilities,
   CollaborationConnectionStatus,
   CollaborationPresenceEntry,
+  CollaborationSessionDto,
   CollaborationTokenPayload,
   CollaborationUserIdentity,
 } from './collaboration.js'

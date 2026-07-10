@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./api": "./src/api.ts",
     "./auth": "./src/auth.ts",
     "./collaboration": "./src/collaboration.ts",
     "./document": "./src/document.ts",

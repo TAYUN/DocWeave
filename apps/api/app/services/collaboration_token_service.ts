@@ -2,6 +2,7 @@ import env from '#start/env'
 import {
   buildDocumentRoomName,
   type CollaborationCapabilities,
+  type CollaborationSessionDto,
   type CollaborationTokenPayload,
   type CollaborationUserIdentity,
 } from '@docweave/contracts/collaboration'
@@ -51,7 +52,7 @@ export default class CollaborationTokenService {
     private ttlSeconds = COLLABORATION_TOKEN_TTL_SECONDS
   ) {}
 
-  issueDocumentToken(input: CreateCollaborationTokenInput) {
+  issueDocumentToken(input: CreateCollaborationTokenInput): CollaborationSessionDto {
     const issuedAt = nowInSeconds()
     const expiresAt = issuedAt + this.ttlSeconds
     const roomName = buildDocumentRoomName(input.document.spaceId, input.document.id)

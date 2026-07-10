@@ -21,6 +21,14 @@ export type CollaborationTokenPayload = {
   expiresAt: number
 }
 
+export type CollaborationSessionDto = {
+  documentId: string
+  roomName: string
+  token: string
+  provider: 'apps/collab'
+  expiresInSeconds: number
+}
+
 export type CollaborationAwarenessState = {
   user: CollaborationUserIdentity
   canEdit: boolean

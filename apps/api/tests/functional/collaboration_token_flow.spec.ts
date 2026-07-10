@@ -1,9 +1,11 @@
 import { test } from '@japa/runner'
+import type { ApiSuccessResponse } from '@docweave/contracts/api'
 import User from '#models/user'
 import Space from '#models/space'
 import Document from '#models/document'
 import {
   buildDocumentRoomName,
+  type CollaborationSessionDto,
   type CollaborationTokenPayload,
 } from '@docweave/contracts/collaboration'
 import { verifyCollaborationToken } from '#services/collaboration_token_service'
@@ -62,17 +64,7 @@ test.group('collaboration token flow', () => {
 
     collabResponse.assertStatus(200)
 
-    const body = (
-      collabResponse.body() as {
-        data: {
-          documentId: string
-          roomName: string
-          token: string
-          provider: string
-          expiresInSeconds: number
-        }
-      }
-    ).data
+    const body = (collabResponse.body() as ApiSuccessResponse<CollaborationSessionDto>).data
 
     assert.equal(body.documentId, document.id)
     assert.equal(body.roomName, buildDocumentRoomName(space.id, document.id))

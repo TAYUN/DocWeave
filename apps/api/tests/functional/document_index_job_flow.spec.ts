@@ -1,17 +1,13 @@
 import { test } from '@japa/runner'
+import type { ApiSuccessResponse } from '@docweave/contracts/api'
+import type { CreateDocumentIndexJobResultDto } from '@docweave/contracts/document'
 import Document from '#models/document'
 import DocumentSnapshot from '#models/document_snapshot'
 import RagIndexJob from '#models/rag_index_job'
 import Space from '#models/space'
 import User from '#models/user'
 
-type IndexJobResponseBody = {
-  data: {
-    job: {
-      id: string
-    }
-  }
-}
+type IndexJobResponseBody = ApiSuccessResponse<CreateDocumentIndexJobResultDto>
 
 async function login(client: Parameters<typeof test>[0] extends never ? never : any, user: User) {
   const response = await client.post('/api/auth/login').json({
