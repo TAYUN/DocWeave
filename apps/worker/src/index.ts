@@ -1,6 +1,7 @@
-import OpenAI from 'openai'
 import { Pool } from 'pg'
 import { QdrantClient } from '@qdrant/js-client-rest'
+import { createAliyunAiRuntimeConfig } from '@docweave/adapters'
+import { createAiRuntime } from '@docweave/ai'
 import { readWorkerConfig } from './config.js'
 import { runDocumentIndexJobs } from './run_document_index_jobs.js'
 
@@ -12,10 +13,14 @@ const pool = new Pool({
   password: config.dbPassword,
   database: config.dbDatabase,
 })
-const openai = new OpenAI({
-  apiKey: config.dashscopeApiKey,
-  baseURL: config.dashscopeBaseUrl,
-})
+const ai = createAiRuntime(
+  createAliyunAiRuntimeConfig({
+    apiKey: config.dashscopeApiKey,
+    baseURL: config.dashscopeBaseUrl,
+    embeddingModel: config.embeddingModel,
+    embeddingDimensions: config.embeddingDimensions,
+  }),
+)
 const qdrant = new QdrantClient({
   url: config.qdrantUrl,
   apiKey: config.qdrantApiKey ?? undefined,
@@ -30,7 +35,7 @@ while (true) {
     await runDocumentIndexJobs({
       config,
       pool,
-      openai,
+      ai,
       qdrant,
     })
   } catch (error) {

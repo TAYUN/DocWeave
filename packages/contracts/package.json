@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./api": "./src/api.ts",
+    "./ai": "./src/ai.ts",
     "./auth": "./src/auth.ts",
     "./collaboration": "./src/collaboration.ts",
     "./document": "./src/document.ts",

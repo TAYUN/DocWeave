@@ -1,6 +1,7 @@
-import OpenAI from 'openai'
 import { Pool, type PoolClient } from 'pg'
 import { QdrantClient } from '@qdrant/js-client-rest'
+import type { AiRuntime } from '@docweave/ai'
+import { createModelRef } from '@docweave/adapters'
 import { readSnapshotContent } from '@docweave/document'
 import { indexDocumentSnapshot, type RagVectorPoint } from '@docweave/rag'
 import type { WorkerConfig } from './config.js'
@@ -20,7 +21,7 @@ type SnapshotRow = {
 export type WorkerRuntime = {
   config: WorkerConfig
   pool: Pool
-  openai: OpenAI
+  ai: AiRuntime
   qdrant: QdrantClient
 }
 
@@ -65,12 +66,13 @@ export async function runDocumentIndexJobs(runtime: WorkerRuntime) {
             embeddingStageMarked = true
           }
 
-          const response = await runtime.openai.embeddings.create({
-            model: runtime.config.embeddingModel,
-            input: texts,
+          const response = await runtime.ai.embedMany({
+            model: createModelRef('embedding', runtime.config.embeddingModel),
+            values: texts,
+            dimensions: runtime.config.embeddingDimensions,
           })
 
-          return response.data.map((item) => item.embedding)
+          return response.embeddings
         },
         ensureCollectionDimensions: async (dimensions) => {
           if (!upsertingStageMarked) {

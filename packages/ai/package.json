@@ -1,0 +1,19 @@
+{
+  "name": "@docweave/ai",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^2.0.0",
+    "@docweave/adapters": "workspace:*",
+    "@docweave/contracts": "workspace:*",
+    "ai": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
+  }
+}

@@ -40,7 +40,7 @@ export function readWorkerConfig(env = process.env): WorkerConfig {
     embeddingDimensions: parsePositiveInteger(
       env.EMBEDDING_DIMENSIONS,
       'EMBEDDING_DIMENSIONS',
-      1536,
+      1024,
     ),
     workerPollIntervalMs: parsePositiveInteger(
       env.WORKER_POLL_INTERVAL_MS,

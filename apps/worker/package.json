@@ -10,9 +10,10 @@
   },
   "dependencies": {
     "@docweave/document": "workspace:*",
+    "@docweave/adapters": "workspace:*",
+    "@docweave/ai": "workspace:*",
     "@docweave/rag": "workspace:*",
     "@qdrant/js-client-rest": "^1.18.0",
-    "openai": "^6.46.0",
     "pg": "^8.16.3"
   },
   "devDependencies": {

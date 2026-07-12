@@ -13,6 +13,18 @@ export type {
   ApiSuccessResponse,
 } from './api.js'
 export type { CurrentUserDto, LoginResultDto } from './auth.js'
+export type {
+  AiChatMessage,
+  AiChatRequest,
+  AiChatResponse,
+  AiChatRole,
+  AiEmbeddingRequest,
+  AiEmbeddingResponse,
+  AiModelKind,
+  AiModelRef,
+  AiProvider,
+  AiUsage,
+} from './ai.js'
 export {
   buildDocumentRoomName,
   parseDocumentRoomName,

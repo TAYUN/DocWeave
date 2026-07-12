@@ -93,7 +93,6 @@ export async function indexDocumentSnapshot(
   const vectors: number[][] = []
 
   for (const batch of chunkArray(chunks, MAX_EMBEDDING_BATCH_SIZE)) {
-    // ponytail: DashScope OpenAI 兼容模式暂不支持 text_type，后续若切 SDK 再下沉到 adapters。
     const batchVectors = await dependencies.embed(batch)
     assertVectorDimensions(batchVectors, dependencies.embeddingDimensions)
     vectors.push(...batchVectors)
