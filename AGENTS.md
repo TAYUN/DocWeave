@@ -8,17 +8,6 @@
 - 让实现、研究、审查三类工作有清晰分工
 - 让产出的代码、文档与设计口径保持统一
 
-## 运行时环境
-
-当前 agent 运行在 **Reasonix**（v1.6.0-rc.1）下，项目级配置在 [`reasonix.toml`](./reasonix.toml)：
-
-| 配置项 | 说明 |
-|--------|------|
-| `[skills].paths` | 指向仓库内镜像的 `.reasonix/vendor/spec-superflow/skills`，由 `pnpm sync:spec-superflow-skills` 从全局 `spec-superflow` 同步并重写运行时路径 |
-| `[[plugins]]` | 注册了 `docweave-mcp`（AdonisJS MCP 服务），启动命令 `pnpm --dir apps/api mcp:start` |
-
-项目本地额外技能在 `.agents/skills/`（`spec-superflow-closing`、`mantine-ui-docs`、`blocknote-docs`、`adonis-mcp`），与 pnpm 全局的 skills 互补。
-
 ## 默认协作模式
 
 DocWeave 默认采用"主 agent 收口，子 agent 辅助"的模式：
@@ -95,8 +84,6 @@ MCP 服务注册在 `reasonix.toml` 的 `[[plugins]]` 中，启动命令为 `pnp
 ## spec-superflow 工作流
 
 当仓库中存在 `.spec-superflow.yaml`、`changes/`、`proposal.md`、`specs/`、`design.md`、`tasks.md` 或 `execution-contract.md` 时，优先按 spec-superflow 工作流推进，并主动选择合适的 skill。
-
-9 个 spec-superflow skill 来自全局安装的 `spec-superflow` 包，但通过 `pnpm sync:spec-superflow-skills` 同步到仓库内镜像后，再由 `reasonix.toml` 的 `[skills].paths` 注册：
 
 | Skill | 阶段 | 职责 |
 |-------|------|------|
