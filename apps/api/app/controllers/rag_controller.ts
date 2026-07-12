@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import type { RagChatResponse } from '@docweave/contracts/rag'
 import RagService from '#services/rag_service'
 import { ragChatValidator, ragSearchValidator } from '#validators/runtime'
 
@@ -14,14 +15,18 @@ export default class RagController {
   }
 
   async chat({ request }: HttpContext) {
-    const payload = await request.validateUsing(ragChatValidator)
+    await request.validateUsing(ragChatValidator)
+    const response: RagChatResponse = {
+      messageId: null,
+      answer:
+        'RAG chat scaffold is wired. Next step is replacing this placeholder with streaming orchestration via packages/rag and packages/ai.',
+      citations: [],
+      finishReason: 'stop',
+      usage: null,
+    }
 
     return {
-      data: {
-        message: payload.message,
-        answer:
-          'RAG chat scaffold is wired. Next step is replacing this placeholder with streaming orchestration via packages/rag and packages/ai.',
-      },
+      data: response,
     }
   }
 }

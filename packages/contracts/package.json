@@ -10,6 +10,7 @@
     "./auth": "./src/auth.ts",
     "./collaboration": "./src/collaboration.ts",
     "./document": "./src/document.ts",
+    "./rag": "./src/rag.ts",
     "./space": "./src/space.ts"
   },
   "dependencies": {

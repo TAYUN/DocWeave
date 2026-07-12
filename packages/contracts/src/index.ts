@@ -59,6 +59,17 @@ export type {
   UpdateDocumentInput,
 } from './document.js'
 export type {
+  RagChatRequest,
+  RagChatResponse,
+  RagCitation,
+  RagFinishReason,
+  RagSearchHit,
+  RagSearchRequest,
+  RagSearchResponse,
+  RagStreamError,
+  RagStreamEvent,
+} from './rag.js'
+export type {
   CreateSpaceInput,
   SpaceDto,
   SpaceTreeDocumentDto,
