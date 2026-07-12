@@ -27,6 +27,10 @@ export interface ApiDefinition {
   collaborationTokens: {
     store: typeof routes['collaboration_tokens.store']
   }
+  internalCollaborationRuntime: {
+    show: typeof routes['internal_collaboration_runtime.show']
+    update: typeof routes['internal_collaboration_runtime.update']
+  }
   aiEditor: {
     store: typeof routes['ai_editor.store']
   }

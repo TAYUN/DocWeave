@@ -9,6 +9,7 @@ export const controllers = {
   Auth: () => import('#controllers/auth_controller'),
   CollaborationTokens: () => import('#controllers/collaboration_tokens_controller'),
   Documents: () => import('#controllers/documents_controller'),
+  InternalCollaborationRuntime: () => import('#controllers/internal_collaboration_runtime_controller'),
   NewAccount: () => import('#controllers/new_account_controller'),
   Profile: () => import('#controllers/profile_controller'),
   Rag: () => import('#controllers/rag_controller'),

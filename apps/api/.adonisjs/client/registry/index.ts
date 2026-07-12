@@ -96,6 +96,18 @@ const routes = {
     tokens: [{"old":"/api/collaboration/token","type":0,"val":"api","end":""},{"old":"/api/collaboration/token","type":0,"val":"collaboration","end":""},{"old":"/api/collaboration/token","type":0,"val":"token","end":""}],
     types: placeholder as Registry['collaboration_tokens.store']['types'],
   },
+  'internal_collaboration_runtime.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/internal/collaboration/documents/:documentId/runtime',
+    tokens: [{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"api","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"internal","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"collaboration","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"documents","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":1,"val":"documentId","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"runtime","end":""}],
+    types: placeholder as Registry['internal_collaboration_runtime.show']['types'],
+  },
+  'internal_collaboration_runtime.update': {
+    methods: ["PUT"],
+    pattern: '/api/internal/collaboration/documents/:documentId/runtime',
+    tokens: [{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"api","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"internal","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"collaboration","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"documents","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":1,"val":"documentId","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"runtime","end":""}],
+    types: placeholder as Registry['internal_collaboration_runtime.update']['types'],
+  },
   'ai_editor.store': {
     methods: ["POST"],
     pattern: '/api/ai/editor',

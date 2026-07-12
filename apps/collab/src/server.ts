@@ -4,16 +4,24 @@ import {
   type onLoadDocumentPayload,
   type onStoreDocumentPayload,
 } from '@hocuspocus/server'
+import {
+  restoreYDocFromSerializedContent,
+  serializeYDocContent,
+} from '@docweave/adapters'
 import * as Y from 'yjs'
 import type { CollabConfig } from './config.js'
 import {
   authenticateCollaborationConnection,
   type CollabConnectionContext,
 } from './auth.js'
+import { CollaborationRuntimeClient } from './runtime_client.js'
 
 const documents = new Map<string, Y.Doc>()
+const COLLAB_FRAGMENT_NAME = 'document-store'
 
 export function createCollaborationServer(config: CollabConfig) {
+  const runtime = new CollaborationRuntimeClient(config)
+
   return new Server<CollabConnectionContext>({
     address: config.host,
     port: config.port,
@@ -35,12 +43,35 @@ export function createCollaborationServer(config: CollabConfig) {
         return existing
       }
 
-      const document = new Y.Doc()
+      const documentId = data.context.tokenPayload?.documentId
+      const runtimeDocument = documentId
+        ? await runtime.getDocumentRuntime(documentId)
+        : null
+      const document =
+        runtimeDocument && runtimeDocument.content
+          ? restoreYDocFromSerializedContent({
+              content: runtimeDocument.content,
+              fragmentName: COLLAB_FRAGMENT_NAME,
+            })
+          : new Y.Doc()
+
       documents.set(data.documentName, document)
       return document
     },
-    async onStoreDocument(_data: onStoreDocumentPayload<CollabConnectionContext>) {
-      // ponytail: keep only the hook boundary in M3; wire persistence when M4 actually needs it.
+    async onStoreDocument(data: onStoreDocumentPayload<CollabConnectionContext>) {
+      const documentId = data.lastContext?.tokenPayload?.documentId
+
+      if (!documentId) {
+        return
+      }
+
+      await runtime.updateDocumentRuntime(documentId, {
+        // M4 第二阶段只回写可恢复正文，不在自动持久化里顺手创建稳定快照。
+        content: serializeYDocContent({
+          document: data.document,
+          fragmentName: COLLAB_FRAGMENT_NAME,
+        }),
+      })
     },
   })
 }

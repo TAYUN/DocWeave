@@ -6,6 +6,8 @@ export {
 } from './content.js'
 export {
   getDocumentStatusLabel,
+  restoreYDocFromSerializedContent,
+  serializeYDocContent,
   toDocumentDetailDto,
   toDocumentSummaryDto,
 } from './document.js'

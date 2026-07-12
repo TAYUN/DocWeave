@@ -107,6 +107,9 @@ importers:
 
   apps/collab:
     dependencies:
+      '@docweave/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
       '@docweave/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
@@ -242,9 +245,15 @@ importers:
 
   packages/adapters:
     dependencies:
+      '@blocknote/core':
+        specifier: ^0.51.4
+        version: 0.51.4(@types/hast@3.0.4)
       '@docweave/contracts':
         specifier: workspace:*
         version: link:../contracts
+      yjs:
+        specifier: ^13.6.31
+        version: 13.6.31
 
   packages/contracts:
     dependencies:

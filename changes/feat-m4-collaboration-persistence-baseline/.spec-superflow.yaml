@@ -2,23 +2,24 @@
 # Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
 
 # === Core state ===
-state: exploring
+state: closing
 workflow: full
 
 # === Hashes (fast staleness detection) ===
-artifacts_hash: null
-contract_hash: null
+artifacts_hash: sha256:fb688bd3df274e8641677c009c0dbb29ab0544cdbeddd44344caed4cb28456b5
+contract_hash: sha256:70485ee4f35a14ea936ea696f62908426452937c0c7bf215da86f6fc47ef3363
 
 # === Execution progress ===
-execution_mode: null
-batches_completed: 0
-test_result: null
+execution_mode: Batch Inline
+batches_completed: 4
+test_result: pass
+spec_merged: false
 
 # === Metadata ===
 change_name: feat-m4-collaboration-persistence-baseline
-last_transition: null
-last_transition_from: null
-last_transition_to: null
+last_transition: 2026-07-12T10:12:00Z
+last_transition_from: executing
+last_transition_to: closing
 
 # === Decision points ===
 dp_0_decisions: Change name: feat-m4-collaboration-persistence-baseline; intent: defer a dedicated collaboration persistence change so the team does not forget the long-term server recovery path after M3; constraints: keep scope to exactly three concerns only—onLoadDocument restore from database content to Yjs, onStoreDocument or throttled persistence from Yjs back to stable snapshot, and explicit responsibility split between manual save and automatic persistence.
@@ -31,11 +32,11 @@ dp_2_result: null
 dp_2_timestamp: null
 dp_3_result: null
 dp_3_timestamp: null
-dp_4_result: null
-dp_4_timestamp: null
+dp_4_result: implemented: internal collaboration runtime contracts, api runtime persistence endpoints, collab runtime client/load-store hooks, frontend fallback narrowing, and adapter-side server recovery helper landed for M4 collaboration persistence baseline
+dp_4_timestamp: 2026-07-12T09:50:00Z
 dp_5_result: null
 dp_5_timestamp: null
-dp_6_result: null
-dp_6_timestamp: null
-dp_7_result: null
-dp_7_timestamp: null
+dp_6_result: verified: pnpm --dir apps/api test --files tests/functional/collaboration_runtime_flow.spec.ts; pnpm typecheck:api; pnpm --dir apps/collab typecheck; cmd /c pnpm --dir apps/collab exec tsc --noEmit; pnpm typecheck:web; pnpm build:web; manual provider-level validation confirmed dual-client sync, automatic runtime writeback, no snapshot/index side effects, and onLoadDocument recovery from documents.content
+dp_6_timestamp: 2026-07-12T10:05:00Z
+dp_7_result: closing requested and approved for feat-m4-collaboration-persistence-baseline after tasks synced, runtime recovery bug fixed, and regression notes appended to docs/planning/40
+dp_7_timestamp: 2026-07-12T10:12:00Z

@@ -22,9 +22,11 @@ export type {
   CollaborationCapabilities,
   CollaborationConnectionStatus,
   CollaborationPresenceEntry,
+  CollaborationRuntimeDocumentDto,
   CollaborationSessionDto,
   CollaborationTokenPayload,
   CollaborationUserIdentity,
+  UpdateCollaborationRuntimeInput,
 } from './collaboration.js'
 export type {
   CreateDocumentIndexJobInput,

@@ -5,6 +5,8 @@ const AiEditorController = () => import('#controllers/ai_editor_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const CollaborationTokensController = () => import('#controllers/collaboration_tokens_controller')
 const DocumentsController = () => import('#controllers/documents_controller')
+const InternalCollaborationRuntimeController = () =>
+  import('#controllers/internal_collaboration_runtime_controller')
 const RagController = () => import('#controllers/rag_controller')
 const SpacesController = () => import('#controllers/spaces_controller')
 
@@ -50,6 +52,20 @@ router
       })
       // M2 工作台入口以“先认证、再进入业务资源”为边界，匿名请求不应直接读取空间和文档。
       .use(middleware.auth())
+
+    router
+      .group(() => {
+        router.get('/collaboration/documents/:documentId/runtime', [
+          InternalCollaborationRuntimeController,
+          'show',
+        ])
+        router.put('/collaboration/documents/:documentId/runtime', [
+          InternalCollaborationRuntimeController,
+          'update',
+        ])
+      })
+      .prefix('/internal')
+      .use(middleware.collabInternal())
 
     router.post('/ai/editor', [AiEditorController, 'store'])
 

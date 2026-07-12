@@ -47,4 +47,5 @@ router.use([
 export const middleware = router.named({
   mcp: () => import('#middleware/mcp_middleware'),
   auth: () => import('#middleware/auth_middleware'),
+  collabInternal: () => import('#middleware/collaboration_internal_auth_middleware'),
 })

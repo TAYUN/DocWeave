@@ -3,6 +3,9 @@ import type {
   DocumentStatus,
   DocumentSummaryDto,
 } from '@docweave/contracts/document'
+import { BlockNoteEditor } from '@blocknote/core'
+import { blocksToYDoc, yDocToBlocks } from '@blocknote/core/yjs'
+import * as Y from 'yjs'
 import {
   createDefaultDocumentContent,
   extractTextPreview,
@@ -89,4 +92,29 @@ export function getDocumentStatusLabel(status: DocumentStatus | string) {
     default:
       return status
   }
+}
+
+function createServerBlockNoteEditor(initialContent = createDefaultDocumentContent()) {
+  // 服务端转换只需要一个最小 editor 宿主，不承担页面渲染职责。
+  return BlockNoteEditor.create({
+    initialContent,
+  })
+}
+
+export function restoreYDocFromSerializedContent(input: {
+  content: string
+  fragmentName: string
+}) {
+  const blocks = parseDocumentContent(input.content)
+  const editor = createServerBlockNoteEditor(blocks)
+  return blocksToYDoc(editor, blocks, input.fragmentName)
+}
+
+export function serializeYDocContent(input: {
+  document: Y.Doc
+  fragmentName: string
+}) {
+  const editor = createServerBlockNoteEditor()
+  const blocks = yDocToBlocks(editor, input.document, input.fragmentName)
+  return serializeDocumentContent(blocks)
 }

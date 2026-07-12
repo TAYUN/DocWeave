@@ -19,6 +19,8 @@ export type ScannedRoutes = {
     'documents.trigger_index': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'documents.status': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'collaboration_tokens.store': { paramsTuple?: []; params?: {} }
+    'internal_collaboration_runtime.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'internal_collaboration_runtime.update': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'ai_editor.store': { paramsTuple?: []; params?: {} }
     'rag.search': { paramsTuple?: []; params?: {} }
     'rag.chat': { paramsTuple?: []; params?: {} }
@@ -30,6 +32,7 @@ export type ScannedRoutes = {
     'documents.index': { paramsTuple?: []; params?: {} }
     'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'documents.status': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'internal_collaboration_runtime.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
   HEAD: {
     'auth.me': { paramsTuple?: []; params?: {} }
@@ -38,6 +41,7 @@ export type ScannedRoutes = {
     'documents.index': { paramsTuple?: []; params?: {} }
     'documents.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'documents.status': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'internal_collaboration_runtime.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
   POST: {
     'mcp.post': { paramsTuple?: []; params?: {} }
@@ -54,6 +58,9 @@ export type ScannedRoutes = {
   }
   PATCH: {
     'documents.update': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+  }
+  PUT: {
+    'internal_collaboration_runtime.update': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {

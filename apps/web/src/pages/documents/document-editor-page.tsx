@@ -105,6 +105,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
       },
       onSynced: ({ state }) => {
         if (state) {
+          // 服务端恢复正文为空时，才让现有 seed 兜底；一旦房间里已有恢复内容，这里不会覆盖它。
           seedCollaborationFragment(yDoc, COLLAB_FRAGMENT_NAME, initialContent)
           setCollaborationStatus('connected')
         }

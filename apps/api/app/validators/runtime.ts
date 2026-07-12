@@ -6,6 +6,10 @@ export const collaborationTokenValidator = vine.create({
   documentId: vine.string().trim().minLength(1),
 })
 
+export const updateCollaborationRuntimeValidator = vine.create({
+  content: vine.string().trim().minLength(1),
+})
+
 export const aiEditorRequestValidator = vine.create({
   documentId: vine.string().trim().optional(),
   instruction: vine.string().trim().minLength(1),

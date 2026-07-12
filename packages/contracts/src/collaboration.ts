@@ -52,6 +52,16 @@ export type CollaborationConnectionStatus =
   | 'unauthorized'
   | 'error'
 
+export type CollaborationRuntimeDocumentDto = {
+  documentId: string
+  content: string
+  updatedAt: string | null
+}
+
+export type UpdateCollaborationRuntimeInput = {
+  content: string
+}
+
 export function buildDocumentRoomName(workspaceId: string, documentId: string) {
   return `workspace:${workspaceId}:document:${documentId}`
 }

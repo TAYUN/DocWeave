@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@docweave/adapters": "workspace:*",
     "@docweave/contracts": "workspace:*",
     "@hocuspocus/server": "^4.3.0",
     "yjs": "^13.6.31"
