@@ -1,5 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai'
-import { embedMany, generateText } from 'ai'
+import { embedMany, generateText, type LanguageModel } from 'ai'
 import type {
   AiChatRequest,
   AiChatResponse,
@@ -11,6 +11,7 @@ import type {
 import type { AiRuntimeConfig } from '@docweave/adapters'
 
 export type AiRuntime = {
+  getChatModel(): LanguageModel
   generateText(request: AiChatRequest): Promise<AiChatResponse>
   embedMany(request: AiEmbeddingRequest): Promise<AiEmbeddingResponse>
 }
@@ -23,6 +24,10 @@ export function createAiRuntime(config: AiRuntimeConfig): AiRuntime {
   })
 
   return {
+    getChatModel() {
+      return provider.chat(config.chatModel.model)
+    },
+
     async generateText(request) {
       assertModelKind(request.model, 'chat')
 

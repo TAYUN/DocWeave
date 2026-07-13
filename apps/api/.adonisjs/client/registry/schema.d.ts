@@ -187,6 +187,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/collaboration_tokens_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'ai_editor.store': {
+    methods: ["POST"]
+    pattern: '/api/ai/editor'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/runtime').aiEditorRequestValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/runtime').aiEditorRequestValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'internal_collaboration_runtime.show': {
     methods: ["GET","HEAD"]
     pattern: '/api/internal/collaboration/documents/:documentId/runtime'
@@ -209,18 +221,6 @@ export interface Registry {
       query: ExtractQuery<InferInput<(typeof import('#validators/runtime').updateCollaborationRuntimeValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['update']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
-    }
-  }
-  'ai_editor.store': {
-    methods: ["POST"]
-    pattern: '/api/ai/editor'
-    types: {
-      body: ExtractBody<InferInput<(typeof import('#validators/runtime').aiEditorRequestValidator)>>
-      paramsTuple: []
-      params: {}
-      query: ExtractQuery<InferInput<(typeof import('#validators/runtime').aiEditorRequestValidator)>>
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'rag.search': {

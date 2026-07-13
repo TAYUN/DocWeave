@@ -11,8 +11,9 @@ export const updateCollaborationRuntimeValidator = vine.create({
 })
 
 export const aiEditorRequestValidator = vine.create({
-  documentId: vine.string().trim().optional(),
-  instruction: vine.string().trim().minLength(1),
+  documentId: vine.string().trim().minLength(1),
+  action: vine.enum(['rewrite', 'expand', 'shorten', 'translate', 'summarize'] as const).optional(),
+  targetLanguage: vine.string().trim().minLength(1).optional(),
 })
 
 export const ragSearchValidator = vine.create({

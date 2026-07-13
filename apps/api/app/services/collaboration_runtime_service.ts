@@ -10,7 +10,9 @@ function toIsoString(value: { toISO(): string | null } | string | null | undefin
   return value.toISO()
 }
 
-function toRuntimeDto(document: Pick<Document, 'id' | 'content' | 'updatedAt'>): CollaborationRuntimeDocumentDto {
+function toRuntimeDto(
+  document: Pick<Document, 'id' | 'content' | 'updatedAt'>
+): CollaborationRuntimeDocumentDto {
   return {
     documentId: document.id,
     content: document.content,

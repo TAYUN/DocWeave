@@ -24,6 +24,10 @@ export type {
   AiModelRef,
   AiProvider,
   AiUsage,
+  EditorAiAction,
+  EditorAiErrorCode,
+  EditorAiLocalContext,
+  EditorAiRequestMetadata,
 } from './ai.js'
 export {
   buildDocumentRoomName,

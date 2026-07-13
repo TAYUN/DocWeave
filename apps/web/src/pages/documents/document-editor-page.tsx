@@ -355,6 +355,11 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                     key={`${document.id}:collaboration`}
                     mode="collaboration"
                     editable={collaborationRuntime.payload.capabilities.canEdit}
+                    ai={
+                      collaborationRuntime.payload.capabilities.canEdit && collaborationStatus === 'connected'
+                        ? { api: '/api/ai/editor', documentId: document.id }
+                        : undefined
+                    }
                     onChange={setDraftContent}
                     collaboration={{
                       fragment: collaborationRuntime.fragment,
@@ -376,6 +381,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                   <DocumentEditor
                     key={`${document.id}:standalone`}
                     editable
+                    ai={{ api: '/api/ai/editor', documentId: document.id }}
                     initialContent={initialContent}
                     onChange={setDraftContent}
                   />

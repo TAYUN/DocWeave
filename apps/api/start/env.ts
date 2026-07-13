@@ -23,6 +23,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   APP_URL: Env.schema.string({ format: 'url', tld: false }),
   COLLAB_SECRET: Env.schema.secret(),
 
+  // 编辑器 AI 只在 API 服务端读取 provider 密钥，浏览器不接触这些配置。
+  DASHSCOPE_API_KEY: Env.schema.secret.optional(),
+  DASHSCOPE_BASE_URL: Env.schema.string.optional(),
+  CHAT_MODEL: Env.schema.string.optional(),
+
   // Session
   SESSION_DRIVER: Env.schema.enum(['cookie', 'memory', 'database'] as const),
 

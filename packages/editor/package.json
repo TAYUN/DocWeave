@@ -8,15 +8,17 @@
     "./document-editor": "./src/document-editor.tsx"
   },
   "dependencies": {
-    "@docweave/contracts": "workspace:*",
     "@blocknote/core": "^0.51.4",
-    "@blocknote/react": "^0.51.4",
     "@blocknote/mantine": "^0.51.4",
+    "@blocknote/react": "^0.51.4",
+    "@blocknote/xl-ai": "0.51.4",
+    "@docweave/contracts": "workspace:*",
     "@mantine/core": "^9.4.1",
     "@mantine/hooks": "^9.4.1",
-    "yjs": "^13.6.27",
     "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3"
+    "@types/react-dom": "^19.2.3",
+    "ai": "6.0.224",
+    "yjs": "^13.6.27"
   },
   "peerDependencies": {
     "react": "^19.2.7",

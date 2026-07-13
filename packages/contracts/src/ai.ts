@@ -47,3 +47,33 @@ export type AiEmbeddingResponse = {
   dimensions: number
   usage: AiUsage | null
 }
+
+export type EditorAiAction =
+  | 'rewrite'
+  | 'expand'
+  | 'shorten'
+  | 'translate'
+  | 'summarize'
+
+export type EditorAiLocalContext = {
+  documentTitle: string
+  selectedText: string
+  currentBlockText: string
+  surroundingText: string
+}
+
+export type EditorAiRequestMetadata = {
+  documentId: string
+  action?: EditorAiAction
+  targetLanguage?: string
+  localContext?: EditorAiLocalContext
+}
+
+export type EditorAiErrorCode =
+  | 'unauthenticated'
+  | 'document_not_found'
+  | 'document_forbidden'
+  | 'document_read_only'
+  | 'provider_unavailable'
+  | 'request_aborted'
+  | 'invalid_request'
