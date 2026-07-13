@@ -266,21 +266,25 @@ importers:
       '@blocknote/core':
         specifier: ^0.51.4
         version: 0.51.4(@types/hast@3.0.4)
+      '@docweave/ai':
+        specifier: workspace:*
+        version: link:../ai
       '@docweave/contracts':
         specifier: workspace:*
         version: link:../contracts
       yjs:
         specifier: ^13.6.31
         version: 13.6.31
+    devDependencies:
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.13.2
 
   packages/ai:
     dependencies:
       '@ai-sdk/openai':
         specifier: ^3.0.84
         version: 3.0.84(zod@4.4.3)
-      '@docweave/adapters':
-        specifier: workspace:*
-        version: link:../adapters
       '@docweave/contracts':
         specifier: workspace:*
         version: link:../contracts

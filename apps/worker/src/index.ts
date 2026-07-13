@@ -1,6 +1,9 @@
 import { Pool } from 'pg'
 import { QdrantClient } from '@qdrant/js-client-rest'
-import { createAliyunAiRuntimeConfig } from '@docweave/adapters'
+import {
+  createAliyunAiRuntimeConfig,
+  createAliyunFetch,
+} from '@docweave/adapters'
 import { createAiRuntime } from '@docweave/ai'
 import { readWorkerConfig } from './config.js'
 import { runDocumentIndexJobs } from './run_document_index_jobs.js'
@@ -13,14 +16,15 @@ const pool = new Pool({
   password: config.dbPassword,
   database: config.dbDatabase,
 })
-const ai = createAiRuntime(
-  createAliyunAiRuntimeConfig({
-    apiKey: config.dashscopeApiKey,
-    baseURL: config.dashscopeBaseUrl,
-    embeddingModel: config.embeddingModel,
-    embeddingDimensions: config.embeddingDimensions,
-  }),
-)
+const aiRuntimeConfig = createAliyunAiRuntimeConfig({
+  apiKey: config.dashscopeApiKey,
+  baseURL: config.dashscopeBaseUrl,
+  embeddingModel: config.embeddingModel,
+  embeddingDimensions: config.embeddingDimensions,
+})
+const ai = createAiRuntime(aiRuntimeConfig, {
+  fetch: createAliyunFetch(aiRuntimeConfig),
+})
 const qdrant = new QdrantClient({
   url: config.qdrantUrl,
   apiKey: config.qdrantApiKey ?? undefined,

@@ -8,7 +8,19 @@ import type {
   AiModelRef,
   AiUsage,
 } from '@docweave/contracts/ai'
-import type { AiRuntimeConfig } from '@docweave/adapters'
+
+export type AiRuntimeConfig = {
+  provider: AiModelRef['provider']
+  apiKey: string
+  baseURL: string
+  chatModel: AiModelRef
+  embeddingModel: AiModelRef
+  embeddingDimensions: number
+}
+
+export type AiRuntimeOptions = {
+  fetch?: typeof globalThis.fetch
+}
 
 export type AiRuntime = {
   getChatModel(): LanguageModel
@@ -16,12 +28,15 @@ export type AiRuntime = {
   embedMany(request: AiEmbeddingRequest): Promise<AiEmbeddingResponse>
 }
 
-export function createAiRuntime(config: AiRuntimeConfig): AiRuntime {
+export function createAiRuntime(
+  config: AiRuntimeConfig,
+  options: AiRuntimeOptions = {},
+): AiRuntime {
   const provider = createOpenAI({
     name: config.provider,
     apiKey: config.apiKey,
     baseURL: config.baseURL,
-    fetch: createAliyunFetch(config),
+    fetch: options.fetch,
   })
 
   return {
@@ -77,40 +92,6 @@ export function createAiRuntime(config: AiRuntimeConfig): AiRuntime {
   }
 }
 
-function createAliyunFetch(config: AiRuntimeConfig) {
-  if (config.enableThinking !== false) {
-    return undefined
-  }
-
-  return async (input: string | URL | Request, init?: RequestInit) => {
-    if (typeof init?.body !== 'string') {
-      return globalThis.fetch(input, init)
-    }
-
-    let body: Record<string, unknown>
-
-    try {
-      body = JSON.parse(init.body) as Record<string, unknown>
-    } catch {
-      return globalThis.fetch(input, init)
-    }
-
-    if (body.model !== config.chatModel.model) {
-      return globalThis.fetch(input, init)
-    }
-
-    // DashScope qwen3.6-plus 的思考模式不接受 tool_choice=required；
-    // 编辑器 AI 依赖 BlockNote 的强制工具调用，因此仅在该 runtime 请求中关闭思考模式。
-    return globalThis.fetch(input, {
-      ...init,
-      body: JSON.stringify({
-        ...body,
-        enable_thinking: false,
-      }),
-    })
-  }
-}
-
 function assertModelKind(model: AiModelRef, expected: AiModelRef['kind']) {
   if (model.kind !== expected) {
     throw new Error(`Expected ${expected} model, received ${model.kind}`)
@@ -133,7 +114,9 @@ function toUsage(
   }
 }
 
-function toEmbeddingUsage(usage: { tokens?: number } | undefined): AiUsage | null {
+function toEmbeddingUsage(
+  usage: { tokens?: number } | undefined,
+): AiUsage | null {
   if (!usage) {
     return null
   }

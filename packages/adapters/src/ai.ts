@@ -1,8 +1,5 @@
-import type {
-  AiModelKind,
-  AiModelRef,
-  AiProvider,
-} from '@docweave/contracts/ai'
+import type { AiRuntimeConfig } from '@docweave/ai'
+import type { AiModelKind, AiModelRef } from '@docweave/contracts/ai'
 
 export const DEFAULT_DASHSCOPE_BASE_URL =
   'https://dashscope.aliyuncs.com/compatible-mode/v1'
@@ -10,14 +7,8 @@ export const DEFAULT_DASHSCOPE_BASE_URL =
 export const DEFAULT_EMBEDDING_MODEL = 'text-embedding-v4'
 export const DEFAULT_EMBEDDING_DIMENSIONS = 1024
 
-export type AiRuntimeConfig = {
-  provider: AiProvider
-  apiKey: string
-  baseURL: string
-  chatModel: AiModelRef
+export type AliyunAiRuntimeConfig = AiRuntimeConfig & {
   enableThinking?: boolean
-  embeddingModel: AiModelRef
-  embeddingDimensions: number
 }
 
 export type AiRuntimeConfigInput = {
@@ -29,7 +20,9 @@ export type AiRuntimeConfigInput = {
   embeddingDimensions?: number
 }
 
-export function createAliyunAiRuntimeConfig(input: AiRuntimeConfigInput): AiRuntimeConfig {
+export function createAliyunAiRuntimeConfig(
+  input: AiRuntimeConfigInput,
+): AliyunAiRuntimeConfig {
   const apiKey = input.apiKey.trim()
 
   if (!apiKey) {
@@ -37,7 +30,8 @@ export function createAliyunAiRuntimeConfig(input: AiRuntimeConfigInput): AiRunt
   }
 
   // text-embedding-v4 默认输出 1024 维，必须与 Qdrant collection 保持一致。
-  const embeddingDimensions = input.embeddingDimensions ?? DEFAULT_EMBEDDING_DIMENSIONS
+  const embeddingDimensions =
+    input.embeddingDimensions ?? DEFAULT_EMBEDDING_DIMENSIONS
 
   if (!Number.isInteger(embeddingDimensions) || embeddingDimensions <= 0) {
     throw new Error('EMBEDDING_DIMENSIONS must be a positive integer')
@@ -54,6 +48,42 @@ export function createAliyunAiRuntimeConfig(input: AiRuntimeConfigInput): AiRunt
       input.embeddingModel ?? DEFAULT_EMBEDDING_MODEL,
     ),
     embeddingDimensions,
+  }
+}
+
+export function createAliyunFetch(
+  config: AliyunAiRuntimeConfig,
+): typeof globalThis.fetch | undefined {
+  if (config.enableThinking !== false) {
+    return undefined
+  }
+
+  return async (input, init) => {
+    if (typeof init?.body !== 'string') {
+      return globalThis.fetch(input, init)
+    }
+
+    let body: Record<string, unknown>
+
+    try {
+      body = JSON.parse(init.body) as Record<string, unknown>
+    } catch {
+      return globalThis.fetch(input, init)
+    }
+
+    if (body.model !== config.chatModel.model) {
+      return globalThis.fetch(input, init)
+    }
+
+    // DashScope qwen3.6-plus 的思考模式不接受 tool_choice=required；
+    // 编辑器 AI 依赖 BlockNote 的强制工具调用，因此仅在显式关闭思考时改写请求。
+    return globalThis.fetch(input, {
+      ...init,
+      body: JSON.stringify({
+        ...body,
+        enable_thinking: false,
+      }),
+    })
   }
 }
 

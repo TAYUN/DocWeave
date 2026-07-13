@@ -8,8 +8,11 @@
   },
   "dependencies": {
     "@blocknote/core": "^0.51.4",
-    "@docweave/contracts": "workspace:*"
-    ,
+    "@docweave/ai": "workspace:*",
+    "@docweave/contracts": "workspace:*",
     "yjs": "^13.6.31"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0"
   }
 }

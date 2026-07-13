@@ -13,10 +13,11 @@ export {
 } from './document.js'
 export { toSpaceDto, toSpaceTreeDto } from './space.js'
 export {
+  createAliyunFetch,
   createAliyunAiRuntimeConfig,
   createModelRef,
   DEFAULT_DASHSCOPE_BASE_URL,
   DEFAULT_EMBEDDING_DIMENSIONS,
   DEFAULT_EMBEDDING_MODEL,
 } from './ai.js'
-export type { AiRuntimeConfig, AiRuntimeConfigInput } from './ai.js'
+export type { AliyunAiRuntimeConfig, AiRuntimeConfigInput } from './ai.js'

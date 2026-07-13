@@ -1,4 +1,4 @@
-import { createAliyunAiRuntimeConfig } from '@docweave/adapters'
+import { createAliyunAiRuntimeConfig, createAliyunFetch } from '@docweave/adapters'
 import { createAiRuntime } from '@docweave/ai'
 import { buildEditorAiContext } from '@docweave/document'
 import type { EditorAiAction } from '@docweave/contracts/ai'
@@ -39,14 +39,15 @@ export default class EditorAiService {
       throw new EditorAiProviderConfigError('DASHSCOPE_API_KEY is required for editor AI')
     }
 
-    const runtime = createAiRuntime(
-      createAliyunAiRuntimeConfig({
-        apiKey,
-        baseURL: env.get('DASHSCOPE_BASE_URL'),
-        chatModel: env.get('CHAT_MODEL'),
-        enableThinking: false,
-      })
-    )
+    const runtimeConfig = createAliyunAiRuntimeConfig({
+      apiKey,
+      baseURL: env.get('DASHSCOPE_BASE_URL'),
+      chatModel: env.get('CHAT_MODEL'),
+      enableThinking: false,
+    })
+    const runtime = createAiRuntime(runtimeConfig, {
+      fetch: createAliyunFetch(runtimeConfig),
+    })
     const messages = injectDocumentStateMessages(input.payload.messages)
     const tools = toolDefinitionsToToolSet(input.payload.toolDefinitions as never)
     const localContext = buildEditorAiContext({
