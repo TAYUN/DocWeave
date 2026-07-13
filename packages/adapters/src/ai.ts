@@ -15,6 +15,7 @@ export type AiRuntimeConfig = {
   apiKey: string
   baseURL: string
   chatModel: AiModelRef
+  enableThinking?: boolean
   embeddingModel: AiModelRef
   embeddingDimensions: number
 }
@@ -23,6 +24,7 @@ export type AiRuntimeConfigInput = {
   apiKey: string
   baseURL?: string
   chatModel?: string
+  enableThinking?: boolean
   embeddingModel?: string
   embeddingDimensions?: number
 }
@@ -46,6 +48,7 @@ export function createAliyunAiRuntimeConfig(input: AiRuntimeConfigInput): AiRunt
     apiKey,
     baseURL: normalizeBaseURL(input.baseURL ?? DEFAULT_DASHSCOPE_BASE_URL),
     chatModel: createModelRef('chat', input.chatModel ?? 'qwen-plus'),
+    enableThinking: input.enableThinking,
     embeddingModel: createModelRef(
       'embedding',
       input.embeddingModel ?? DEFAULT_EMBEDDING_MODEL,

@@ -1,6 +1,7 @@
 import {
   Server,
   type onAuthenticatePayload,
+  type onDisconnectPayload,
   type onLoadDocumentPayload,
   type onStoreDocumentPayload,
 } from '@hocuspocus/server'
@@ -40,7 +41,15 @@ export function createCollaborationServer(config: CollabConfig) {
       const existing = documents.get(data.documentName)
 
       if (existing) {
-        return existing
+        const existingFragment = existing.getXmlFragment(COLLAB_FRAGMENT_NAME)
+
+        if (existingFragment.length > 0) {
+          return existing
+        }
+
+        // 空缓存可能来自协同编辑器尚未完成初始化时的首帧连接；丢弃它，
+        // 让本次加载重新读取 API 的持久化正文，避免空文档覆盖真实内容。
+        documents.delete(data.documentName)
       }
 
       const documentId = data.context.tokenPayload?.documentId
@@ -65,13 +74,36 @@ export function createCollaborationServer(config: CollabConfig) {
         return
       }
 
-      await runtime.updateDocumentRuntime(documentId, {
-        // M4 第二阶段只回写可恢复正文，不在自动持久化里顺手创建稳定快照。
-        content: serializeYDocContent({
-          document: data.document,
-          fragmentName: COLLAB_FRAGMENT_NAME,
-        }),
-      })
+      await persistDocumentRuntime(runtime, documentId, data.document)
     },
+    async onDisconnect(data: onDisconnectPayload<CollabConnectionContext>) {
+      if (data.clientsCount !== 0) {
+        return
+      }
+
+      const documentId = data.context?.tokenPayload?.documentId
+
+      if (!documentId) {
+        return
+      }
+
+      // 路由切换会销毁最后一个浏览器 provider；此时显式回写一次，
+      // 不把未达到 debounce 窗口的最后一段草稿留在内存中。
+      await persistDocumentRuntime(runtime, documentId, data.document)
+    },
+  })
+}
+
+async function persistDocumentRuntime(
+  runtime: CollaborationRuntimeClient,
+  documentId: string,
+  document: Y.Doc,
+) {
+  await runtime.updateDocumentRuntime(documentId, {
+    // M4 第二阶段只回写可恢复正文，不在自动持久化里顺手创建稳定快照。
+    content: serializeYDocContent({
+      document,
+      fragmentName: COLLAB_FRAGMENT_NAME,
+    }),
   })
 }

@@ -44,6 +44,7 @@ export default class EditorAiService {
         apiKey,
         baseURL: env.get('DASHSCOPE_BASE_URL'),
         chatModel: env.get('CHAT_MODEL'),
+        enableThinking: false,
       })
     )
     const messages = injectDocumentStateMessages(input.payload.messages)

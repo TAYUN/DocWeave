@@ -21,6 +21,7 @@ export function createAiRuntime(config: AiRuntimeConfig): AiRuntime {
     name: config.provider,
     apiKey: config.apiKey,
     baseURL: config.baseURL,
+    fetch: createAliyunFetch(config),
   })
 
   return {
@@ -73,6 +74,40 @@ export function createAiRuntime(config: AiRuntimeConfig): AiRuntime {
         usage: toEmbeddingUsage(result.usage),
       }
     },
+  }
+}
+
+function createAliyunFetch(config: AiRuntimeConfig) {
+  if (config.enableThinking !== false) {
+    return undefined
+  }
+
+  return async (input: string | URL | Request, init?: RequestInit) => {
+    if (typeof init?.body !== 'string') {
+      return globalThis.fetch(input, init)
+    }
+
+    let body: Record<string, unknown>
+
+    try {
+      body = JSON.parse(init.body) as Record<string, unknown>
+    } catch {
+      return globalThis.fetch(input, init)
+    }
+
+    if (body.model !== config.chatModel.model) {
+      return globalThis.fetch(input, init)
+    }
+
+    // DashScope qwen3.6-plus 的思考模式不接受 tool_choice=required；
+    // 编辑器 AI 依赖 BlockNote 的强制工具调用，因此仅在该 runtime 请求中关闭思考模式。
+    return globalThis.fetch(input, {
+      ...init,
+      body: JSON.stringify({
+        ...body,
+        enable_thinking: false,
+      }),
+    })
   }
 }
 

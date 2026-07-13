@@ -14,9 +14,11 @@ import {
   useCreateBlockNote,
 } from '@blocknote/react'
 import {
+  AIMenu,
   AIExtension,
   AIMenuController,
   AIToolbarButton,
+  getDefaultAIMenuItems,
   getAISlashMenuItems,
 } from '@blocknote/xl-ai'
 import { en as aiEn } from '@blocknote/xl-ai/locales'
@@ -47,6 +49,7 @@ type DocumentEditorCollaborationProps = {
 export type DocumentEditorAiProps = {
   api: string
   documentId: string
+  headers?: () => Record<string, string>
 }
 
 export type DocumentEditorProps = {
@@ -84,7 +87,9 @@ export function DocumentEditor(props: DocumentEditorProps) {
       slashMenu={aiEnabled ? false : undefined}
       onChange={(currentEditor) => props.onChange?.(currentEditor.document)}
     >
-      {aiEnabled ? <AIMenuController /> : null}
+      {aiEnabled ? (
+        <AIMenuController aiMenu={props.mode === 'collaboration' ? CollaborationAIMenu : undefined} />
+      ) : null}
       {aiEnabled ? <FormattingToolbarController formattingToolbar={FormattingToolbarWithAI} /> : null}
       {aiEnabled ? (
         <SuggestionMenuController
@@ -115,6 +120,7 @@ function buildAiOptions(ai: DocumentEditorAiProps | undefined) {
       AIExtension({
         transport: new DefaultChatTransport({
           api: ai.api,
+          headers: ai.headers,
           body: {
             documentId: ai.documentId,
           },
@@ -130,6 +136,38 @@ function FormattingToolbarWithAI() {
       {getFormattingToolbarItems()}
       <AIToolbarButton />
     </FormattingToolbar>
+  )
+}
+
+function CollaborationAIMenu() {
+  return (
+    <AIMenu
+      items={(currentEditor, status) =>
+        getDefaultAIMenuItems(currentEditor, status).map((item) => {
+          if (item.key !== 'accept') {
+            return item
+          }
+
+          return {
+            ...item,
+            onItemClick: (setPrompt: (userPrompt: string) => void) => {
+              const selectedBlockId = currentEditor.getSelection()?.blocks.at(-1)?.id
+              const targetBlock =
+                (selectedBlockId ? currentEditor.getBlock(selectedBlockId) : undefined) ??
+                currentEditor.document[0]
+
+              if (targetBlock) {
+                // BlockNote 0.51.4 的协同 AI merge 会重建 Yjs 同步插件；先把 selection
+                // 收敛到当前仍存在的文本块，避免旧文档位置映射到 doc 根节点。
+                currentEditor.setTextCursorPosition(targetBlock.id, 'end')
+              }
+
+              item.onItemClick(setPrompt)
+            },
+          }
+        })
+      }
+    />
   )
 }
 

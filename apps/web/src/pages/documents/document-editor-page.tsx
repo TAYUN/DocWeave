@@ -12,7 +12,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { HocuspocusProvider } from '@hocuspocus/provider'
 import { ArrowLeft, ChevronRight, Clock } from 'lucide-react'
 import { DocumentEditor, seedCollaborationFragment } from '@docweave/editor'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as Y from 'yjs'
 import { toDocumentEditorViewModel } from '@/features/documents/lib/document-display'
 import { MutationNotice } from '@/features/shared/mutation-notice'
@@ -23,9 +23,18 @@ import {
   readCollaborationTokenPayload,
   updateDocument,
 } from '@/lib/api'
+import { getAccessToken } from '@/lib/auth'
 
 const COLLAB_FRAGMENT_NAME = 'document-store'
 const COLLAB_BOOT_TIMEOUT_MS = 2500
+
+function getEditorAiHeaders(): Record<string, string> {
+  const token = getAccessToken()
+
+  // BlockNote AI 使用 AI SDK 自己的 fetch 链路，不会复用 Tuyau 的认证 hook。
+  // 每次请求动态读取 token，确保登录态变化后不会继续发送旧凭证。
+  return token ? { authorization: `Bearer ${token}` } : {}
+}
 
 function getDocumentStateKind(message: string) {
   if (/权限|禁止|forbidden|restricted/i.test(message)) return 'restricted'
@@ -43,6 +52,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
   })
 
   const document = documentQuery.data
+  const documentIdValue = document?.id
   const collaborationTokenQuery = useQuery({
     queryKey: ['collaboration-token', documentId],
     queryFn: () => getCollaborationToken(documentId),
@@ -51,6 +61,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
   })
   const documentView = useMemo(() => (document ? toDocumentEditorViewModel(document) : null), [document])
   const initialContent = useMemo(() => documentView?.content ?? parseDocumentContent(), [documentView])
+  const initialContentRef = useRef(initialContent)
   const hasDocument = Boolean(document)
   const [title, setTitle] = useState('')
   const [summary, setSummary] = useState('')
@@ -76,6 +87,10 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
   }, [documentView])
 
   useEffect(() => {
+    initialContentRef.current = initialContent
+  }, [initialContent])
+
+  useEffect(() => {
     setCollaborationRuntime(null)
     setPresenceEntries([])
     setUseLocalFallback(false)
@@ -83,7 +98,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
   }, [document?.id, hasDocument])
 
   useEffect(() => {
-    if (!document || !collaborationTokenQuery.data || useLocalFallback) {
+    if (!documentIdValue || !collaborationTokenQuery.data || useLocalFallback) {
       return
     }
 
@@ -106,7 +121,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
       onSynced: ({ state }) => {
         if (state) {
           // 服务端恢复正文为空时，才让现有 seed 兜底；一旦房间里已有恢复内容，这里不会覆盖它。
-          seedCollaborationFragment(yDoc, COLLAB_FRAGMENT_NAME, initialContent)
+          seedCollaborationFragment(yDoc, COLLAB_FRAGMENT_NAME, initialContentRef.current)
           setCollaborationStatus('connected')
         }
       },
@@ -165,7 +180,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
       provider.destroy()
       yDoc.destroy()
     }
-  }, [collaborationTokenQuery.data, document, initialContent, useLocalFallback])
+  }, [collaborationTokenQuery.data, documentIdValue, useLocalFallback])
 
   useEffect(() => {
     if (collaborationTokenQuery.isError) {
@@ -181,6 +196,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
 
   const isCollaborationEditor =
     Boolean(collaborationRuntime) && !useLocalFallback && collaborationStatus === 'connected'
+  const isCollaborationUnavailable = useLocalFallback || collaborationTokenQuery.isError
   const hasContentChanges = JSON.stringify(draftContent) !== JSON.stringify(initialContent)
 
   const hasUnsavedChanges =
@@ -357,7 +373,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                     editable={collaborationRuntime.payload.capabilities.canEdit}
                     ai={
                       collaborationRuntime.payload.capabilities.canEdit && collaborationStatus === 'connected'
-                        ? { api: '/api/ai/editor', documentId: document.id }
+                        ? { api: '/api/ai/editor', documentId: document.id, headers: getEditorAiHeaders }
                         : undefined
                     }
                     onChange={setDraftContent}
@@ -372,7 +388,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                       },
                     }}
                   />
-                ) : collaborationTokenQuery.isPending && !useLocalFallback ? (
+                ) : !isCollaborationUnavailable && collaborationStatus !== 'error' ? (
                   <Stack gap="sm">
                     <Skeleton h={18} radius="sm" w="30%" />
                     <Skeleton h={240} radius="md" />
@@ -381,7 +397,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                   <DocumentEditor
                     key={`${document.id}:standalone`}
                     editable
-                    ai={{ api: '/api/ai/editor', documentId: document.id }}
+                    ai={{ api: '/api/ai/editor', documentId: document.id, headers: getEditorAiHeaders }}
                     initialContent={initialContent}
                     onChange={setDraftContent}
                   />
