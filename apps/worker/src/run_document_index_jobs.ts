@@ -14,6 +14,8 @@ type ClaimedJob = {
 
 type SnapshotRow = {
   document_id: string
+  workspace_id: string
+  space_id: string
   content: string
   content_format: 'blocknote_json'
 }
@@ -53,9 +55,10 @@ export async function runDocumentIndexJobs(runtime: WorkerRuntime) {
 
     const result = await indexDocumentSnapshot(
       {
+        workspaceId: snapshot.workspace_id,
+        spaceId: snapshot.space_id,
         documentId: job.documentId,
         snapshotVersion: job.targetSnapshotVersion,
-        plainText: parsed.plainText,
         blocks: parsed.blocks,
       },
       {
@@ -167,9 +170,16 @@ async function claimNextDocumentIndexJob(pool: Pool, leaseMs: number) {
 async function loadSnapshot(pool: Pool, job: ClaimedJob) {
   const result = await pool.query<SnapshotRow>(
     `
-      select document_id, content, content_format
-      from document_snapshots
-      where document_id = $1 and version = $2
+      -- 当前数据模型以 space 作为 workspace 边界；同时保留两个契约字段，为后续独立 workspace 做准备。
+      select snapshots.document_id,
+             spaces.id as workspace_id,
+             documents.space_id,
+             snapshots.content,
+             snapshots.content_format
+      from document_snapshots as snapshots
+      join documents on documents.id = snapshots.document_id
+      join spaces on spaces.id = documents.space_id
+      where snapshots.document_id = $1 and snapshots.version = $2
       limit 1
     `,
     [job.documentId, job.targetSnapshotVersion],

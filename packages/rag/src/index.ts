@@ -1,5 +1,5 @@
 export {
-  buildTextChunks,
+  buildBlockChunks,
   indexDocumentSnapshot,
   type IndexDocumentSnapshotDependencies,
   type IndexDocumentSnapshotInput,

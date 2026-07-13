@@ -1,21 +1,18 @@
 import { createHash } from 'node:crypto'
+import type { RagIndexBlock } from '@docweave/contracts/rag'
 
 export type IndexDocumentSnapshotInput = {
+  workspaceId: string
+  spaceId: string
   documentId: string
   snapshotVersion: number
-  plainText: string
   blocks: unknown[]
 }
 
 export type RagVectorPoint = {
   id: string
   vector: number[]
-  payload: {
-    documentId: string
-    snapshotVersion: number
-    chunkIndex: number
-    text: string
-  }
+  payload: RagIndexBlock
 }
 
 export type IndexDocumentSnapshotDependencies = {
@@ -33,18 +30,86 @@ export type IndexDocumentSnapshotResult = {
 
 const MAX_EMBEDDING_BATCH_SIZE = 10
 
-export function buildTextChunks(plainText: string) {
-  const normalized = plainText
-    .split(/\r?\n+/)
-    .map((line) => line.trim())
-    .filter(Boolean)
+type BlockLike = {
+  id?: unknown
+  type?: unknown
+  props?: { level?: unknown }
+  content?: unknown
+  children?: unknown
+}
 
-  if (normalized.length > 0) {
-    return normalized
+function readBlockText(content: unknown) {
+  if (!Array.isArray(content)) {
+    return ''
   }
 
-  const fallback = plainText.trim()
-  return fallback ? [fallback] : []
+  return content
+    .flatMap((inline) => {
+      if (
+        typeof inline === 'object' &&
+        inline !== null &&
+        'type' in inline &&
+        inline.type === 'text' &&
+        'text' in inline &&
+        typeof inline.text === 'string'
+      ) {
+        return inline.text
+      }
+
+      return ''
+    })
+    .join('')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+/**
+ * 从快照原始 BlockNote blocks 生成索引单元，绝不把纯文本行号伪造为 blockId。
+ */
+export function buildBlockChunks(input: IndexDocumentSnapshotInput): RagIndexBlock[] {
+  const chunks: RagIndexBlock[] = []
+  const headingPath: Array<{ level: number; text: string }> = []
+
+  function walk(blocks: unknown[]) {
+    for (const value of blocks) {
+      if (typeof value !== 'object' || value === null) {
+        continue
+      }
+
+      const block = value as BlockLike
+      const blockId = typeof block.id === 'string' ? block.id : null
+      const plainText = readBlockText(block.content)
+      const isHeading = block.type === 'heading'
+
+      if (isHeading && plainText) {
+        const level = typeof block.props?.level === 'number' ? block.props.level : 1
+        while (headingPath.length > 0 && headingPath.at(-1)!.level >= level) {
+          headingPath.pop()
+        }
+        headingPath.push({ level, text: plainText })
+      }
+
+      if (blockId && plainText) {
+        chunks.push({
+          workspaceId: input.workspaceId,
+          spaceId: input.spaceId,
+          documentId: input.documentId,
+          snapshotVersion: input.snapshotVersion,
+          blockId,
+          chunkId: `${blockId}:0`,
+          headingPath: headingPath.map((heading) => heading.text),
+          plainText,
+        })
+      }
+
+      if (Array.isArray(block.children)) {
+        walk(block.children)
+      }
+    }
+  }
+
+  walk(input.blocks)
+  return chunks
 }
 
 function chunkArray<T>(items: T[], size: number) {
@@ -67,10 +132,10 @@ function assertVectorDimensions(vectors: number[][], dimensions: number) {
   }
 }
 
-function toStablePointId(documentId: string, snapshotVersion: number, chunkIndex: number) {
+function toStablePointId(block: RagIndexBlock) {
   // Qdrant point id 必须是 uint64 或 UUID，这里用稳定哈希生成可重复的 UUID 形态，避免同版本重复写入变成脏重复点。
   const hex = createHash('sha256')
-    .update(`${documentId}:${snapshotVersion}:${chunkIndex}`)
+    .update(`${block.documentId}:${block.snapshotVersion}:${block.blockId}:${block.chunkId}`)
     .digest('hex')
     .slice(0, 32)
 
@@ -81,7 +146,7 @@ export async function indexDocumentSnapshot(
   input: IndexDocumentSnapshotInput,
   dependencies: IndexDocumentSnapshotDependencies,
 ): Promise<IndexDocumentSnapshotResult> {
-  const chunks = buildTextChunks(input.plainText)
+  const chunks = buildBlockChunks(input)
 
   if (chunks.length === 0) {
     return {
@@ -93,22 +158,17 @@ export async function indexDocumentSnapshot(
   const vectors: number[][] = []
 
   for (const batch of chunkArray(chunks, MAX_EMBEDDING_BATCH_SIZE)) {
-    const batchVectors = await dependencies.embed(batch)
+    const batchVectors = await dependencies.embed(batch.map((chunk) => chunk.plainText))
     assertVectorDimensions(batchVectors, dependencies.embeddingDimensions)
     vectors.push(...batchVectors)
   }
 
   await dependencies.ensureCollectionDimensions(dependencies.embeddingDimensions)
 
-  const points = chunks.map<RagVectorPoint>((text, chunkIndex) => ({
-    id: toStablePointId(input.documentId, input.snapshotVersion, chunkIndex),
+  const points = chunks.map<RagVectorPoint>((chunk, chunkIndex) => ({
+    id: toStablePointId(chunk),
     vector: vectors[chunkIndex]!,
-    payload: {
-      documentId: input.documentId,
-      snapshotVersion: input.snapshotVersion,
-      chunkIndex,
-      text,
-    },
+    payload: chunk,
   }))
 
   await dependencies.upsert(points)

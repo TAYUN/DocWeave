@@ -1,5 +1,17 @@
 import type { AiUsage } from './ai.js'
 
+/** Qdrant 索引点的领域 payload，具备 Citation 所需的完整来源信息。 */
+export type RagIndexBlock = {
+  workspaceId: string
+  spaceId: string
+  documentId: string
+  snapshotVersion: number
+  blockId: string
+  chunkId: string
+  headingPath: string[]
+  plainText: string
+}
+
 export type RagSearchRequest = {
   searchText: string
   limit?: number

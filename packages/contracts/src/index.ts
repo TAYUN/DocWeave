@@ -68,6 +68,7 @@ export type {
   RagChatResponse,
   RagCitation,
   RagFinishReason,
+  RagIndexBlock,
   RagSearchHit,
   RagSearchRequest,
   RagSearchResponse,
