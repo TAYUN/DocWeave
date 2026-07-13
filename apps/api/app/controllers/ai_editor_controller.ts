@@ -5,10 +5,7 @@ import EditorAiService, {
   EditorAiDocumentNotFoundError,
   EditorAiProviderConfigError,
 } from '#services/editor_ai_service'
-import {
-  apiErrors,
-  toApiErrorResponse,
-} from '#exceptions/error_messages'
+import { apiErrors, toApiErrorResponse } from '#exceptions/error_messages'
 
 export default class AiEditorController {
   constructor(private editorAi = new EditorAiService()) {}

@@ -13,11 +13,7 @@ import {
   updateDocumentValidator,
 } from '#validators/documents'
 import type { HttpContext } from '@adonisjs/core/http'
-import {
-  apiErrors,
-  apiSuccessMessages,
-  toApiErrorResponse,
-} from '#exceptions/error_messages'
+import { apiErrors, apiSuccessMessages, toApiErrorResponse } from '#exceptions/error_messages'
 
 export default class DocumentsController {
   constructor(

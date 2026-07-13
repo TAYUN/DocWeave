@@ -40,11 +40,13 @@ export default class HttpExceptionHandler extends ExceptionHandler {
         message: definition.message,
       } satisfies Omit<ErrorBody, 'errors'>
 
-      return ctx.response.status(status).send(
-        errors.length > 0
-          ? ({ ...responseBody, errors } satisfies ErrorBody)
-          : (responseBody satisfies ErrorBody)
-      )
+      return ctx.response
+        .status(status)
+        .send(
+          errors.length > 0
+            ? ({ ...responseBody, errors } satisfies ErrorBody)
+            : (responseBody satisfies ErrorBody)
+        )
     }
 
     return super.handle(error, ctx)
