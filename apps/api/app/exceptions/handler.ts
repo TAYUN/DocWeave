@@ -1,7 +1,16 @@
 import app from '@adonisjs/core/services/app'
 import { type HttpContext, ExceptionHandler } from '@adonisjs/core/http'
+import type { ApiErrorResponse } from '@docweave/contracts/api'
+import {
+  getApiErrorDefinitionByCode,
+  isApiErrorCode,
+  type ApiErrorDefinition,
+  apiErrors,
+  resolveFallbackApiError,
+  resolveKnownApiError,
+} from '#exceptions/error_messages'
 
-type ErrorBody = {
+type ErrorBody = ApiErrorResponse & {
   message: string
   errors?: Array<{
     field?: string
@@ -25,17 +34,16 @@ export default class HttpExceptionHandler extends ExceptionHandler {
     if (shouldSendJson(ctx)) {
       const status = getErrorStatus(error)
       const errors = extractValidationErrors(error)
-      const message = getErrorMessage(error, status, errors)
+      const definition = resolveApiErrorDefinition(error, status, errors)
+      const responseBody = {
+        code: definition.code,
+        message: definition.message,
+      } satisfies Omit<ErrorBody, 'errors'>
 
       return ctx.response.status(status).send(
         errors.length > 0
-          ? ({
-              message,
-              errors,
-            } satisfies ErrorBody)
-          : ({
-              message,
-            } satisfies ErrorBody)
+          ? ({ ...responseBody, errors } satisfies ErrorBody)
+          : (responseBody satisfies ErrorBody)
       )
     }
 
@@ -71,37 +79,54 @@ function getErrorStatus(error: unknown) {
   return 500
 }
 
-function getErrorMessage(error: unknown, status: number, errors: ErrorBody['errors'] = []) {
+function resolveApiErrorDefinition(
+  error: unknown,
+  status: number,
+  errors: ErrorBody['errors'] = []
+): ApiErrorDefinition {
   const response = getObjectValue(error, 'response')
-  const payloadMessage = getObjectValue(response, 'message')
+  const payloadCode = getObjectValue(response, 'code')
 
-  if (typeof payloadMessage === 'string' && payloadMessage.length > 0) {
-    return payloadMessage
+  if (isApiErrorCode(payloadCode)) {
+    return getApiErrorDefinitionByCode(payloadCode) ?? apiErrors.internalServerError
+  }
+
+  if (status === 422 && errors.length > 0) {
+    return apiErrors.validationFailed
+  }
+
+  const payloadMessage = getObjectValue(response, 'message')
+  const translatedPayloadMessage =
+    typeof payloadMessage === 'string' ? resolveKnownApiError(payloadMessage) : null
+
+  if (translatedPayloadMessage) {
+    return translatedPayloadMessage
+  }
+
+  const errorCode = getObjectValue(error, 'code')
+
+  if (isApiErrorCode(errorCode)) {
+    return getApiErrorDefinitionByCode(errorCode) ?? apiErrors.internalServerError
   }
 
   const errorMessage =
     typeof getObjectValue(error, 'message') === 'string'
       ? (getObjectValue(error, 'message') as string)
       : null
+  const translatedErrorMessage = resolveKnownApiError(errorMessage)
 
-  if (status === 422 && errors.length > 0) {
-    return 'Validation failed'
+  if (translatedErrorMessage) {
+    return translatedErrorMessage
   }
 
-  if (errorMessage) {
-    return errorMessage
+  if (status >= 400 && status < 500 && errorMessage) {
+    return {
+      ...resolveFallbackApiError(status),
+      message: errorMessage,
+    }
   }
 
-  switch (status) {
-    case 401:
-      return 'Unauthorized'
-    case 403:
-      return 'Forbidden'
-    case 404:
-      return 'Not found'
-    default:
-      return 'Internal server error'
-  }
+  return resolveFallbackApiError(status)
 }
 
 function extractValidationErrors(error: unknown): NonNullable<ErrorBody['errors']> {

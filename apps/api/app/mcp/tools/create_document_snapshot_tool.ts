@@ -1,6 +1,7 @@
 import type { ToolContext } from '@jrmc/adonis-mcp/types/context'
 import type { BaseSchema } from '@jrmc/adonis-mcp/types/method'
 
+import { apiErrors, apiSuccessMessages, mcpMessages } from '#exceptions/error_messages'
 import DocumentProcessingService from '#services/document_processing_service'
 import { Tool } from '@jrmc/adonis-mcp'
 import vine from '@vinejs/vine'
@@ -26,18 +27,18 @@ export default class CreateDocumentSnapshotTool extends Tool<Schema> {
     const documentId = args?.documentId
 
     if (!documentId) {
-      return response.error('documentId is required')
+      return response.error(mcpMessages.documentIdRequired)
     }
 
     // 直接复用快照服务，确保 MCP 与 HTTP API 对“是否需要新版本”的判断完全一致。
     const result = await this.processing.createSnapshot(documentId)
 
     if (!result) {
-      return response.error(`Document not found: ${documentId}`)
+      return response.error(apiErrors.documentNotFound.message)
     }
 
     return response.structured({
-      message: 'Document snapshot created',
+      message: apiSuccessMessages.documentSnapshotCreated,
       snapshot: result.snapshot,
       latestSnapshotVersion: result.latestSnapshotVersion,
     })

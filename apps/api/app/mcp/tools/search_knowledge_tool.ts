@@ -1,6 +1,7 @@
 import type { ToolContext } from '@jrmc/adonis-mcp/types/context'
 import type { BaseSchema } from '@jrmc/adonis-mcp/types/method'
 
+import { mcpMessages } from '#exceptions/error_messages'
 import RagService from '#services/rag_service'
 import { Tool } from '@jrmc/adonis-mcp'
 import { isReadOnly } from '@jrmc/adonis-mcp/tool_annotations'
@@ -28,7 +29,7 @@ export default class SearchKnowledgeTool extends Tool<Schema> {
     const query = args?.query
 
     if (!query) {
-      return response.error('query is required')
+      return response.error(mcpMessages.queryRequired)
     }
 
     return response.structured(await this.rag.search(query))

@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import CollaborationRuntimeService from '#services/collaboration_runtime_service'
 import { updateCollaborationRuntimeValidator } from '#validators/runtime'
+import { apiErrors, toApiErrorResponse } from '#exceptions/error_messages'
 
 export default class InternalCollaborationRuntimeController {
   constructor(private runtime = new CollaborationRuntimeService()) {}
@@ -9,9 +10,7 @@ export default class InternalCollaborationRuntimeController {
     const document = await this.runtime.getRuntimeDocument(params.documentId)
 
     if (!document) {
-      return response.status(404).send({
-        message: 'Document not found',
-      })
+      return response.status(404).send(toApiErrorResponse(apiErrors.documentNotFound))
     }
 
     return serialize(document)
@@ -22,9 +21,7 @@ export default class InternalCollaborationRuntimeController {
     const document = await this.runtime.updateRuntimeDocument(params.documentId, payload)
 
     if (!document) {
-      return response.status(404).send({
-        message: 'Document not found',
-      })
+      return response.status(404).send(toApiErrorResponse(apiErrors.documentNotFound))
     }
 
     return serialize(document)

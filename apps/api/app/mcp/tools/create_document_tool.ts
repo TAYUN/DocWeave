@@ -1,6 +1,7 @@
 import type { ToolContext } from '@jrmc/adonis-mcp/types/context'
 import type { BaseSchema } from '@jrmc/adonis-mcp/types/method'
 
+import { apiErrors, apiSuccessMessages, mcpMessages } from '#exceptions/error_messages'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import { Tool } from '@jrmc/adonis-mcp'
 import vine from '@vinejs/vine'
@@ -32,7 +33,7 @@ export default class CreateDocumentTool extends Tool<Schema> {
 
   async handle({ args, response }: ToolContext<Schema>) {
     if (!args) {
-      return response.error('spaceId and title are required')
+      return response.error(mcpMessages.spaceIdAndTitleRequired)
     }
 
     // 创建动作直接复用现有服务，保证默认内容、默认状态等业务约束不会在 MCP 层分叉。
@@ -43,11 +44,11 @@ export default class CreateDocumentTool extends Tool<Schema> {
     })
 
     if (!document) {
-      return response.error(`Space not found: ${args.spaceId}`)
+      return response.error(apiErrors.spaceNotFound.message)
     }
 
     return response.structured({
-      message: 'Document created',
+      message: apiSuccessMessages.documentCreated,
       document,
     })
   }

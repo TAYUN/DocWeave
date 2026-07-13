@@ -12,7 +12,8 @@
 */
 
 import { DateTime } from 'luxon'
-import { VineDate } from '@vinejs/vine'
+import vine, { VineDate } from '@vinejs/vine'
+import { validationMessagesProvider } from '#exceptions/error_messages'
 
 declare module '@vinejs/vine/types' {
   interface VineGlobalTransforms {
@@ -21,3 +22,4 @@ declare module '@vinejs/vine/types' {
 }
 
 VineDate.transform((value) => DateTime.fromJSDate(value))
+vine.messagesProvider = validationMessagesProvider

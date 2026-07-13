@@ -12,16 +12,17 @@ import db from '@adonisjs/lucid/services/db'
 import Document from '#models/document'
 import DocumentSnapshot from '#models/document_snapshot'
 import RagIndexJob from '#models/rag_index_job'
+import { ApiContractError, apiErrors } from '#exceptions/error_messages'
 
-export class MissingStableSnapshotError extends Error {
+export class MissingStableSnapshotError extends ApiContractError {
   constructor() {
-    super('Document has no stable snapshot yet')
+    super(apiErrors.missingStableSnapshot.code, apiErrors.missingStableSnapshot.message)
   }
 }
 
-export class SnapshotVersionNotFoundError extends Error {
+export class SnapshotVersionNotFoundError extends ApiContractError {
   constructor() {
-    super('Snapshot not found')
+    super(apiErrors.snapshotNotFound.code, apiErrors.snapshotNotFound.message)
   }
 }
 

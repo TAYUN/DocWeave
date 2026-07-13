@@ -1,9 +1,10 @@
 import type { DocumentDetailDto, UpdateDocumentInput } from '@docweave/contracts/document'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
+import { ApiContractError, apiErrors } from '#exceptions/error_messages'
 
-export class EmptyDocumentPatchError extends Error {
+export class EmptyDocumentPatchError extends ApiContractError {
   constructor() {
-    super('At least one editable field is required')
+    super(apiErrors.documentPatchEmpty.code, apiErrors.documentPatchEmpty.message)
   }
 }
 

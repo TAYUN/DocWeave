@@ -1,6 +1,7 @@
 import { HttpContext } from '@adonisjs/core/http'
 import { BaseSerializer } from '@adonisjs/core/transformers'
 import { type SimplePaginatorMetaKeys } from '@adonisjs/lucid/types/querybuilder'
+import { apiErrors } from '#exceptions/error_messages'
 
 /**
  * Custom serializer for API responses that ensures consistent JSON structure
@@ -25,9 +26,7 @@ class ApiSerializer extends BaseSerializer<{
    */
   definePaginationMetaData(metaData: unknown): SimplePaginatorMetaKeys {
     if (!this.isLucidPaginatorMetaData(metaData)) {
-      throw new Error(
-        'Invalid pagination metadata. Expected metadata to contain Lucid pagination keys'
-      )
+      throw new Error(apiErrors.invalidPaginationMetadata.message)
     }
     return metaData
   }

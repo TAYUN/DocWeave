@@ -71,6 +71,7 @@
     "@docweave/ai": "workspace:*",
     "@docweave/contracts": "workspace:*",
     "@docweave/document": "workspace:*",
+    "@docweave/shared": "workspace:*",
     "@japa/api-client": "^3.2.1",
     "@jrmc/adonis-mcp": "^1.0.4",
     "@tuyau/core": "^1.2.2",

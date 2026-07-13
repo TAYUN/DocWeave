@@ -3,6 +3,7 @@ import type { ApiErrorResponse } from '@docweave/contracts/api'
 import User from '#models/user'
 import Space from '#models/space'
 import Document from '#models/document'
+import { apiErrors } from '#exceptions/error_messages'
 
 test.group('api response envelope', () => {
   test('returns a message for unauthorized api requests', async ({ client, assert }) => {
@@ -16,6 +17,7 @@ test.group('api response envelope', () => {
 
     const body = response.body() as ApiErrorResponse
 
+    assert.equal(body.code, apiErrors.unauthorized.code)
     assert.isString(body.message)
     assert.isAbove(body.message!.length, 0)
     assert.isUndefined(body.errors)
@@ -53,11 +55,13 @@ test.group('api response envelope', () => {
 
     const body = response.body() as ApiErrorResponse
 
-    assert.equal(body.message, 'Validation failed')
+    assert.equal(body.code, apiErrors.validationFailed.code)
+    assert.equal(body.message, apiErrors.validationFailed.message)
     assert.isArray(body.errors)
     assert.isAtLeast(body.errors!.length, 1)
     assert.isString(body.errors![0]!.message)
     assert.isAbove(body.errors![0]!.message!.length, 0)
+    assert.match(body.errors![0]!.message!, /不能为空|长度不能少于/)
   })
 
   test('returns message and errors for collaboration token validation failures', async ({
@@ -94,9 +98,11 @@ test.group('api response envelope', () => {
 
     const body = response.body() as ApiErrorResponse
 
-    assert.equal(body.message, 'Validation failed')
+    assert.equal(body.code, apiErrors.validationFailed.code)
+    assert.equal(body.message, apiErrors.validationFailed.message)
     assert.isArray(body.errors)
     assert.equal(body.errors![0]?.field, 'documentId')
+    assert.match(body.errors![0]!.message!, /不能为空|长度不能少于/)
   })
 
   test('returns message and errors for rag search validation failures', async ({
@@ -111,8 +117,10 @@ test.group('api response envelope', () => {
 
     const body = response.body() as ApiErrorResponse
 
-    assert.equal(body.message, 'Validation failed')
+    assert.equal(body.code, apiErrors.validationFailed.code)
+    assert.equal(body.message, apiErrors.validationFailed.message)
     assert.isArray(body.errors)
     assert.equal(body.errors![0]?.field, 'searchText')
+    assert.match(body.errors![0]!.message!, /不能为空|长度不能少于/)
   })
 })

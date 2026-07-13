@@ -2,6 +2,7 @@ import User from '#models/user'
 import { loginValidator } from '#validators/user'
 import type { HttpContext } from '@adonisjs/core/http'
 import UserTransformer from '#transformers/user_transformer'
+import { apiSuccessMessages } from '#exceptions/error_messages'
 
 export default class AccessTokensController {
   async store({ request, serialize }: HttpContext) {
@@ -23,7 +24,7 @@ export default class AccessTokensController {
     }
 
     return {
-      message: 'Logged out successfully',
+      message: apiSuccessMessages.loggedOutSuccessfully,
     }
   }
 }

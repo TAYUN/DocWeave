@@ -7,6 +7,7 @@
  * `@docweave/contracts/auth`
  */
 export type {
+  ApiErrorCode,
   ApiErrorItem,
   ApiErrorResponse,
   ApiMessageResponse,

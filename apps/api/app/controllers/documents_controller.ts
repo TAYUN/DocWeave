@@ -13,6 +13,11 @@ import {
   updateDocumentValidator,
 } from '#validators/documents'
 import type { HttpContext } from '@adonisjs/core/http'
+import {
+  apiErrors,
+  apiSuccessMessages,
+  toApiErrorResponse,
+} from '#exceptions/error_messages'
 
 export default class DocumentsController {
   constructor(
@@ -39,15 +44,13 @@ export default class DocumentsController {
     )
 
     if (!document) {
-      return response.status(404).send({
-        message: 'Space not found',
-      })
+      return response.status(404).send(toApiErrorResponse(apiErrors.spaceNotFound))
     }
 
     response.status(201)
 
     return {
-      message: 'Document created',
+      message: apiSuccessMessages.documentCreated,
       data: document,
     }
   }
@@ -56,9 +59,7 @@ export default class DocumentsController {
     const document = await getDocument(params.documentId, this.catalog)
 
     if (!document) {
-      return response.status(404).send({
-        message: 'Document not found',
-      })
+      return response.status(404).send(toApiErrorResponse(apiErrors.documentNotFound))
     }
 
     return {
@@ -73,20 +74,16 @@ export default class DocumentsController {
       const document = await updateDocument(params.documentId, patch, this.catalog)
 
       if (!document) {
-        return response.status(404).send({
-          message: 'Document not found',
-        })
+        return response.status(404).send(toApiErrorResponse(apiErrors.documentNotFound))
       }
 
       return {
-        message: 'Document updated',
+        message: apiSuccessMessages.documentUpdated,
         data: document,
       }
     } catch (error) {
       if (error instanceof EmptyDocumentPatchError) {
-        return response.status(422).send({
-          message: error.message,
-        })
+        return response.status(422).send(toApiErrorResponse(apiErrors.documentPatchEmpty))
       }
 
       throw error
@@ -97,9 +94,7 @@ export default class DocumentsController {
     const result = await this.processing.createSnapshot(params.documentId)
 
     if (!result) {
-      return response.status(404).send({
-        message: 'Document not found',
-      })
+      return response.status(404).send(toApiErrorResponse(apiErrors.documentNotFound))
     }
 
     return serialize(result)
@@ -116,23 +111,17 @@ export default class DocumentsController {
       )
 
       if (!result) {
-        return response.status(404).send({
-          message: 'Document not found',
-        })
+        return response.status(404).send(toApiErrorResponse(apiErrors.documentNotFound))
       }
 
       return serialize(result)
     } catch (error) {
       if (error instanceof MissingStableSnapshotError) {
-        return response.status(422).send({
-          message: error.message,
-        })
+        return response.status(422).send(toApiErrorResponse(apiErrors.missingStableSnapshot))
       }
 
       if (error instanceof SnapshotVersionNotFoundError) {
-        return response.status(404).send({
-          message: error.message,
-        })
+        return response.status(404).send(toApiErrorResponse(apiErrors.snapshotNotFound))
       }
 
       throw error
@@ -143,9 +132,7 @@ export default class DocumentsController {
     const result = await this.processing.getStatus(params.documentId)
 
     if (!result) {
-      return response.status(404).send({
-        message: 'Document not found',
-      })
+      return response.status(404).send(toApiErrorResponse(apiErrors.documentNotFound))
     }
 
     return serialize(result)

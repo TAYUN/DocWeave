@@ -27,7 +27,8 @@
 5. `apps/web/src/lib/api.ts`：前端统一 API 封装层，页面和查询逻辑只从这里取能力。
 6. `packages/contracts`：跨边界稳定 DTO / input 定义层。
 7. `packages/adapters`：DTO、内容结构与兼容转换的统一适配层。
-8. `apps/web/src/features/*/lib/*view-model.ts`：页面展示友好结构的统一收口点。
+8. `packages/shared`：前后端共享运行时常量目录，例如错误码默认文案。
+9. `apps/web/src/features/*/lib/*view-model.ts`：页面展示友好结构的统一收口点。
 
 更完整的边界说明，见 [数据契约与适配层设计](../architecture/05.%20数据契约与适配层设计.md)。
 
@@ -68,7 +69,7 @@
 2. “至少传一个字段”“只有某状态允许更新”这类业务约束继续留在控制器或 service。
 3. 控制器返回结构尽量稳定，优先保持 `{ message?, data }` 这种统一外形。
 4. 推荐把成功响应收口成三种最小外形：读接口 `{ data }`、带 payload 的写接口 `{ message, data }`、无 payload 成功 `{ message }`。
-5. 错误响应优先统一为 `{ message, errors? }`，不要让页面和 Query 层直接消费框架默认异常 shape。
+5. 错误响应优先统一为 `{ code?, message, errors? }`，不要让页面和 Query 层直接消费框架默认异常 shape。
 
 ### 2. 刷新 registry
 
@@ -98,7 +99,8 @@ pnpm --dir apps/api build
 1. `tuyau-client.ts` 只负责创建 client，不放业务逻辑。
 2. `api.ts` 负责把 route name、params、body、错误转换封装成稳定函数。
 3. `api.ts` 优先对齐 `packages/contracts` 定义的 input / DTO，而不是把页面直接暴露给 Tuyau 推导出的偶然 shape。
-4. 页面、路由 loader、TanStack Query hooks 只依赖 `api.ts` 暴露的函数。
+4. 若接口返回 `ApiErrorResponse.code`，前端 API 层优先按错误码解释语义，`message` 只作为展示与兼容兜底。
+5. 页面、路由 loader、TanStack Query hooks 只依赖 `api.ts` 暴露的函数。
 
 这样做的目的，是把“后端路由细节变化”和“页面业务调用方式”隔开。
 

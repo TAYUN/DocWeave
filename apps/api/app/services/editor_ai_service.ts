@@ -10,6 +10,7 @@ import {
 } from '@blocknote/xl-ai/server'
 import env from '#start/env'
 import Document from '#models/document'
+import { apiErrors } from '#exceptions/error_messages'
 
 type EditorAiPayload = {
   documentId: string
@@ -28,7 +29,7 @@ export default class EditorAiService {
     const document = await Document.find(input.payload.documentId)
 
     if (!document) {
-      throw new EditorAiDocumentNotFoundError('Editor AI document not found')
+      throw new EditorAiDocumentNotFoundError(apiErrors.editorAiDocumentNotFound.message)
     }
 
     void input.userId
@@ -36,7 +37,7 @@ export default class EditorAiService {
     const apiKey = env.get('DASHSCOPE_API_KEY')?.release()
 
     if (!apiKey) {
-      throw new EditorAiProviderConfigError('DASHSCOPE_API_KEY is required for editor AI')
+      throw new EditorAiProviderConfigError(apiErrors.editorAiProviderConfigMissing.message)
     }
 
     const runtimeConfig = createAliyunAiRuntimeConfig({

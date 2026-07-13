@@ -4,6 +4,7 @@ import Document from '#models/document'
 import DocumentSnapshot from '#models/document_snapshot'
 import RagIndexJob from '#models/rag_index_job'
 import Space from '#models/space'
+import { apiErrors } from '#exceptions/error_messages'
 
 const internalSecret = env.get('COLLAB_SECRET').release()
 
@@ -86,7 +87,8 @@ test.group('collaboration runtime flow', (group) => {
 
     response.assertStatus(401)
     response.assertBodyContains({
-      message: 'Unauthorized collaboration runtime request',
+      code: apiErrors.unauthorizedCollaborationRuntimeRequest.code,
+      message: apiErrors.unauthorizedCollaborationRuntimeRequest.message,
     })
   })
 })

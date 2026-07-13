@@ -17,6 +17,7 @@
     "@docweave/api": "workspace:*",
     "@docweave/contracts": "workspace:*",
     "@docweave/editor": "workspace:*",
+    "@docweave/shared": "workspace:*",
     "@hocuspocus/provider": "^4.3.0",
     "@mantine/core": "9.4.1",
     "@mantine/hooks": "9.4.1",

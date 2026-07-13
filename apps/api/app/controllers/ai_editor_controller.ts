@@ -5,6 +5,10 @@ import EditorAiService, {
   EditorAiDocumentNotFoundError,
   EditorAiProviderConfigError,
 } from '#services/editor_ai_service'
+import {
+  apiErrors,
+  toApiErrorResponse,
+} from '#exceptions/error_messages'
 
 export default class AiEditorController {
   constructor(private editorAi = new EditorAiService()) {}
@@ -21,9 +25,7 @@ export default class AiEditorController {
       !body.toolDefinitions ||
       typeof body.toolDefinitions !== 'object'
     ) {
-      return response.status(422).send({
-        message: 'Editor AI messages and toolDefinitions are required',
-      })
+      return response.status(422).send(toApiErrorResponse(apiErrors.editorAiRequestInvalid))
     }
 
     let streamResponse: Response
@@ -39,11 +41,13 @@ export default class AiEditorController {
       })
     } catch (error) {
       if (error instanceof EditorAiDocumentNotFoundError) {
-        return response.status(404).send({ message: error.message })
+        return response.status(404).send(toApiErrorResponse(apiErrors.editorAiDocumentNotFound))
       }
 
       if (error instanceof EditorAiProviderConfigError) {
-        return response.status(503).send({ message: error.message })
+        return response
+          .status(503)
+          .send(toApiErrorResponse(apiErrors.editorAiProviderConfigMissing))
       }
 
       throw error
@@ -54,7 +58,7 @@ export default class AiEditorController {
     }
 
     if (!streamResponse.body) {
-      return response.status(502).send({ message: 'AI provider returned an empty stream' })
+      return response.status(502).send(toApiErrorResponse(apiErrors.aiProviderReturnedEmptyStream))
     }
 
     response.stream(Readable.fromWeb(streamResponse.body as never))

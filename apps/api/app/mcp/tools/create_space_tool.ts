@@ -1,6 +1,7 @@
 import type { ToolContext } from '@jrmc/adonis-mcp/types/context'
 import type { BaseSchema } from '@jrmc/adonis-mcp/types/method'
 
+import { apiSuccessMessages, mcpMessages } from '#exceptions/error_messages'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import { Tool } from '@jrmc/adonis-mcp'
 import vine from '@vinejs/vine'
@@ -28,7 +29,7 @@ export default class CreateSpaceTool extends Tool<Schema> {
 
   async handle({ args, response }: ToolContext<Schema>) {
     if (!args) {
-      return response.error('name and summary are required')
+      return response.error(mcpMessages.nameAndSummaryRequired)
     }
 
     // 复用现有 service，保证空间 ID 生成规则和 HTTP API 完全一致，避免 MCP 层单独分叉。
@@ -38,7 +39,7 @@ export default class CreateSpaceTool extends Tool<Schema> {
     })
 
     return response.structured({
-      message: 'Space created',
+      message: apiSuccessMessages.spaceCreated,
       space,
     })
   }

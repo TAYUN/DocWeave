@@ -4,6 +4,7 @@ import { listSpaces } from '#application/spaces/list_spaces'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import { createSpaceValidator } from '#validators/spaces'
 import type { HttpContext } from '@adonisjs/core/http'
+import { apiErrors, apiSuccessMessages, toApiErrorResponse } from '#exceptions/error_messages'
 
 export default class SpacesController {
   constructor(private catalog = new DocweaveCatalogService()) {}
@@ -18,9 +19,7 @@ export default class SpacesController {
     const tree = await getSpaceTree(params.spaceId, this.catalog)
 
     if (!tree) {
-      return response.status(404).send({
-        message: 'Space not found',
-      })
+      return response.status(404).send(toApiErrorResponse(apiErrors.spaceNotFound))
     }
 
     return {
@@ -43,7 +42,7 @@ export default class SpacesController {
     response.status(201)
 
     return {
-      message: 'Space created',
+      message: apiSuccessMessages.spaceCreated,
       data: space,
     }
   }

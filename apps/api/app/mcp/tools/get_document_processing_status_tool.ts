@@ -1,6 +1,7 @@
 import type { ToolContext } from '@jrmc/adonis-mcp/types/context'
 import type { BaseSchema } from '@jrmc/adonis-mcp/types/method'
 
+import { apiErrors, mcpMessages } from '#exceptions/error_messages'
 import DocumentProcessingService from '#services/document_processing_service'
 import { Tool } from '@jrmc/adonis-mcp'
 import { isReadOnly } from '@jrmc/adonis-mcp/tool_annotations'
@@ -28,14 +29,14 @@ export default class GetDocumentProcessingStatusTool extends Tool<Schema> {
     const documentId = args?.documentId
 
     if (!documentId) {
-      return response.error('documentId is required')
+      return response.error(mcpMessages.documentIdRequired)
     }
 
     // 统一复用状态聚合服务，避免 MCP 自己拼装快照和索引任务摘要。
     const status = await this.processing.getStatus(documentId)
 
     if (!status) {
-      return response.error(`Document not found: ${documentId}`)
+      return response.error(apiErrors.documentNotFound.message)
     }
 
     return response.structured({

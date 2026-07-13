@@ -9,6 +9,7 @@ import {
   MissingStableSnapshotError,
   SnapshotVersionNotFoundError,
 } from '#services/document_processing_service'
+import { apiErrors, apiSuccessMessages } from '#exceptions/error_messages'
 import CreateDocumentSnapshotTool from '../../app/mcp/tools/create_document_snapshot_tool.js'
 import GetDocumentProcessingStatusTool from '../../app/mcp/tools/get_document_processing_status_tool.js'
 import TriggerDocumentIndexTool from '../../app/mcp/tools/trigger_document_index_tool.js'
@@ -69,7 +70,7 @@ test.group('document processing mcp tools', () => {
     assert.deepEqual(result, {
       type: 'structured',
       payload: {
-        message: 'Document snapshot created',
+        message: apiSuccessMessages.documentSnapshotCreated,
         snapshot: expected.snapshot,
         latestSnapshotVersion: 3,
       },
@@ -134,7 +135,7 @@ test.group('document processing mcp tools', () => {
     assert.deepEqual(success, {
       type: 'structured',
       payload: {
-        message: 'Document index triggered',
+        message: apiSuccessMessages.documentIndexTriggered,
         job: expected.job,
         latestSnapshotVersion: 2,
         latestIndexedVersion: 1,
@@ -150,7 +151,7 @@ test.group('document processing mcp tools', () => {
 
     assert.deepEqual(missingSnapshot, {
       type: 'error',
-      message: 'Document has no stable snapshot yet',
+      message: apiErrors.missingStableSnapshot.message,
     })
 
     const missingVersion = await tool.handle({
@@ -162,7 +163,7 @@ test.group('document processing mcp tools', () => {
 
     assert.deepEqual(missingVersion, {
       type: 'error',
-      message: 'Snapshot not found',
+      message: apiErrors.snapshotNotFound.message,
     })
   })
 

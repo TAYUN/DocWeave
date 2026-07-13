@@ -1,6 +1,7 @@
 import type { ToolContext } from '@jrmc/adonis-mcp/types/context'
 import type { BaseSchema } from '@jrmc/adonis-mcp/types/method'
 
+import { apiErrors, apiSuccessMessages, mcpMessages } from '#exceptions/error_messages'
 import DocumentProcessingService, {
   MissingStableSnapshotError,
   SnapshotVersionNotFoundError,
@@ -33,7 +34,7 @@ export default class TriggerDocumentIndexTool extends Tool<Schema> {
     const documentId = args?.documentId
 
     if (!documentId) {
-      return response.error('documentId is required')
+      return response.error(mcpMessages.documentIdRequired)
     }
 
     try {
@@ -43,11 +44,11 @@ export default class TriggerDocumentIndexTool extends Tool<Schema> {
       })
 
       if (!result) {
-        return response.error(`Document not found: ${documentId}`)
+        return response.error(apiErrors.documentNotFound.message)
       }
 
       return response.structured({
-        message: 'Document index triggered',
+        message: apiSuccessMessages.documentIndexTriggered,
         job: result.job,
         latestSnapshotVersion: result.latestSnapshotVersion,
         latestIndexedVersion: result.latestIndexedVersion,

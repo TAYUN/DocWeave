@@ -1,0 +1,13 @@
+{
+  "name": "@docweave/shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./api-messages": "./src/api-messages.ts"
+  },
+  "dependencies": {
+    "@docweave/contracts": "workspace:*"
+  }
+}

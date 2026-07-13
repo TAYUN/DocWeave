@@ -1,0 +1,42 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: closing
+workflow: auto
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:b22a7a5397b3afe2ac203db384f4fd1be30888f2335fb7a9d0f4deca3d44aa70
+contract_hash: sha256:b4ee23ffa759a7d2783376547ef0fa763dcebc77d15772f2cd5fd7b6ab680e9d
+
+# === Execution progress ===
+execution_mode: Batch Inline
+batches_completed: 3
+test_result: pass
+spec_merged: true
+
+# === Metadata ===
+change_name: refactor-api-error-code-contract-alignment
+last_transition: 2026-07-13T06:36:53.070Z
+last_transition_from: executing
+last_transition_to: closing
+
+# === Decision points ===
+dp_0_decisions: Change name: refactor-api-error-code-contract-alignment; intent: upgrade API error handling from message-coupled normalization to stable error-code contracts; constraints: keep M6 isolated in stash, keep success envelopes unchanged, and avoid moving product copy into packages/contracts.
+dp_0_result: confirmed: change intent, scope boundaries, and M6 isolation strategy were confirmed before implementation.
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-13T06:18:00Z
+dp_1_result: confirmed: proposal, design, tasks, and delta spec define a stable full-workflow change boundary.
+dp_1_timestamp: 2026-07-13T06:21:00Z
+dp_2_result: approved: execution contract is sufficient to implement contract-first error-code alignment.
+dp_2_timestamp: 2026-07-13T06:22:00Z
+dp_3_result: approved: proceed with contract upgrade, backend error-code mapping, frontend api.ts normalization, and verification updates.
+dp_3_timestamp: 2026-07-13T06:23:00Z
+dp_4_result: implemented: ApiErrorCode was added to contracts, HTTP error responses now carry code + message, controller branches were aligned, frontend api.ts now prefers code, and docs/tests were updated.
+dp_4_timestamp: 2026-07-13T06:33:00Z
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: pass: verified with pnpm --dir apps/api typecheck; pnpm --dir "D:\\code-my\\DocWeave\\apps\\web" exec tsc --noEmit; pnpm --dir apps/api test --files tests/functional/api_response_envelope.spec.ts; pnpm --dir apps/api test --files tests/functional/document_processing_mcp_tools.spec.ts; pnpm --dir apps/api test --files tests/functional/collaboration_runtime_flow.spec.ts
+dp_6_timestamp: 2026-07-13T06:38:00Z
+dp_7_result: confirmed: tasks are fully checked off, verification passed, and the change is ready for closing artifacts sync.
+dp_7_timestamp: 2026-07-13T06:39:00Z

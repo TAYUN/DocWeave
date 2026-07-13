@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import CollaborationTokenService from '#services/collaboration_token_service'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
 import { collaborationTokenValidator } from '#validators/runtime'
+import { apiErrors, toApiErrorResponse } from '#exceptions/error_messages'
 
 export default class CollaborationTokensController {
   constructor(
@@ -15,9 +16,7 @@ export default class CollaborationTokensController {
     const document = await this.catalog.getDocument(payload.documentId)
 
     if (!document) {
-      return response.status(404).send({
-        message: 'Document not found',
-      })
+      return response.status(404).send(toApiErrorResponse(apiErrors.documentNotFound))
     }
 
     const user = auth.getUserOrFail()

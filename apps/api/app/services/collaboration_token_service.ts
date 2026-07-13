@@ -1,4 +1,5 @@
 import env from '#start/env'
+import { ApiContractError, apiErrors } from '#exceptions/error_messages'
 import {
   buildDocumentRoomName,
   type CollaborationCapabilities,
@@ -28,19 +29,28 @@ export function verifyCollaborationToken(token: string, secret: string) {
   const [encodedPayload, signature] = token.split('.')
 
   if (!encodedPayload || !signature) {
-    throw new Error('Invalid collaboration token format')
+    throw new ApiContractError(
+      apiErrors.collaborationTokenFormatInvalid.code,
+      apiErrors.collaborationTokenFormatInvalid.message
+    )
   }
 
   const expectedSignature = signValue(encodedPayload, secret)
 
   if (!safeEqual(signature, expectedSignature)) {
-    throw new Error('Invalid collaboration token signature')
+    throw new ApiContractError(
+      apiErrors.collaborationTokenSignatureInvalid.code,
+      apiErrors.collaborationTokenSignatureInvalid.message
+    )
   }
 
   const payload = JSON.parse(decodeBase64Url(encodedPayload)) as CollaborationTokenPayload
 
   if (payload.expiresAt <= nowInSeconds()) {
-    throw new Error('Collaboration token expired')
+    throw new ApiContractError(
+      apiErrors.collaborationTokenExpired.code,
+      apiErrors.collaborationTokenExpired.message
+    )
   }
 
   return payload

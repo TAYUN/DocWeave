@@ -3,6 +3,7 @@ import type {
   ApiMessageResponse,
   ApiSuccessResponse,
 } from '@docweave/contracts/api'
+import { apiErrorsByCode } from '@docweave/shared/api-messages'
 import type { CurrentUserDto, LoginResultDto } from '@docweave/contracts/auth'
 import type {
   CollaborationSessionDto,
@@ -48,9 +49,31 @@ export type LoginInput = {
 
 export class AuthError extends Error {}
 
+function normalizeLegacyErrorMessage(message: string | null | undefined, fallback: string) {
+  if (!message) return fallback
+
+  if (message.startsWith('Document not found:')) {
+    return '文档不存在'
+  }
+
+  if (message.startsWith('Space not found:')) {
+    return '知识空间不存在'
+  }
+
+  if (/failed to fetch|networkerror/i.test(message)) {
+    return '无法连接到服务器，请检查网络后重试'
+  }
+
+  return message
+}
+
 function readErrorMessage(payload: ApiErrorResponse | undefined, fallback: string) {
+  if (payload?.code && apiErrorsByCode[payload.code]) {
+    return apiErrorsByCode[payload.code].message
+  }
+
   const validationMessage = payload?.errors?.find((issue) => typeof issue.message === 'string')?.message
-  return payload?.message ?? validationMessage ?? fallback
+  return normalizeLegacyErrorMessage(payload?.message ?? validationMessage, fallback)
 }
 
 function toRequestError(error: unknown, fallback: string) {
@@ -68,7 +91,7 @@ function toRequestError(error: unknown, fallback: string) {
   }
 
   if (error instanceof Error) {
-    return error
+    return new Error(normalizeLegacyErrorMessage(error.message, fallback))
   }
 
   return new Error(fallback)
