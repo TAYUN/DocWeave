@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { indexDocumentSnapshot } from './index_document_snapshot.js'
+import type { RagIndexBlock } from '@docweave/contracts/rag'
+import { createStablePointId, indexDocumentSnapshot } from './index_document_snapshot.js'
 
 function paragraphBlocks(text: string) {
   return text.split('\n').map((line, index) => ({
@@ -219,4 +220,23 @@ test('uses stable UUID-like point ids so qdrant accepts upserts', async () => {
   )
   assert.equal(capturedPoints[0]!.id, capturedPoints[0]!.id)
   assert.notEqual(capturedPoints[0]!.id, capturedPoints[1]!.id)
+})
+
+test('changes the stable point id for every document, snapshot, block, and chunk identity part', async () => {
+  const baseline: RagIndexBlock = {
+    workspaceId: 'workspace-1',
+    spaceId: 'space-1',
+    documentId: 'doc-1',
+    snapshotVersion: 1,
+    blockId: 'block-1',
+    chunkId: 'block-1:0',
+    headingPath: [],
+    plainText: 'Stable point identity.',
+  }
+  const baselineId = createStablePointId(baseline)
+
+  assert.notEqual(createStablePointId({ ...baseline, documentId: 'doc-2' }), baselineId)
+  assert.notEqual(createStablePointId({ ...baseline, snapshotVersion: 2 }), baselineId)
+  assert.notEqual(createStablePointId({ ...baseline, blockId: 'block-2' }), baselineId)
+  assert.notEqual(createStablePointId({ ...baseline, chunkId: 'block-1:1' }), baselineId)
 })

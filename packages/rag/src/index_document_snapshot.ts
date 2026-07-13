@@ -132,7 +132,8 @@ function assertVectorDimensions(vectors: number[][], dimensions: number) {
   }
 }
 
-function toStablePointId(block: RagIndexBlock) {
+/** 由 Citation 的完整来源身份生成可重复的 Qdrant UUID 形态 point ID。 */
+export function createStablePointId(block: RagIndexBlock) {
   // Qdrant point id 必须是 uint64 或 UUID，这里用稳定哈希生成可重复的 UUID 形态，避免同版本重复写入变成脏重复点。
   const hex = createHash('sha256')
     .update(`${block.documentId}:${block.snapshotVersion}:${block.blockId}:${block.chunkId}`)
@@ -166,7 +167,7 @@ export async function indexDocumentSnapshot(
   await dependencies.ensureCollectionDimensions(dependencies.embeddingDimensions)
 
   const points = chunks.map<RagVectorPoint>((chunk, chunkIndex) => ({
-    id: toStablePointId(chunk),
+    id: createStablePointId(chunk),
     vector: vectors[chunkIndex]!,
     payload: chunk,
   }))

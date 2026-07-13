@@ -1,5 +1,6 @@
 export {
   buildBlockChunks,
+  createStablePointId,
   indexDocumentSnapshot,
   type IndexDocumentSnapshotDependencies,
   type IndexDocumentSnapshotInput,
