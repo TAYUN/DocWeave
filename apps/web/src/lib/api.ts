@@ -25,11 +25,7 @@ import type {
   RagSearchResponse,
   RagStreamEvent,
 } from '@docweave/contracts/rag'
-import type {
-  CreateSpaceInput,
-  SpaceDto,
-  SpaceTreeDto,
-} from '@docweave/contracts/space'
+import type { CreateSpaceInput, SpaceDto, SpaceTreeDto } from '@docweave/contracts/space'
 import { TuyauError } from '@tuyau/core/client'
 import { getAccessToken } from '@/lib/auth'
 import { tuyau } from '@/lib/tuyau-client'
@@ -50,9 +46,7 @@ type DocumentProcessingStatusPayload = SuccessPayload<
 type DocumentSnapshotPayload = SuccessPayload<
   AwaitedRoute<typeof tuyau.api.documents.createSnapshot>
 >
-type DocumentIndexJobPayload = SuccessPayload<
-  AwaitedRoute<typeof tuyau.api.documents.triggerIndex>
->
+type DocumentIndexJobPayload = SuccessPayload<AwaitedRoute<typeof tuyau.api.documents.triggerIndex>>
 
 export type ApiSpace = SpaceDto
 export type ApiDocumentSummary = DocumentSummaryDto
@@ -74,7 +68,7 @@ export class ApiRequestError extends Error {
   constructor(
     message: string,
     readonly code?: ApiErrorCode,
-    readonly status?: number,
+    readonly status?: number
   ) {
     super(message)
     this.name = 'ApiRequestError'
@@ -111,14 +105,16 @@ function readErrorMessage(payload: ApiErrorResponse | undefined, fallback: strin
     return apiErrorsByCode[payload.code].message
   }
 
-  const validationMessage = payload?.errors?.find((issue) => typeof issue.message === 'string')?.message
+  const validationMessage = payload?.errors?.find(
+    (issue) => typeof issue.message === 'string'
+  )?.message
   return normalizeLegacyErrorMessage(payload?.message ?? validationMessage, fallback)
 }
 
 function toApiRequestError(
   status: number | undefined,
   payload: ApiErrorResponse | undefined,
-  fallback: string,
+  fallback: string
 ) {
   const message = readErrorMessage(payload, fallback)
 
@@ -201,7 +197,7 @@ export async function searchRag(input: RagSearchRequest): Promise<RagSearchRespo
       method: 'POST',
       body: JSON.stringify(input),
     },
-    '知识搜索失败，请稍后重试',
+    '知识搜索失败，请稍后重试'
   )
 
   return payload.data
@@ -212,7 +208,7 @@ export async function searchRag(input: RagSearchRequest): Promise<RagSearchRespo
  */
 export async function streamRagChat(
   input: RagChatRequest,
-  { signal, onEvent }: RagChatStreamOptions,
+  { signal, onEvent }: RagChatStreamOptions
 ): Promise<void> {
   const response = await fetch('/api/rag/chat', {
     method: 'POST',
@@ -280,7 +276,12 @@ export function parseRagSseFrame(frame: string): RagStreamEvent | null {
 
   try {
     const event = JSON.parse(data) as RagStreamEvent
-    if (!event || typeof event !== 'object' || !('type' in event) || typeof event.type !== 'string') {
+    if (
+      !event ||
+      typeof event !== 'object' ||
+      !('type' in event) ||
+      typeof event.type !== 'string'
+    ) {
       throw new Error('Invalid RAG stream event')
     }
 
@@ -297,7 +298,7 @@ export async function login(input: LoginInput): Promise<LoginResultDto> {
       method: 'POST',
       body: JSON.stringify(input),
     },
-    '登录失败，请稍后重试',
+    '登录失败，请稍后重试'
   )
 
   return payload.data
@@ -309,7 +310,7 @@ export async function logout(): Promise<ApiMessageResponse> {
     {
       method: 'POST',
     },
-    '退出登录失败，请稍后重试',
+    '退出登录失败，请稍后重试'
   )
 }
 
@@ -319,7 +320,7 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     {
       method: 'GET',
     },
-    '加载当前用户失败，请稍后重试',
+    '加载当前用户失败，请稍后重试'
   )
 
   return payload.data
@@ -373,7 +374,7 @@ export async function getDocumentById(documentId: string): Promise<DocumentShowP
  * 将文档处理状态收口在前端 API 边界，页面不依赖 Tuyau 的传输返回 shape。
  */
 export async function getDocumentProcessingStatus(
-  documentId: string,
+  documentId: string
 ): Promise<ApiDocumentProcessingStatus> {
   try {
     const payload = await tuyau.api.documents.status({
@@ -392,7 +393,7 @@ export async function getDocumentProcessingStatus(
  * 不把 RAG 页的只读状态查询误当成建立索引的入口。
  */
 export async function createDocumentSnapshot(
-  documentId: string,
+  documentId: string
 ): Promise<CreateDocumentSnapshotResultDto> {
   try {
     const payload = await tuyau.api.documents.createSnapshot({
@@ -406,7 +407,7 @@ export async function createDocumentSnapshot(
 
 export async function triggerDocumentIndex(
   documentId: string,
-  snapshotVersion?: number,
+  snapshotVersion?: number
 ): Promise<CreateDocumentIndexJobResultDto> {
   try {
     const payload = await tuyau.api.documents.triggerIndex({
@@ -430,7 +431,9 @@ export async function createSpace(input: CreateSpaceInput): Promise<SpaceStorePa
   }
 }
 
-export async function createDocument(input: CreateDocumentInput): Promise<DocumentStorePayload['data']> {
+export async function createDocument(
+  input: CreateDocumentInput
+): Promise<DocumentStorePayload['data']> {
   try {
     const payload = await tuyau.api.documents.store({
       body: input,
@@ -442,7 +445,7 @@ export async function createDocument(input: CreateDocumentInput): Promise<Docume
 }
 
 export async function updateDocument(
-  input: { documentId: string } & UpdateDocumentPatch,
+  input: { documentId: string } & UpdateDocumentPatch
 ): Promise<DocumentUpdatePayload['data']> {
   try {
     const { documentId, ...patch } = input
@@ -467,7 +470,7 @@ export async function getCollaborationToken(documentId: string): Promise<ApiColl
       method: 'POST',
       body: JSON.stringify({ documentId }),
     },
-    '加载协同令牌失败，请稍后重试',
+    '加载协同令牌失败，请稍后重试'
   )
 
   return payload.data

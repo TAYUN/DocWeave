@@ -25,16 +25,22 @@ export function WorkbenchHomePage() {
                 Knowledge Spaces
               </Badge>
               <div>
-                <Title order={1} mb={6}>知识空间</Title>
+                <Title order={1} mb={6}>
+                  知识空间
+                </Title>
                 <Text className="section-description" size="md">
-                  {currentUser?.fullName ?? '你'} 的文档、专题和知识沉淀都从这里展开。先进入一个空间，再继续查看和编辑其中的文档。
+                  {currentUser?.fullName ?? '你'}{' '}
+                  的文档、专题和知识沉淀都从这里展开。先进入一个空间，再继续查看和编辑其中的文档。
                 </Text>
               </div>
               <Group gap="sm">
                 <CreateSpaceModal buttonLabel="新建知识空间" primary />
                 <Button
                   variant="light"
-                  onClick={() => commonSpaces[0] && navigate({ to: '/spaces/$spaceId', params: { spaceId: commonSpaces[0].id } })}
+                  onClick={() =>
+                    commonSpaces[0] &&
+                    navigate({ to: '/spaces/$spaceId', params: { spaceId: commonSpaces[0].id } })
+                  }
                   disabled={commonSpaces.length === 0}
                 >
                   打开常用空间
@@ -75,7 +81,9 @@ export function WorkbenchHomePage() {
             emptyTitle="还没有常用空间"
             emptyMessage="先创建一个知识空间，后续这里会优先显示你最常进入的内容。"
             onOpenSpace={(spaceId) => navigate({ to: '/spaces/$spaceId', params: { spaceId } })}
-            onOpenDocument={(documentId) => navigate({ to: '/documents/$documentId', params: { documentId } })}
+            onOpenDocument={(documentId) =>
+              navigate({ to: '/documents/$documentId', params: { documentId } })
+            }
           />
         </Stack>
 
@@ -87,7 +95,9 @@ export function WorkbenchHomePage() {
                 每个空间下会带出最近更新的文档，让你不用先进入空间也能快速判断下一步去哪。
               </Text>
             </div>
-            <Text className="section-count">{documentsPending || documentsError ? '同步中' : `${spaces.length} 个空间`}</Text>
+            <Text className="section-count">
+              {documentsPending || documentsError ? '同步中' : `${spaces.length} 个空间`}
+            </Text>
           </Group>
 
           <SpaceOverviewGrid
@@ -96,7 +106,9 @@ export function WorkbenchHomePage() {
             emptyTitle="还没有知识空间"
             emptyMessage="创建第一个知识空间，把团队文档和专题内容整理起来。"
             onOpenSpace={(spaceId) => navigate({ to: '/spaces/$spaceId', params: { spaceId } })}
-            onOpenDocument={(documentId) => navigate({ to: '/documents/$documentId', params: { documentId } })}
+            onOpenDocument={(documentId) =>
+              navigate({ to: '/documents/$documentId', params: { documentId } })
+            }
           />
         </Stack>
       </Stack>

@@ -1,8 +1,7 @@
 import type { AiRuntimeConfig } from '@docweave/ai'
 import type { AiModelKind, AiModelRef } from '@docweave/contracts/ai'
 
-export const DEFAULT_DASHSCOPE_BASE_URL =
-  'https://dashscope.aliyuncs.com/compatible-mode/v1'
+export const DEFAULT_DASHSCOPE_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1'
 
 export const DEFAULT_EMBEDDING_MODEL = 'text-embedding-v4'
 export const DEFAULT_EMBEDDING_DIMENSIONS = 1024
@@ -20,9 +19,7 @@ export type AiRuntimeConfigInput = {
   embeddingDimensions?: number
 }
 
-export function createAliyunAiRuntimeConfig(
-  input: AiRuntimeConfigInput,
-): AliyunAiRuntimeConfig {
+export function createAliyunAiRuntimeConfig(input: AiRuntimeConfigInput): AliyunAiRuntimeConfig {
   const apiKey = input.apiKey.trim()
 
   if (!apiKey) {
@@ -30,8 +27,7 @@ export function createAliyunAiRuntimeConfig(
   }
 
   // text-embedding-v4 默认输出 1024 维，必须与 Qdrant collection 保持一致。
-  const embeddingDimensions =
-    input.embeddingDimensions ?? DEFAULT_EMBEDDING_DIMENSIONS
+  const embeddingDimensions = input.embeddingDimensions ?? DEFAULT_EMBEDDING_DIMENSIONS
 
   if (!Number.isInteger(embeddingDimensions) || embeddingDimensions <= 0) {
     throw new Error('EMBEDDING_DIMENSIONS must be a positive integer')
@@ -43,16 +39,13 @@ export function createAliyunAiRuntimeConfig(
     baseURL: normalizeBaseURL(input.baseURL ?? DEFAULT_DASHSCOPE_BASE_URL),
     chatModel: createModelRef('chat', input.chatModel ?? 'qwen-plus'),
     enableThinking: input.enableThinking,
-    embeddingModel: createModelRef(
-      'embedding',
-      input.embeddingModel ?? DEFAULT_EMBEDDING_MODEL,
-    ),
+    embeddingModel: createModelRef('embedding', input.embeddingModel ?? DEFAULT_EMBEDDING_MODEL),
     embeddingDimensions,
   }
 }
 
 export function createAliyunFetch(
-  config: AliyunAiRuntimeConfig,
+  config: AliyunAiRuntimeConfig
 ): typeof globalThis.fetch | undefined {
   if (config.enableThinking !== false) {
     return undefined

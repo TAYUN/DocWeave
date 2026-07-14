@@ -57,9 +57,7 @@ function toIsoString(value: DateValue): string | null {
 export function toDocumentSummaryDto(document: DocumentSummarySource): DocumentSummaryDto {
   const summary =
     document.summary ??
-    (document.content
-      ? extractTextPreview(parseDocumentContent(document.content))
-      : null)
+    (document.content ? extractTextPreview(parseDocumentContent(document.content)) : null)
 
   return {
     id: document.id,
@@ -101,19 +99,13 @@ function createServerBlockNoteEditor(initialContent = createDefaultDocumentConte
   })
 }
 
-export function restoreYDocFromSerializedContent(input: {
-  content: string
-  fragmentName: string
-}) {
+export function restoreYDocFromSerializedContent(input: { content: string; fragmentName: string }) {
   const blocks = parseDocumentContent(input.content)
   const editor = createServerBlockNoteEditor(blocks)
   return blocksToYDoc(editor, blocks, input.fragmentName)
 }
 
-export function serializeYDocContent(input: {
-  document: Y.Doc
-  fragmentName: string
-}) {
+export function serializeYDocContent(input: { document: Y.Doc; fragmentName: string }) {
   const editor = createServerBlockNoteEditor()
   const blocks = yDocToBlocks(editor, input.document, input.fragmentName)
   return serializeDocumentContent(blocks)

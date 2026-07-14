@@ -51,7 +51,7 @@ test('creates citation-capable points from BlockNote blocks with complete metada
       async canPublish() {
         return true
       },
-    },
+    }
   )
 
   assert.equal(capturedPoints.length, 2)
@@ -91,7 +91,7 @@ test('does not create points for blocks without usable text', async () => {
       async canPublish() {
         return true
       },
-    },
+    }
   )
 
   assert.equal(result.chunkCount, 0)
@@ -108,7 +108,7 @@ test('splits embedding calls into batches of at most 10 texts', async () => {
       documentId: 'doc-1',
       snapshotVersion: 3,
       blocks: paragraphBlocks(
-        Array.from({ length: 23 }, (_, index) => `chunk-${index + 1}`).join('\n'),
+        Array.from({ length: 23 }, (_, index) => `chunk-${index + 1}`).join('\n')
       ),
     },
     {
@@ -122,10 +122,13 @@ test('splits embedding calls into batches of at most 10 texts', async () => {
       async canPublish() {
         return true
       },
-    },
+    }
   )
 
-  assert.deepEqual(calls.map((batch) => batch.length), [10, 10, 3])
+  assert.deepEqual(
+    calls.map((batch) => batch.length),
+    [10, 10, 3]
+  )
   assert.equal(result.chunkCount, 23)
   assert.equal(result.status, 'published')
 })
@@ -155,9 +158,9 @@ test('fails before writes when embedding dimensions do not match the configured 
           async canPublish() {
             return true
           },
-        },
+        }
       ),
-    /Embedding dimensions mismatch/,
+    /Embedding dimensions mismatch/
   )
 
   assert.equal(upserted, false)
@@ -182,7 +185,7 @@ test('returns superseded when publish gate rejects the snapshot version', async 
       async canPublish() {
         return false
       },
-    },
+    }
   )
 
   assert.equal(result.status, 'superseded')
@@ -211,12 +214,12 @@ test('uses stable UUID-like point ids so qdrant accepts upserts', async () => {
       async canPublish() {
         return true
       },
-    },
+    }
   )
 
   assert.match(
     capturedPoints[0]!.id,
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
   )
   assert.equal(capturedPoints[0]!.id, capturedPoints[0]!.id)
   assert.notEqual(capturedPoints[0]!.id, capturedPoints[1]!.id)

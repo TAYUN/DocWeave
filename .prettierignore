@@ -1,0 +1,11 @@
+.adonisjs
+.agents
+.codegraph
+.codex
+.git
+.reasonix
+changes
+coverage
+dist
+node_modules
+pnpm-lock.yaml

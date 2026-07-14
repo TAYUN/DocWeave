@@ -110,7 +110,7 @@ test('returns only complete, authorized points at each document active indexed v
           },
         ]
       },
-    },
+    }
   )
 
   assert.deepEqual(backendRequest, {
@@ -157,7 +157,7 @@ test('narrows the authorized scope by its optional space filter before querying 
         assert.deepEqual(request.documents, [{ documentId: 'doc-a', snapshotVersion: 3 }])
         return []
       },
-    },
+    }
   )
 
   assert.deepEqual(hits, [])
@@ -185,7 +185,7 @@ test('does not query the backend when no authorized document has an active index
         called = true
         return []
       },
-    },
+    }
   )
 
   assert.equal(called, false)
@@ -226,10 +226,13 @@ test('keeps the returned hits bounded when the backend returns extra valid candi
           },
         ]
       },
-    },
+    }
   )
 
-  assert.deepEqual(hits.map((hit) => hit.snippet), ['Second result.'])
+  assert.deepEqual(
+    hits.map((hit) => hit.snippet),
+    ['Second result.']
+  )
 })
 
 test('rejects candidates with blank citation fields or non-positive integer snapshot versions', async () => {
@@ -261,7 +264,7 @@ test('rejects candidates with blank citation fields or non-positive integer snap
       async search() {
         return invalidPayloads.map((payload, index) => ({ score: 1 - index / 10, payload }))
       },
-    },
+    }
   )
 
   assert.deepEqual(hits, [])
@@ -275,9 +278,24 @@ test('does not query the backend for zero, negative, or fractional active indexe
       queryVector: [1],
       scope: {
         documents: [
-          { workspaceId: 'workspace-1', spaceId: 'space-a', documentId: 'doc-zero', latestIndexedVersion: 0 },
-          { workspaceId: 'workspace-1', spaceId: 'space-a', documentId: 'doc-negative', latestIndexedVersion: -1 },
-          { workspaceId: 'workspace-1', spaceId: 'space-a', documentId: 'doc-fractional', latestIndexedVersion: 1.5 },
+          {
+            workspaceId: 'workspace-1',
+            spaceId: 'space-a',
+            documentId: 'doc-zero',
+            latestIndexedVersion: 0,
+          },
+          {
+            workspaceId: 'workspace-1',
+            spaceId: 'space-a',
+            documentId: 'doc-negative',
+            latestIndexedVersion: -1,
+          },
+          {
+            workspaceId: 'workspace-1',
+            spaceId: 'space-a',
+            documentId: 'doc-fractional',
+            latestIndexedVersion: 1.5,
+          },
         ],
       },
     },
@@ -286,7 +304,7 @@ test('does not query the backend for zero, negative, or fractional active indexe
         called = true
         return []
       },
-    },
+    }
   )
 
   assert.equal(called, false)

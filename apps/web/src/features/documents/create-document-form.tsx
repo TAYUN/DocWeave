@@ -99,11 +99,7 @@ export function CreateDocumentForm({
           value={summary}
         />
         <div className="action-row">
-          <Button
-            disabled={!title.trim()}
-            loading={createDocumentMutation.isPending}
-            type="submit"
-          >
+          <Button disabled={!title.trim()} loading={createDocumentMutation.isPending} type="submit">
             {createDocumentMutation.isPending ? '创建中...' : '创建文档'}
           </Button>
           <Button onClick={() => setOpened(false)} variant="light">

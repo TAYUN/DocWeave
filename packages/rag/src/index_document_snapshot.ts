@@ -126,7 +126,7 @@ function assertVectorDimensions(vectors: number[][], dimensions: number) {
   for (const vector of vectors) {
     if (vector.length !== dimensions) {
       throw new Error(
-        `Embedding dimensions mismatch: expected ${dimensions}, received ${vector.length}`,
+        `Embedding dimensions mismatch: expected ${dimensions}, received ${vector.length}`
       )
     }
   }
@@ -145,7 +145,7 @@ export function createStablePointId(block: RagIndexBlock) {
 
 export async function indexDocumentSnapshot(
   input: IndexDocumentSnapshotInput,
-  dependencies: IndexDocumentSnapshotDependencies,
+  dependencies: IndexDocumentSnapshotDependencies
 ): Promise<IndexDocumentSnapshotResult> {
   const chunks = buildBlockChunks(input)
 

@@ -53,11 +53,15 @@ export function AppSidebar({ treeEntries }: { treeEntries: AppShellTreeEntry[] }
           <Text size="xs" c="dimmed" fw={600} tt="uppercase">
             空间
           </Text>
-          <Text size="xs" c="dimmed">{spaces.length}</Text>
+          <Text size="xs" c="dimmed">
+            {spaces.length}
+          </Text>
         </Group>
 
         {spaces.length === 0 ? (
-          <Text size="xs" c="dimmed" px="xs">还没有空间</Text>
+          <Text size="xs" c="dimmed" px="xs">
+            还没有空间
+          </Text>
         ) : (
           spaces.map((space) => (
             <NavLink
@@ -69,15 +73,21 @@ export function AppSidebar({ treeEntries }: { treeEntries: AppShellTreeEntry[] }
               childrenOffset={12}
               defaultOpened={sidebarMode !== 'GlobalMode' && space.id === currentSpaceId}
             >
-              {sidebarMode !== 'GlobalMode' && activeTreeEntry && activeTreeEntry.space.id === space.id ? (
+              {sidebarMode !== 'GlobalMode' &&
+              activeTreeEntry &&
+              activeTreeEntry.space.id === space.id ? (
                 <>
                   {activeTreeEntry.isPending ? (
                     <Group gap="xs" px="xs" py={4}>
                       <Loader size="xs" />
-                      <Text size="xs" c="dimmed">加载文档树...</Text>
+                      <Text size="xs" c="dimmed">
+                        加载文档树...
+                      </Text>
                     </Group>
                   ) : activeTreeEntry.error ? (
-                    <Text size="xs" c="red" px="xs">加载失败</Text>
+                    <Text size="xs" c="red" px="xs">
+                      加载失败
+                    </Text>
                   ) : activeTreeEntry.tree && activeTreeEntry.tree.children.length > 0 ? (
                     activeTreeEntry.tree.children.map((doc) => (
                       <NavLink
@@ -92,7 +102,9 @@ export function AppSidebar({ treeEntries }: { treeEntries: AppShellTreeEntry[] }
                       />
                     ))
                   ) : (
-                    <Text size="xs" c="dimmed" px="xs">还没有文档</Text>
+                    <Text size="xs" c="dimmed" px="xs">
+                      还没有文档
+                    </Text>
                   )}
                 </>
               ) : null}
@@ -107,28 +119,36 @@ export function AppSidebar({ treeEntries }: { treeEntries: AppShellTreeEntry[] }
               <Text size="xs" c="dimmed" fw={600} tt="uppercase">
                 最近文档
               </Text>
-              <Text size="xs" c="dimmed">{documents.length}</Text>
+              <Text size="xs" c="dimmed">
+                {documents.length}
+              </Text>
             </Group>
 
             {documentsPending ? (
               <Group gap="xs" px="xs" py={4}>
                 <Loader size="xs" />
-                <Text size="xs" c="dimmed">加载中...</Text>
+                <Text size="xs" c="dimmed">
+                  加载中...
+                </Text>
               </Group>
             ) : documents.length === 0 ? (
-              <Text size="xs" c="dimmed" px="xs">还没有文档</Text>
+              <Text size="xs" c="dimmed" px="xs">
+                还没有文档
+              </Text>
             ) : (
-              documents.slice(0, 8).map((doc) => (
-                <NavLink
-                  key={doc.id}
-                  label={doc.title}
-                  leftSection={<FileText size={14} />}
-                  onClick={() =>
-                    navigate({ to: '/documents/$documentId', params: { documentId: doc.id } })
-                  }
-                  className={`ui-interactive ${classes.navLink}`}
-                />
-              ))
+              documents
+                .slice(0, 8)
+                .map((doc) => (
+                  <NavLink
+                    key={doc.id}
+                    label={doc.title}
+                    leftSection={<FileText size={14} />}
+                    onClick={() =>
+                      navigate({ to: '/documents/$documentId', params: { documentId: doc.id } })
+                    }
+                    className={`ui-interactive ${classes.navLink}`}
+                  />
+                ))
             )}
           </>
         ) : null}

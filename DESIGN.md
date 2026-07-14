@@ -117,13 +117,13 @@ DocWeave 的字体规范跟随 `Mantine` 官方默认字体系统，不额外定
 
 ### Hierarchy
 
-| Role | Intent | Visual Rule |
-|------|--------|-------------|
-| Page Title | 页面主标题 | 明确、稳定、不过度夸张 |
-| Section Title | 区块标题 | 比正文明显，但不制造营销式冲击 |
-| Body | 正文与说明 | 可连续阅读，优先清晰 |
-| Meta | 标签、辅助说明、元数据 | 弱于正文，但仍需可读 |
-| Status / Badge | 状态与短标签 | 紧凑、明确、可快速扫描 |
+| Role           | Intent                 | Visual Rule                    |
+| -------------- | ---------------------- | ------------------------------ |
+| Page Title     | 页面主标题             | 明确、稳定、不过度夸张         |
+| Section Title  | 区块标题               | 比正文明显，但不制造营销式冲击 |
+| Body           | 正文与说明             | 可连续阅读，优先清晰           |
+| Meta           | 标签、辅助说明、元数据 | 弱于正文，但仍需可读           |
+| Status / Badge | 状态与短标签           | 紧凑、明确、可快速扫描         |
 
 ### Typography Principles
 
@@ -211,12 +211,12 @@ DocWeave 的字体规范跟随 `Mantine` 官方默认字体系统，不额外定
 
 DocWeave 的深度系统应该很克制。
 
-| Level | Treatment | Use |
-|-------|-----------|-----|
-| Flat | 无额外强调 | 页面背景、普通排版区 |
-| Structured | 轻边框 | 普通区块、列表项、表单区域 |
-| Soft Elevated | 极轻阴影 | 需要从背景中略微浮出的面板 |
-| Semantic Focus | 焦点环 / 活动边框 | 焦点、当前项、选中态 |
+| Level          | Treatment         | Use                        |
+| -------------- | ----------------- | -------------------------- |
+| Flat           | 无额外强调        | 页面背景、普通排版区       |
+| Structured     | 轻边框            | 普通区块、列表项、表单区域 |
+| Soft Elevated  | 极轻阴影          | 需要从背景中略微浮出的面板 |
+| Semantic Focus | 焦点环 / 活动边框 | 焦点、当前项、选中态       |
 
 ### Depth Principles
 

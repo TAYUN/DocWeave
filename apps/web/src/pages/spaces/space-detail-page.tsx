@@ -1,4 +1,14 @@
-import { ActionIcon, Alert, Button, Container, Group, Paper, Stack, Text, Title } from '@mantine/core'
+import {
+  ActionIcon,
+  Alert,
+  Button,
+  Container,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core'
 import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { FilePlus, FolderOpen, MoreHorizontal } from 'lucide-react'
@@ -6,10 +16,7 @@ import { CreateDocumentForm } from '@/features/documents/create-document-form'
 import { DocumentDirectoryList } from '@/features/documents/document-directory-list'
 import { useAppShellData } from '@/features/shell/app-shell-data'
 import { NotFoundStatePanel, RestrictedStatePanel } from '@/features/shared/state-panels'
-import {
-  sortDocumentsByUpdatedAt,
-  toSpaceSummaryViewModel,
-} from '@/features/spaces/lib'
+import { sortDocumentsByUpdatedAt, toSpaceSummaryViewModel } from '@/features/spaces/lib'
 
 function isRestrictedMessage(message: string) {
   return /权限|禁止|forbidden|restricted/i.test(message)

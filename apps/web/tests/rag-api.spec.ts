@@ -2,14 +2,18 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import type { DocumentProcessingStatusDto } from '@docweave/contracts/document'
 import { parseRagSseFrame, streamRagChat } from '../src/lib/api.ts'
-import { getRagIndexState, toRagChatViewModel, toRagSearchViewModel } from '../src/features/rag/lib/index.ts'
+import {
+  getRagIndexState,
+  toRagChatViewModel,
+  toRagSearchViewModel,
+} from '../src/features/rag/lib/index.ts'
 import { toRagAnswerParts } from '../src/features/rag/rag-answer-parts.ts'
 
 test('parses one JSON data frame and ignores frames without data', () => {
-  assert.deepEqual(
-    parseRagSseFrame('event: message\ndata: {"type":"text-delta","delta":"答案"}'),
-    { type: 'text-delta', delta: '答案' },
-  )
+  assert.deepEqual(parseRagSseFrame('event: message\ndata: {"type":"text-delta","delta":"答案"}'), {
+    type: 'text-delta',
+    delta: '答案',
+  })
   assert.equal(parseRagSseFrame(': heartbeat'), null)
 })
 
@@ -31,7 +35,7 @@ test('consumes fragmented SSE frames and accepts a finish frame at EOF', async (
         { type: 'text-delta', delta: '答案' },
         { type: 'finish', finishReason: 'stop', citations: [], usage: null },
       ])
-    },
+    }
   )
 })
 
@@ -51,7 +55,7 @@ test('accepts an error frame at EOF as the only terminal stream event', async ()
           error: { code: 'RAG_PERMISSION_DENIED', message: '无权限', retryable: false },
         },
       ])
-    },
+    }
   )
 })
 
@@ -69,13 +73,16 @@ test('passes AbortController signal to fetch and does not synthesize a terminal 
             controller.error(new DOMException('cancelled', 'AbortError'))
           })
         },
-      }),
+      })
     )
   }
 
   try {
     const events: unknown[] = []
-    const streaming = streamRagChat({ message: '问题' }, { signal: abort.signal, onEvent: (event) => events.push(event) })
+    const streaming = streamRagChat(
+      { message: '问题' },
+      { signal: abort.signal, onEvent: (event) => events.push(event) }
+    )
     abort.abort()
 
     await assert.rejects(streaming, { name: 'AbortError' })
@@ -92,20 +99,20 @@ test('maps no-index only from explicit page status and maps stream permission de
       status: 'success',
       response: { searchText: '问题', hits: [] },
     }).state,
-    'empty',
+    'empty'
   )
   assert.equal(toRagSearchViewModel({ status: 'no-index', searchText: '问题' }).state, 'no-index')
   const restricted = toRagChatViewModel({
-      status: 'failed',
-      events: [
-        { type: 'text-delta', delta: '不应继续显示的回答' },
-        {
-          type: 'error',
-          error: { code: 'RAG_PERMISSION_DENIED', message: '无权限', retryable: false },
-        },
-      ],
-      error: new Error('fallback'),
-    })
+    status: 'failed',
+    events: [
+      { type: 'text-delta', delta: '不应继续显示的回答' },
+      {
+        type: 'error',
+        error: { code: 'RAG_PERMISSION_DENIED', message: '无权限', retryable: false },
+      },
+    ],
+    error: new Error('fallback'),
+  })
 
   assert.equal(restricted.state, 'restricted')
   assert.equal(restricted.answer, '')
@@ -117,15 +124,20 @@ test('prioritizes shell and document-status loading failures over index availabi
 
   assert.equal(
     getRagIndexState(documents, { spaceId: null, pending: true, error: null }),
-    'loading',
+    'loading'
   )
   assert.equal(
     getRagIndexState(documents, { spaceId: null, pending: false, error: new Error('加载失败') }),
-    'failed',
+    'failed'
   )
   assert.equal(
-    getRagIndexState(documents, { spaceId: null, pending: false, error: null, statusesPending: true }),
-    'loading',
+    getRagIndexState(documents, {
+      spaceId: null,
+      pending: false,
+      error: null,
+      statusesPending: true,
+    }),
+    'loading'
   )
   assert.equal(
     getRagIndexState(documents, {
@@ -134,7 +146,7 @@ test('prioritizes shell and document-status loading failures over index availabi
       error: null,
       statusesError: new Error('状态加载失败'),
     }),
-    'failed',
+    'failed'
   )
   assert.equal(
     getRagIndexState(documents, {
@@ -143,7 +155,7 @@ test('prioritizes shell and document-status loading failures over index availabi
       error: null,
       statuses: [processingStatus({ latestIndexedVersion: null })],
     }),
-    'no-index',
+    'no-index'
   )
 })
 
@@ -180,7 +192,7 @@ test('returns failed-index when a visible document latest index job failed witho
         processingStatus({ documentId: 'ready-doc', latestIndexedVersion: 2 }),
       ],
     }),
-    'failed-index',
+    'failed-index'
   )
 })
 
@@ -216,7 +228,7 @@ test('only evaluates document processing statuses within the selected visible sp
         }),
       ],
     }),
-    'ready',
+    'ready'
   )
 })
 
@@ -234,13 +246,13 @@ test('replaces only known verbose Citation IDs with compact answer references', 
   assert.deepEqual(
     toRagAnswerParts(
       '结论有据 [rag-evaluation-playbook:2:a9453816-504d-4f3f-ab62-647a89a391ce:0]，保留 [不应替换]。',
-      citations,
+      citations
     ),
     [
       { type: 'text', value: '结论有据 ' },
       { type: 'citation', citation: citations[0], index: 1 },
       { type: 'text', value: '，保留 [不应替换]。' },
-    ],
+    ]
   )
 })
 
@@ -258,18 +270,18 @@ test('recognizes the model Citation shorthand that omits the repeated block ID',
   assert.deepEqual(
     toRagAnswerParts(
       '应避免平均分掩盖关键失败 [rag-evaluation-playbook:2:c200729c-2be4-4cad-989b-873274d4ac7d:0]。',
-      citations,
+      citations
     ),
     [
       { type: 'text', value: '应避免平均分掩盖关键失败 ' },
       { type: 'citation', citation: citations[0], index: 1 },
       { type: 'text', value: '。' },
-    ],
+    ]
   )
 })
 
 function processingStatus(
-  overrides: Partial<DocumentProcessingStatusDto> = {},
+  overrides: Partial<DocumentProcessingStatusDto> = {}
 ): DocumentProcessingStatusDto {
   return {
     documentId: 'document-1',
@@ -289,7 +301,7 @@ function responseFromChunks(chunks: string[]) {
         for (const chunk of chunks) controller.enqueue(encoder.encode(chunk))
         controller.close()
       },
-    }),
+    })
   )
 }
 

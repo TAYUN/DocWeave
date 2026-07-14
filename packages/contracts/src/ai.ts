@@ -48,12 +48,7 @@ export type AiEmbeddingResponse = {
   usage: AiUsage | null
 }
 
-export type EditorAiAction =
-  | 'rewrite'
-  | 'expand'
-  | 'shorten'
-  | 'translate'
-  | 'summarize'
+export type EditorAiAction = 'rewrite' | 'expand' | 'shorten' | 'translate' | 'summarize'
 
 export type EditorAiLocalContext = {
   documentTitle: string

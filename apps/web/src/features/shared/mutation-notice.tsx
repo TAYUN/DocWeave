@@ -7,7 +7,12 @@ export function MutationNotice({ message }: { message: string | null }) {
   }
 
   return (
-    <Alert className="notice-inline status-alert status-alert--error" color="red" icon={<AlertCircle size={18} />} variant="light">
+    <Alert
+      className="notice-inline status-alert status-alert--error"
+      color="red"
+      icon={<AlertCircle size={18} />}
+      variant="light"
+    >
       {message}
     </Alert>
   )

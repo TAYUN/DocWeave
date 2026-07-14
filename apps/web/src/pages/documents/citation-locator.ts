@@ -34,14 +34,12 @@ export function locateCitationBlock({
     if (block) editor.setTextCursorPosition(block.id, 'start')
 
     schedule(() => {
-      const target = (
-        editorSurface?.querySelector<HTMLElement>(
-          `[data-node-type="blockContainer"][data-id="${blockId}"], [id="${blockId}"]`,
-        ) ??
+      const target = (editorSurface?.querySelector<HTMLElement>(
+        `[data-node-type="blockContainer"][data-id="${blockId}"], [id="${blockId}"]`
+      ) ??
         Array.from(editorSurface?.querySelectorAll<HTMLElement>('[data-id]') ?? []).find(
-          (element) => element.dataset.id === blockId,
-        )
-      ) as CitationTargetElement | undefined
+          (element) => element.dataset.id === blockId
+        )) as CitationTargetElement | undefined
 
       if (!target) {
         retry()

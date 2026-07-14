@@ -30,7 +30,7 @@ export function buildEditorAiContext(input: BuildEditorAiContextInput): EditorAi
     selectedText: limit(input.selectedText ?? '', maxCharacters),
     currentBlockText: limit(
       currentBlock ? extractTextPreview([currentBlock], maxCharacters) : '',
-      maxCharacters,
+      maxCharacters
     ),
     surroundingText: limit(extractTextPreview(surroundingBlocks, maxCharacters), maxCharacters),
   }

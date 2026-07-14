@@ -6,14 +6,14 @@
 
 ## 文件索引
 
-| 文档 | 职责 |
-|------|------|
-| [`../ui/page-inventory.md`](../ui/page-inventory.md) | 页面清单、页面树、导航流转、优先级和跨页面一致性约定 |
-| [`../ui/pages/`](../ui/pages/) | 单页规格，定义每个页面的目标、分区、状态和约束 |
-| [`../../DESIGN.md`](../../DESIGN.md) | 视觉语言和设计规范 |
-| [`./frontend-mantine-implementation-guide.md`](./frontend-mantine-implementation-guide.md) | `Mantine` 默认主题下的实现规范 |
-| [`./frontend-adonis-api-client-guide.md`](./frontend-adonis-api-client-guide.md) | `apps/web` 与 `apps/api` 的类型安全 API 调用约定 |
-| 本文档 | 路由分层、目录树、页面模块迁移和 AI 实现约束 |
+| 文档                                                                                       | 职责                                                 |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| [`../ui/page-inventory.md`](../ui/page-inventory.md)                                       | 页面清单、页面树、导航流转、优先级和跨页面一致性约定 |
+| [`../ui/pages/`](../ui/pages/)                                                             | 单页规格，定义每个页面的目标、分区、状态和约束       |
+| [`../../DESIGN.md`](../../DESIGN.md)                                                       | 视觉语言和设计规范                                   |
+| [`./frontend-mantine-implementation-guide.md`](./frontend-mantine-implementation-guide.md) | `Mantine` 默认主题下的实现规范                       |
+| [`./frontend-adonis-api-client-guide.md`](./frontend-adonis-api-client-guide.md)           | `apps/web` 与 `apps/api` 的类型安全 API 调用约定     |
+| 本文档                                                                                     | 路由分层、目录树、页面模块迁移和 AI 实现约束         |
 
 ## 适用边界
 
@@ -251,13 +251,13 @@ apps/web/src
 
 ## 路由层与页面层职责边界
 
-| 层级 | 应负责 | 不应负责 |
-|------|--------|----------|
-| `router/index.tsx` | 创建 `router`、注册 `routeTree` | 页面 JSX、查询逻辑、表单状态 |
-| `router/layouts/*.tsx` | `Outlet`、壳层布局、公共守卫、公共错误边界 | 具体页面业务区块 |
+| 层级                           | 应负责                                                   | 不应负责                           |
+| ------------------------------ | -------------------------------------------------------- | ---------------------------------- |
+| `router/index.tsx`             | 创建 `router`、注册 `routeTree`                          | 页面 JSX、查询逻辑、表单状态       |
+| `router/layouts/*.tsx`         | `Outlet`、壳层布局、公共守卫、公共错误边界               | 具体页面业务区块                   |
 | `router/routes/**/*.route.tsx` | `path`、参数声明、`beforeLoad`、`loader`、路由级错误处理 | 大块页面 UI、长表单、复杂 mutation |
-| `pages/**/*.tsx` | 页面区块编排、页面级标题、空态、错误态 | `createRoute`、全局路由装配 |
-| `features/**/*.tsx` | 业务区块、数据查询、表单和交互流程 | 全局布局职责 |
+| `pages/**/*.tsx`               | 页面区块编排、页面级标题、空态、错误态                   | `createRoute`、全局路由装配        |
+| `features/**/*.tsx`            | 业务区块、数据查询、表单和交互流程                       | 全局布局职责                       |
 
 ## 数据与守卫归属硬规则
 

@@ -8,7 +8,10 @@ export type RagAnswerPart =
  * 将模型文本里的内部 Citation ID 映射为当前回答内的短序号。
  * 只匹配流中已返回的来源，避免把用户或模型普通文本中的方括号误当成 Citation。
  */
-export function toRagAnswerParts(answer: string, citations: RagCitationViewModel[]): RagAnswerPart[] {
+export function toRagAnswerParts(
+  answer: string,
+  citations: RagCitationViewModel[]
+): RagAnswerPart[] {
   if (!answer || citations.length === 0) {
     return answer ? [{ type: 'text', value: answer }] : []
   }
@@ -29,7 +32,9 @@ export function toRagAnswerParts(answer: string, citations: RagCitationViewModel
     const match = tokens
       .map((token) => ({ token, position: answer.indexOf(token, cursor) }))
       .filter((candidate) => candidate.position >= 0)
-      .sort((left, right) => left.position - right.position || right.token.length - left.token.length)[0]
+      .sort(
+        (left, right) => left.position - right.position || right.token.length - left.token.length
+      )[0]
 
     if (!match) {
       parts.push({ type: 'text', value: answer.slice(cursor) })
@@ -58,5 +63,8 @@ function getCitationTokens(citation: RagCitationViewModel) {
   // 两种表示均受当前 Citation 元数据约束，不能匹配任意方括号内容。
   if (!citation.id.startsWith(prefix)) return [stableToken]
 
-  return [stableToken, `[${citation.documentId}:${citation.snapshotVersion}:${citation.id.slice(prefix.length)}]`]
+  return [
+    stableToken,
+    `[${citation.documentId}:${citation.snapshotVersion}:${citation.id.slice(prefix.length)}]`,
+  ]
 }

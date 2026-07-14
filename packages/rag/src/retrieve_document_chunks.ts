@@ -36,18 +36,16 @@ type ActiveRagAuthorizedDocument = RagAuthorizedDocument & {
 }
 
 function activeDocuments(scope: RagRetrievalScope): ActiveRagAuthorizedDocument[] {
-  return scope.documents.filter(
-    (document): document is ActiveRagAuthorizedDocument => {
-      const version = document.latestIndexedVersion
+  return scope.documents.filter((document): document is ActiveRagAuthorizedDocument => {
+    const version = document.latestIndexedVersion
 
-      return (
-        typeof version === 'number' &&
-        Number.isSafeInteger(version) &&
-        version > 0 &&
-        (scope.spaceId === undefined || document.spaceId === scope.spaceId)
-      )
-    },
-  )
+    return (
+      typeof version === 'number' &&
+      Number.isSafeInteger(version) &&
+      version > 0 &&
+      (scope.spaceId === undefined || document.spaceId === scope.spaceId)
+    )
+  })
 }
 
 function isRagIndexBlock(payload: unknown): payload is RagIndexBlock {
@@ -73,7 +71,10 @@ function isRagIndexBlock(payload: unknown): payload is RagIndexBlock {
   )
 }
 
-function toSearchHit(candidate: RagRetrievalCandidate, document: RagAuthorizedDocument): RagSearchHit | null {
+function toSearchHit(
+  candidate: RagRetrievalCandidate,
+  document: RagAuthorizedDocument
+): RagSearchHit | null {
   if (!isRagIndexBlock(candidate.payload)) {
     return null
   }
@@ -107,7 +108,7 @@ function toSearchHit(candidate: RagRetrievalCandidate, document: RagAuthorizedDo
  */
 export async function retrieveDocumentChunks(
   input: RetrieveDocumentChunksInput,
-  backend: RagRetrievalBackend,
+  backend: RagRetrievalBackend
 ): Promise<RagSearchHit[]> {
   const documents = activeDocuments(input.scope)
   if (documents.length === 0) {

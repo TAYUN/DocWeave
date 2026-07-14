@@ -1,9 +1,6 @@
 import { Pool } from 'pg'
 import { QdrantClient } from '@qdrant/js-client-rest'
-import {
-  createAliyunAiRuntimeConfig,
-  createAliyunFetch,
-} from '@docweave/adapters'
+import { createAliyunAiRuntimeConfig, createAliyunFetch } from '@docweave/adapters'
 import { createAiRuntime } from '@docweave/ai'
 import { readWorkerConfig } from './config.js'
 import { runDocumentIndexJobs } from './run_document_index_jobs.js'
@@ -31,7 +28,7 @@ const qdrant = new QdrantClient({
 })
 
 console.log(
-  `[worker] polling every ${config.workerPollIntervalMs}ms with lease ${config.workerJobLeaseMs}ms`,
+  `[worker] polling every ${config.workerPollIntervalMs}ms with lease ${config.workerJobLeaseMs}ms`
 )
 
 while (true) {

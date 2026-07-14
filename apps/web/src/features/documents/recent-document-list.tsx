@@ -64,7 +64,14 @@ export function RecentDocumentList({
                   {view.summaryText}
                 </Text>
               </Box>
-              <Badge size="sm" flex="none" variant="light" className="status-badge status-badge--info">{view.statusLabel}</Badge>
+              <Badge
+                size="sm"
+                flex="none"
+                variant="light"
+                className="status-badge status-badge--info"
+              >
+                {view.statusLabel}
+              </Badge>
             </Group>
           </Paper>
         )

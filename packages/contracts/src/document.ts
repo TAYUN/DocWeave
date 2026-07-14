@@ -5,19 +5,9 @@ export type DocumentContent = PartialBlock[]
 export type DocumentStatus = 'draft' | 'review' | 'ready'
 export type DocumentSnapshotContentFormat = 'blocknote_json'
 export type DocumentIndexJobStatus =
-  | 'pending'
-  | 'running'
-  | 'succeeded'
-  | 'failed'
-  | 'superseded'
-  | 'canceled'
+  'pending' | 'running' | 'succeeded' | 'failed' | 'superseded' | 'canceled'
 export type DocumentIndexJobStage =
-  | 'queued'
-  | 'preprocessing'
-  | 'chunking'
-  | 'embedding'
-  | 'upserting'
-  | 'publishing'
+  'queued' | 'preprocessing' | 'chunking' | 'embedding' | 'upserting' | 'publishing'
 
 export type DocumentSummaryDto = {
   id: string

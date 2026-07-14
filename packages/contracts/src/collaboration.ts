@@ -45,12 +45,7 @@ export type CollaborationPresenceEntry = CollaborationUserIdentity & {
 }
 
 export type CollaborationConnectionStatus =
-  | 'idle'
-  | 'connecting'
-  | 'connected'
-  | 'disconnected'
-  | 'unauthorized'
-  | 'error'
+  'idle' | 'connecting' | 'connected' | 'disconnected' | 'unauthorized' | 'error'
 
 export type CollaborationRuntimeDocumentDto = {
   documentId: string

@@ -39,15 +39,11 @@ export function CitationLink({
   }
 
   return (
-    <Anchor
-      component="button"
-      type="button"
-      size="sm"
-      onClick={openCitation}
-    >
+    <Anchor component="button" type="button" size="sm" onClick={openCitation}>
       <Text component="span" inherit>
         {label ?? citation.id}
-      </Text>{withIcon ? ' ' : null}
+      </Text>
+      {withIcon ? ' ' : null}
       {withIcon ? <ExternalLink size={13} aria-hidden="true" /> : null}
     </Anchor>
   )

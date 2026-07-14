@@ -25,11 +25,11 @@
   --color-badge-blue-text: #097fe8;
   --color-background: #ffffff;
   --color-surface: #f6f5f4;
-  --color-ink: rgba(0,0,0,0.95);
+  --color-ink: rgba(0, 0, 0, 0.95);
   --color-ink-muted: #615d59;
   --color-accent: #0075de;
   --color-accent-alt: #005bab;
-  --color-border: rgba(0,0,0,0.1);
+  --color-border: rgba(0, 0, 0, 0.1);
   --color-link: #0075de;
   --status-warning-text: #9a5a22;
   --status-warning-icon: #c87423;
@@ -41,8 +41,16 @@
   --status-error-icon: #d64545;
   --status-error-border: color-mix(in srgb, var(--mantine-color-red-6) 24%, var(--color-border));
   --status-error-bg: color-mix(in srgb, var(--mantine-color-red-1) 76%, var(--color-background));
-  --status-error-badge-border: color-mix(in srgb, var(--mantine-color-red-6) 24%, var(--color-border));
-  --status-error-badge-bg: color-mix(in srgb, var(--mantine-color-red-1) 72%, var(--color-background));
+  --status-error-badge-border: color-mix(
+    in srgb,
+    var(--mantine-color-red-6) 24%,
+    var(--color-border)
+  );
+  --status-error-badge-bg: color-mix(
+    in srgb,
+    var(--mantine-color-red-1) 72%,
+    var(--color-background)
+  );
   --status-success-text: #167c2c;
   --status-success-icon: #299a42;
   --status-success-border: color-mix(in srgb, var(--color-green) 24%, var(--color-border));
@@ -58,12 +66,17 @@
   --font-badge-size: 0.75rem;
   --font-badge-weight: 600;
   --font-badge-letter-spacing: 0.125px;
-  --shadow-sm: rgba(0,0,0,0.04) 0px 4px 18px, rgba(0,0,0,0.027) 0px 2.025px 7.84688px, rgba(0,0,0,0.02) 0px 0.8px 2.925px, rgba(0,0,0,0.01) 0px 0.175px 1.04062px;
-  --shadow-md: rgba(0,0,0,0.01) 0px 1px 3px, rgba(0,0,0,0.02) 0px 3px 7px, rgba(0,0,0,0.02) 0px 7px 15px, rgba(0,0,0,0.04) 0px 14px 28px, rgba(0,0,0,0.05) 0px 23px 52px;
+  --shadow-sm:
+    rgba(0, 0, 0, 0.04) 0px 4px 18px, rgba(0, 0, 0, 0.027) 0px 2.025px 7.84688px,
+    rgba(0, 0, 0, 0.02) 0px 0.8px 2.925px, rgba(0, 0, 0, 0.01) 0px 0.175px 1.04062px;
+  --shadow-md:
+    rgba(0, 0, 0, 0.01) 0px 1px 3px, rgba(0, 0, 0, 0.02) 0px 3px 7px,
+    rgba(0, 0, 0, 0.02) 0px 7px 15px, rgba(0, 0, 0, 0.04) 0px 14px 28px,
+    rgba(0, 0, 0, 0.05) 0px 23px 52px;
 }
 
 /* DARK_TOKENS_START */
-[data-mantine-color-scheme="dark"] {
+[data-mantine-color-scheme='dark'] {
   /*
    * 暗色 token 由脚本按 OKLCH 生成：
    * 1. 保留 hue，让亮暗模式共享同一品牌色相；
@@ -79,11 +92,11 @@
   --color-badge-blue-text: #74bbff;
   --color-background: #1d1d1d;
   --color-surface: #272626;
-  --color-ink: rgba(232,232,232,0.95);
+  --color-ink: rgba(232, 232, 232, 0.95);
   --color-ink-muted: #a6a4a3;
   --color-accent: #5da7ff;
   --color-accent-alt: #548fd4;
-  --color-border: rgba(255,255,255,0.08);
+  --color-border: rgba(255, 255, 255, 0.08);
   --color-link: #64adff;
   --status-warning-text: #f1d7bb;
   --status-warning-icon: #e6a15f;
@@ -95,7 +108,11 @@
   --status-error-icon: #f08c8c;
   --status-error-border: color-mix(in srgb, var(--mantine-color-red-5) 28%, var(--color-border));
   --status-error-bg: color-mix(in srgb, var(--mantine-color-red-9) 26%, var(--color-surface));
-  --status-error-badge-border: color-mix(in srgb, var(--mantine-color-red-5) 28%, var(--color-border));
+  --status-error-badge-border: color-mix(
+    in srgb,
+    var(--mantine-color-red-5) 28%,
+    var(--color-border)
+  );
   --status-error-badge-bg: color-mix(in srgb, var(--mantine-color-red-9) 22%, var(--color-surface));
   --status-success-text: #8fd49a;
   --status-success-icon: #72c780;
@@ -109,7 +126,12 @@
   --status-info-bg: color-mix(in srgb, var(--color-accent) 15%, var(--color-surface));
   --status-info-badge-border: color-mix(in srgb, var(--color-accent) 26%, var(--color-border));
   --status-info-badge-bg: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
-  --shadow-sm: rgba(0,0,0,0.2) 0px 4px 18px, rgba(0,0,0,0.16) 0px 2.025px 7.84688px, rgba(0,0,0,0.11) 0px 0.8px 2.925px, rgba(0,0,0,0.08) 0px 0.175px 1.04062px;
-  --shadow-md: rgba(0,0,0,0.16) 0px 1px 3px, rgba(0,0,0,0.2) 0px 3px 7px, rgba(0,0,0,0.2) 0px 7px 15px, rgba(0,0,0,0.26) 0px 14px 28px, rgba(0,0,0,0.3) 0px 23px 52px;
+  --shadow-sm:
+    rgba(0, 0, 0, 0.2) 0px 4px 18px, rgba(0, 0, 0, 0.16) 0px 2.025px 7.84688px,
+    rgba(0, 0, 0, 0.11) 0px 0.8px 2.925px, rgba(0, 0, 0, 0.08) 0px 0.175px 1.04062px;
+  --shadow-md:
+    rgba(0, 0, 0, 0.16) 0px 1px 3px, rgba(0, 0, 0, 0.2) 0px 3px 7px,
+    rgba(0, 0, 0, 0.2) 0px 7px 15px, rgba(0, 0, 0, 0.26) 0px 14px 28px,
+    rgba(0, 0, 0, 0.3) 0px 23px 52px;
 }
 /* DARK_TOKENS_END */

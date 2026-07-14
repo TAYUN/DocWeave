@@ -85,17 +85,17 @@ MCP 服务注册在 `reasonix.toml` 的 `[[plugins]]` 中，启动命令为 `pnp
 
 当仓库中存在 `.spec-superflow.yaml`、`changes/`、`proposal.md`、`specs/`、`design.md`、`tasks.md` 或 `execution-contract.md` 时，优先按 spec-superflow 工作流推进，并主动选择合适的 skill。
 
-| Skill | 阶段 | 职责 |
-|-------|------|------|
-| `workflow-start` | 入口 | 内容级状态检测、8 状态路由、阻止非法跳转 |
-| `need-explorer` | 探索 | 一次一问 + 方案对比 + 推荐 |
-| `spec-writer` | 规格 | 产出 proposal/specs/design/tasks |
-| `contract-builder` | 桥接 | 提取工件 → execution-contract.md |
-| `build-executor` | 执行 | TDD 铁律 + SDD 子代理驱动 |
-| `bug-investigator` | 调试 | 4 阶段根因分析，3+ 修复失败 → 质疑架构 |
-| `code-reviewer` | 审查 | 结构化审查，三级问题分级 |
-| `release-archivist` | 收口 | 验证 + 归档 + 风险总结 |
-| `spec-merger` | 同步 | Delta Spec → 主规范智能合并 |
+| Skill               | 阶段 | 职责                                     |
+| ------------------- | ---- | ---------------------------------------- |
+| `workflow-start`    | 入口 | 内容级状态检测、8 状态路由、阻止非法跳转 |
+| `need-explorer`     | 探索 | 一次一问 + 方案对比 + 推荐               |
+| `spec-writer`       | 规格 | 产出 proposal/specs/design/tasks         |
+| `contract-builder`  | 桥接 | 提取工件 → execution-contract.md         |
+| `build-executor`    | 执行 | TDD 铁律 + SDD 子代理驱动                |
+| `bug-investigator`  | 调试 | 4 阶段根因分析，3+ 修复失败 → 质疑架构   |
+| `code-reviewer`     | 审查 | 结构化审查，三级问题分级                 |
+| `release-archivist` | 收口 | 验证 + 归档 + 风险总结                   |
+| `spec-merger`       | 同步 | Delta Spec → 主规范智能合并              |
 
 ### spec-superflow 约定
 

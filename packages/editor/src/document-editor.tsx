@@ -76,7 +76,11 @@ export function DocumentEditor(props: DocumentEditorProps) {
           initialContent: props.initialContent,
           ...buildAiOptions(ai),
         },
-    [props.mode === 'collaboration' ? props.collaboration.fragment : props.initialContent, ai?.api, ai?.documentId],
+    [
+      props.mode === 'collaboration' ? props.collaboration.fragment : props.initialContent,
+      ai?.api,
+      ai?.documentId,
+    ]
   )
   const { colorScheme } = useMantineColorScheme()
   const isDark = colorScheme === 'dark'
@@ -99,16 +103,20 @@ export function DocumentEditor(props: DocumentEditorProps) {
       onChange={(currentEditor) => props.onChange?.(currentEditor.document, currentEditor)}
     >
       {aiEnabled ? (
-        <AIMenuController aiMenu={props.mode === 'collaboration' ? CollaborationAIMenu : undefined} />
+        <AIMenuController
+          aiMenu={props.mode === 'collaboration' ? CollaborationAIMenu : undefined}
+        />
       ) : null}
-      {aiEnabled ? <FormattingToolbarController formattingToolbar={FormattingToolbarWithAI} /> : null}
+      {aiEnabled ? (
+        <FormattingToolbarController formattingToolbar={FormattingToolbarWithAI} />
+      ) : null}
       {aiEnabled ? (
         <SuggestionMenuController
           triggerCharacter="/"
           getItems={async (query) =>
             filterSuggestionItems(
               [...getDefaultReactSlashMenuItems(editor), ...getAISlashMenuItems(editor)],
-              query,
+              query
             )
           }
         />
@@ -185,7 +193,7 @@ function CollaborationAIMenu() {
 export function seedCollaborationFragment(
   document: Y.Doc,
   fragmentName: string,
-  initialContent: DocumentEditorContent,
+  initialContent: DocumentEditorContent
 ) {
   const fragment = document.getXmlFragment(fragmentName)
 

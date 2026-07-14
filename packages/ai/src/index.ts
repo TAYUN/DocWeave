@@ -30,7 +30,7 @@ export type AiRuntime = {
 
 export function createAiRuntime(
   config: AiRuntimeConfig,
-  options: AiRuntimeOptions = {},
+  options: AiRuntimeOptions = {}
 ): AiRuntime {
   const provider = createOpenAI({
     name: config.provider,
@@ -99,9 +99,7 @@ function assertModelKind(model: AiModelRef, expected: AiModelRef['kind']) {
 }
 
 function toUsage(
-  usage:
-    | { inputTokens?: number; outputTokens?: number; totalTokens?: number }
-    | undefined,
+  usage: { inputTokens?: number; outputTokens?: number; totalTokens?: number } | undefined
 ): AiUsage | null {
   if (!usage) {
     return null
@@ -114,9 +112,7 @@ function toUsage(
   }
 }
 
-function toEmbeddingUsage(
-  usage: { tokens?: number } | undefined,
-): AiUsage | null {
+function toEmbeddingUsage(usage: { tokens?: number } | undefined): AiUsage | null {
   if (!usage) {
     return null
   }

@@ -5,16 +5,10 @@ import {
   type onLoadDocumentPayload,
   type onStoreDocumentPayload,
 } from '@hocuspocus/server'
-import {
-  restoreYDocFromSerializedContent,
-  serializeYDocContent,
-} from '@docweave/adapters'
+import { restoreYDocFromSerializedContent, serializeYDocContent } from '@docweave/adapters'
 import * as Y from 'yjs'
 import type { CollabConfig } from './config.js'
-import {
-  authenticateCollaborationConnection,
-  type CollabConnectionContext,
-} from './auth.js'
+import { authenticateCollaborationConnection, type CollabConnectionContext } from './auth.js'
 import { CollaborationRuntimeClient } from './runtime_client.js'
 
 const documents = new Map<string, Y.Doc>()
@@ -53,9 +47,7 @@ export function createCollaborationServer(config: CollabConfig) {
       }
 
       const documentId = data.context.tokenPayload?.documentId
-      const runtimeDocument = documentId
-        ? await runtime.getDocumentRuntime(documentId)
-        : null
+      const runtimeDocument = documentId ? await runtime.getDocumentRuntime(documentId) : null
       const document =
         runtimeDocument && runtimeDocument.content
           ? restoreYDocFromSerializedContent({
@@ -102,7 +94,7 @@ export function createCollaborationServer(config: CollabConfig) {
 async function persistDocumentRuntime(
   runtime: CollaborationRuntimeClient,
   documentId: string,
-  document: Y.Doc,
+  document: Y.Doc
 ) {
   await runtime.updateDocumentRuntime(documentId, {
     // M4 第二阶段只回写可恢复正文，不在自动持久化里顺手创建稳定快照。

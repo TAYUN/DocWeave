@@ -6,25 +6,45 @@
   --page-ambient:
     radial-gradient(circle at top left, rgba(0, 117, 222, 0.08), transparent 26%),
     radial-gradient(circle at top right, rgba(163, 158, 152, 0.12), transparent 32%),
-    linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 52%, white), var(--color-background) 240px);
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 52%, white),
+      var(--color-background) 240px
+    );
 }
 
-[data-mantine-color-scheme="dark"] {
+[data-mantine-color-scheme='dark'] {
   --sidebar-bg: color-mix(in srgb, var(--color-surface) 88%, #1b1917);
   --sidebar-active-bg: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
   --page-ambient:
     radial-gradient(circle at top left, rgba(77, 159, 230, 0.05), transparent 24%),
     radial-gradient(circle at top right, rgba(129, 120, 111, 0.08), transparent 30%),
-    linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 72%, #1d1b19), var(--color-background) 260px);
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 72%, #1d1b19),
+      var(--color-background) 260px
+    );
 }
 
 /* 统一补齐标题字距，保证 Mantine 标题在当前产品里维持紧凑节奏。 */
-:where(h1)[data-order="1"] { letter-spacing: -2.125px; }
-:where(h2)[data-order="2"] { letter-spacing: -1.875px; }
-:where(h3)[data-order="3"] { letter-spacing: -1.5px; }
-:where(h4)[data-order="4"] { letter-spacing: -0.625px; }
-:where(h5)[data-order="5"] { letter-spacing: -0.25px; }
-:where(h6)[data-order="6"] { letter-spacing: normal; }
+:where(h1)[data-order='1'] {
+  letter-spacing: -2.125px;
+}
+:where(h2)[data-order='2'] {
+  letter-spacing: -1.875px;
+}
+:where(h3)[data-order='3'] {
+  letter-spacing: -1.5px;
+}
+:where(h4)[data-order='4'] {
+  letter-spacing: -0.625px;
+}
+:where(h5)[data-order='5'] {
+  letter-spacing: -0.25px;
+}
+:where(h6)[data-order='6'] {
+  letter-spacing: normal;
+}
 
 *,
 *::before,
@@ -65,11 +85,11 @@ a:hover {
   color: var(--color-accent-alt);
 }
 
-[data-mantine-color-scheme="dark"] a:hover {
+[data-mantine-color-scheme='dark'] a:hover {
   color: var(--color-link-light-blue);
 }
 
-[data-mantine-color-scheme="dark"] body {
+[data-mantine-color-scheme='dark'] body {
   color-scheme: dark;
 }
 

@@ -13,7 +13,7 @@ test('serializes Citation location and accepts numeric route query strings safel
       blockId: 'block-1',
       quote: null,
     }),
-    { snapshotVersion: 7, blockId: 'block-1' },
+    { snapshotVersion: 7, blockId: 'block-1' }
   )
   assert.deepEqual(validateCitationLocationSearch({ snapshotVersion: '7', blockId: ' block-1 ' }), {
     snapshotVersion: 7,
@@ -23,10 +23,13 @@ test('serializes Citation location and accepts numeric route query strings safel
     snapshotVersion: undefined,
     blockId: undefined,
   })
-  assert.deepEqual(validateCitationLocationSearch({ snapshotVersion: 'not-a-number', blockId: 7 }), {
-    snapshotVersion: undefined,
-    blockId: undefined,
-  })
+  assert.deepEqual(
+    validateCitationLocationSearch({ snapshotVersion: 'not-a-number', blockId: 7 }),
+    {
+      snapshotVersion: undefined,
+      blockId: undefined,
+    }
+  )
 })
 
 test('locates the current Citation block without making a missing historical target fatal', () => {
@@ -46,30 +49,50 @@ test('locates the current Citation block without making a missing historical tar
     },
     blockId: 'block-1',
     editorSurface: {
-      querySelector: (value: string) => { selector = value; return target },
+      querySelector: (value: string) => {
+        selector = value
+        return target
+      },
       querySelectorAll: () => [target],
     } as unknown as HTMLElement,
-    onLocated: () => { state = 'located' },
-    onNotFound: () => { state = 'not-found' },
-    schedule: (callback) => { callback(0); return 1 },
+    onLocated: () => {
+      state = 'located'
+    },
+    onNotFound: () => {
+      state = 'not-found'
+    },
+    schedule: (callback) => {
+      callback(0)
+      return 1
+    },
     scheduleCleanup: () => 1,
   })
 
   assert.equal(state, 'located')
-  assert.equal(
-    selector,
-    '[data-node-type="blockContainer"][data-id="block-1"], [id="block-1"]',
-  )
+  assert.equal(selector, '[data-node-type="blockContainer"][data-id="block-1"], [id="block-1"]')
   assert.deepEqual(calls, ['cursor', 'scroll', 'focus'])
 
   locateCitationBlock({
-    editor: { getBlock: () => undefined, setTextCursorPosition: () => calls.push('unexpected-cursor') },
+    editor: {
+      getBlock: () => undefined,
+      setTextCursorPosition: () => calls.push('unexpected-cursor'),
+    },
     blockId: 'missing-block',
     editorSurface: null,
-    onLocated: () => { state = 'located' },
-    onNotFound: () => { state = 'not-found' },
-    schedule: (callback) => { callback(0); return 1 },
-    scheduleCleanup: (callback) => { callback(); return 1 },
+    onLocated: () => {
+      state = 'located'
+    },
+    onNotFound: () => {
+      state = 'not-found'
+    },
+    schedule: (callback) => {
+      callback(0)
+      return 1
+    },
+    scheduleCleanup: (callback) => {
+      callback()
+      return 1
+    },
   })
 
   assert.equal(state, 'not-found')
@@ -93,9 +116,16 @@ test('locates and highlights a rendered Citation block even when editor lookup i
       querySelector: () => target,
       querySelectorAll: () => [target],
     } as unknown as HTMLElement,
-    onLocated: () => { state = 'located' },
-    onNotFound: () => { state = 'not-found' },
-    schedule: (callback) => { callback(0); return 1 },
+    onLocated: () => {
+      state = 'located'
+    },
+    onNotFound: () => {
+      state = 'not-found'
+    },
+    schedule: (callback) => {
+      callback(0)
+      return 1
+    },
     scheduleCleanup: () => 1,
   })
 

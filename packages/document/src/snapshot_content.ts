@@ -11,9 +11,7 @@ export type ReadSnapshotContentResult = {
   blocks: ReturnType<typeof parseDocumentContent>
 }
 
-export function readSnapshotContent(
-  snapshot: ReadSnapshotContentInput,
-): ReadSnapshotContentResult {
+export function readSnapshotContent(snapshot: ReadSnapshotContentInput): ReadSnapshotContentResult {
   if (snapshot.contentFormat !== 'blocknote_json') {
     throw new Error(`Unsupported snapshot content format: ${snapshot.contentFormat}`)
   }

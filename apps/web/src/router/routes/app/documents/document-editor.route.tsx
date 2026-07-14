@@ -14,7 +14,9 @@ export function documentEditorRoute(parentRoute: AnyRoute) {
     const { documentId } = route.useParams()
     const { snapshotVersion, blockId } = route.useSearch()
 
-    return <DocumentEditorPage documentId={documentId} citationLocation={{ snapshotVersion, blockId }} />
+    return (
+      <DocumentEditorPage documentId={documentId} citationLocation={{ snapshotVersion, blockId }} />
+    )
   }
 
   return route

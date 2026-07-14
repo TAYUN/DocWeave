@@ -1,4 +1,15 @@
-import { ActionIcon, Avatar, Box, Group, Menu, Text, TextInput, Tooltip, UnstyledButton, useMantineColorScheme } from '@mantine/core'
+import {
+  ActionIcon,
+  Avatar,
+  Box,
+  Group,
+  Menu,
+  Text,
+  TextInput,
+  Tooltip,
+  UnstyledButton,
+  useMantineColorScheme,
+} from '@mantine/core'
 import { useNavigate } from '@tanstack/react-router'
 import { LogOut, Moon, Search, Settings, Sun } from 'lucide-react'
 import { CreateSpaceModal } from '@/features/spaces/create-space-modal'
@@ -30,16 +41,24 @@ export function AppHeader({
           className="brand-mark brand-mark--sm brand-mark--interactive"
           onClick={() => navigate({ to: '/' })}
         >
-          <Text c="white" size="xs" fw={700}>DW</Text>
+          <Text c="white" size="xs" fw={700}>
+            DW
+          </Text>
         </div>
-        <Text fw={600} visibleFrom="sm">DocWeave</Text>
+        <Text fw={600} visibleFrom="sm">
+          DocWeave
+        </Text>
       </Group>
 
       <Box visibleFrom="md" className="app-header-search">
         <TextInput
           placeholder="搜索文档..."
           leftSection={<Search size={16} />}
-          rightSection={<Text size="xs" c="dimmed">⌘K</Text>}
+          rightSection={
+            <Text size="xs" c="dimmed">
+              ⌘K
+            </Text>
+          }
           readOnly
           onClick={() => navigate({ to: '/search' })}
           classNames={{ input: 'search-input' }}
@@ -54,7 +73,9 @@ export function AppHeader({
           trigger={
             <Tooltip label="新建空间" position="bottom">
               <ActionIcon variant="subtle" color="gray">
-                <Text className="plus-glyph" c="inherit">+</Text>
+                <Text className="plus-glyph" c="inherit">
+                  +
+                </Text>
               </ActionIcon>
             </Tooltip>
           }
@@ -70,14 +91,11 @@ export function AppHeader({
           <Menu.Target>
             <UnstyledButton>
               <Group gap="xs">
-                <Avatar
-                  radius="xl"
-                  className="avatar-accent"
-                >
+                <Avatar radius="xl" className="avatar-accent">
                   {getUserInitial(currentUser)}
                 </Avatar>
                 <Text visibleFrom="lg">
-                  {currentUser ? currentUser.fullName ?? currentUser.email : '加载中...'}
+                  {currentUser ? (currentUser.fullName ?? currentUser.email) : '加载中...'}
                 </Text>
               </Group>
             </UnstyledButton>
@@ -85,7 +103,9 @@ export function AppHeader({
 
           <Menu.Dropdown>
             <Menu.Label>
-              {currentUser ? `${currentUser.fullName ?? '用户'} · ${currentUser.email}` : '正在加载当前用户'}
+              {currentUser
+                ? `${currentUser.fullName ?? '用户'} · ${currentUser.email}`
+                : '正在加载当前用户'}
             </Menu.Label>
             <Menu.Item leftSection={<Settings size={14} />} disabled>
               设置

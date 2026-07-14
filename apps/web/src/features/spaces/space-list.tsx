@@ -30,7 +30,12 @@ export function SpaceList({
                   {view.summaryText}
                 </Text>
               </Box>
-              <Badge size="sm" flex="none" variant="light" className="status-badge status-badge--info">
+              <Badge
+                size="sm"
+                flex="none"
+                variant="light"
+                className="status-badge status-badge--info"
+              >
                 {view.documentCountText}
               </Badge>
             </Group>

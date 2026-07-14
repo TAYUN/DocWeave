@@ -30,10 +30,7 @@ export type {
   EditorAiLocalContext,
   EditorAiRequestMetadata,
 } from './ai.js'
-export {
-  buildDocumentRoomName,
-  parseDocumentRoomName,
-} from './collaboration.js'
+export { buildDocumentRoomName, parseDocumentRoomName } from './collaboration.js'
 export type {
   CollaborationAwarenessState,
   CollaborationCapabilities,
@@ -77,9 +74,4 @@ export type {
   RagStreamError,
   RagStreamEvent,
 } from './rag.js'
-export type {
-  CreateSpaceInput,
-  SpaceDto,
-  SpaceTreeDocumentDto,
-  SpaceTreeDto,
-} from './space.js'
+export type { CreateSpaceInput, SpaceDto, SpaceTreeDocumentDto, SpaceTreeDto } from './space.js'

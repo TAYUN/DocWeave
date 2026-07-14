@@ -41,16 +41,14 @@ function verifyCollaborationToken(token: string, secret: string) {
     throw new Error('Invalid collaboration token format')
   }
 
-  const expectedSignature = createHmac('sha256', secret)
-    .update(encodedPayload)
-    .digest('base64url')
+  const expectedSignature = createHmac('sha256', secret).update(encodedPayload).digest('base64url')
 
   if (!safeEqual(signature, expectedSignature)) {
     throw new Error('Invalid collaboration token signature')
   }
 
   const payload = JSON.parse(
-    Buffer.from(encodedPayload, 'base64url').toString('utf8'),
+    Buffer.from(encodedPayload, 'base64url').toString('utf8')
   ) as CollaborationTokenPayload
 
   if (payload.expiresAt <= Math.floor(Date.now() / 1000)) {

@@ -1,4 +1,18 @@
-import { Alert, Badge, Button, Container, Flex, Group, Paper, ScrollArea, Skeleton, Stack, Text, TextInput, Textarea } from '@mantine/core'
+import {
+  Alert,
+  Badge,
+  Button,
+  Container,
+  Flex,
+  Group,
+  Paper,
+  ScrollArea,
+  Skeleton,
+  Stack,
+  Text,
+  TextInput,
+  Textarea,
+} from '@mantine/core'
 import { parseDocumentContent, serializeDocumentContent } from '@docweave/adapters'
 import type {
   CollaborationConnectionStatus,
@@ -11,12 +25,20 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { HocuspocusProvider } from '@hocuspocus/provider'
 import { ArrowLeft, ChevronRight, Clock, Database, Save } from 'lucide-react'
-import { DocumentEditor, seedCollaborationFragment, type DocumentEditorInstance } from '@docweave/editor'
+import {
+  DocumentEditor,
+  seedCollaborationFragment,
+  type DocumentEditorInstance,
+} from '@docweave/editor'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as Y from 'yjs'
 import { toDocumentEditorViewModel } from '@/features/documents/lib/document-display'
 import { MutationNotice } from '@/features/shared/mutation-notice'
-import { ErrorStatePanel, NotFoundStatePanel, RestrictedStatePanel } from '@/features/shared/state-panels'
+import {
+  ErrorStatePanel,
+  NotFoundStatePanel,
+  RestrictedStatePanel,
+} from '@/features/shared/state-panels'
 import {
   getCollaborationToken,
   createDocumentSnapshot,
@@ -79,8 +101,14 @@ export function DocumentEditorPage({
       return status === 'pending' || status === 'running' ? 3000 : false
     },
   })
-  const documentView = useMemo(() => (document ? toDocumentEditorViewModel(document) : null), [document])
-  const initialContent = useMemo(() => documentView?.content ?? parseDocumentContent(), [documentView])
+  const documentView = useMemo(
+    () => (document ? toDocumentEditorViewModel(document) : null),
+    [document]
+  )
+  const initialContent = useMemo(
+    () => documentView?.content ?? parseDocumentContent(),
+    [documentView]
+  )
   const initialContentRef = useRef(initialContent)
   const editorSurfaceRef = useRef<HTMLDivElement>(null)
   const hasDocument = Boolean(document)
@@ -101,7 +129,9 @@ export function DocumentEditorPage({
   } | null>(null)
   const [presenceEntries, setPresenceEntries] = useState<CollaborationPresenceEntry[]>([])
   const [useLocalFallback, setUseLocalFallback] = useState(false)
-  const [citationFocusState, setCitationFocusState] = useState<'pending' | 'located' | 'not-found'>('pending')
+  const [citationFocusState, setCitationFocusState] = useState<'pending' | 'located' | 'not-found'>(
+    'pending'
+  )
   const citationLocatedRef = useRef(false)
 
   useEffect(() => {
@@ -109,18 +139,21 @@ export function DocumentEditorPage({
     setCitationFocusState('pending')
   }, [citationLocation?.blockId, citationLocation?.snapshotVersion])
 
-  const handleLocateCitationBlock = useCallback((editor: DocumentEditorInstance) => {
-    locateCitationBlock({
-      editor,
-      blockId: citationLocation?.blockId,
-      editorSurface: editorSurfaceRef.current,
-      onLocated: () => {
-        citationLocatedRef.current = true
-        setCitationFocusState('located')
-      },
-      onNotFound: () => setCitationFocusState('not-found'),
-    })
-  }, [citationLocation?.blockId])
+  const handleLocateCitationBlock = useCallback(
+    (editor: DocumentEditorInstance) => {
+      locateCitationBlock({
+        editor,
+        blockId: citationLocation?.blockId,
+        editorSurface: editorSurfaceRef.current,
+        onLocated: () => {
+          citationLocatedRef.current = true
+          setCitationFocusState('located')
+        },
+        onNotFound: () => setCitationFocusState('not-found'),
+      })
+    },
+    [citationLocation?.blockId]
+  )
 
   useEffect(() => {
     if (!documentView) return
@@ -195,7 +228,7 @@ export function DocumentEditorPage({
                 canEdit: payload.capabilities.canEdit,
                 isCurrentUser: true,
               },
-            ],
+            ]
       )
     }
 
@@ -236,7 +269,7 @@ export function DocumentEditorPage({
       setError(
         collaborationTokenQuery.error instanceof Error
           ? `${collaborationTokenQuery.error.message}，已切换为本地降级编辑。`
-          : '协同初始化失败，已切换为本地降级编辑。',
+          : '协同初始化失败，已切换为本地降级编辑。'
       )
       setUseLocalFallback(true)
       setCollaborationStatus('error')
@@ -249,10 +282,7 @@ export function DocumentEditorPage({
   const hasContentChanges = JSON.stringify(draftContent) !== JSON.stringify(savedContent)
 
   const hasUnsavedChanges =
-    !!document &&
-    (title !== document.title ||
-      summary !== document.summary ||
-      hasContentChanges)
+    !!document && (title !== document.title || summary !== document.summary || hasContentChanges)
 
   useEffect(() => {
     if (!hasUnsavedChanges) return
@@ -304,8 +334,13 @@ export function DocumentEditorPage({
   })
 
   const indexMutation = useMutation({
-    mutationFn: ({ targetDocumentId, snapshotVersion }: { targetDocumentId: string; snapshotVersion: number }) =>
-      triggerDocumentIndex(targetDocumentId, snapshotVersion),
+    mutationFn: ({
+      targetDocumentId,
+      snapshotVersion,
+    }: {
+      targetDocumentId: string
+      snapshotVersion: number
+    }) => triggerDocumentIndex(targetDocumentId, snapshotVersion),
     onSuccess: async (result) => {
       notifications.show({
         color: 'blue',
@@ -334,13 +369,37 @@ export function DocumentEditorPage({
   if (documentQuery.error instanceof Error) {
     const kind = getDocumentStateKind(documentQuery.error.message)
     if (kind === 'restricted')
-      return <RestrictedStatePanel title="当前文档不可编辑" message={documentQuery.error.message} onBack={() => navigate({ to: '/' })} />
+      return (
+        <RestrictedStatePanel
+          title="当前文档不可编辑"
+          message={documentQuery.error.message}
+          onBack={() => navigate({ to: '/' })}
+        />
+      )
     if (kind === 'not-found')
-      return <NotFoundStatePanel title="未找到对应文档" message="当前文档可能已被删除。" onBack={() => navigate({ to: '/' })} />
-    return <ErrorStatePanel title="加载文档失败" message={documentQuery.error.message} onRetry={() => void documentQuery.refetch()} />
+      return (
+        <NotFoundStatePanel
+          title="未找到对应文档"
+          message="当前文档可能已被删除。"
+          onBack={() => navigate({ to: '/' })}
+        />
+      )
+    return (
+      <ErrorStatePanel
+        title="加载文档失败"
+        message={documentQuery.error.message}
+        onRetry={() => void documentQuery.refetch()}
+      />
+    )
   }
   if (!document)
-    return <NotFoundStatePanel title="未找到对应文档" message="当前文档不存在。" onBack={() => navigate({ to: '/' })} />
+    return (
+      <NotFoundStatePanel
+        title="未找到对应文档"
+        message="当前文档不存在。"
+        onBack={() => navigate({ to: '/' })}
+      />
+    )
 
   const handleEditorChange = (content: typeof draftContent) => {
     // BlockNote/Yjs 初次同步会把持久化的简化 blocks 规范化为 editor document。
@@ -355,7 +414,7 @@ export function DocumentEditorPage({
 
   const handleDocumentEditorChange = (
     content: typeof draftContent,
-    editor: DocumentEditorInstance,
+    editor: DocumentEditorInstance
   ) => {
     handleEditorChange(content)
 
@@ -406,10 +465,7 @@ export function DocumentEditorPage({
   return (
     <Flex className="page-scroll-shell page-scroll-shell--viewport">
       <Stack flex={1} gap={0} className="page-scroll-stack">
-        <Group
-          className="document-toolbar"
-          h="var(--shell-section-height)"
-        >
+        <Group className="document-toolbar" h="var(--shell-section-height)">
           <Container size={1040} px={{ base: 'md', md: 'lg' }} w="100%">
             <Group h="100%" justify="space-between" wrap="nowrap">
               <Group gap={4} wrap="nowrap">
@@ -419,7 +475,9 @@ export function DocumentEditorPage({
                   color="warmGray"
                   leftSection={<ArrowLeft size={14} />}
                   // 这里是面包屑返回动作，本质上更像“轻量导航链接”，因此统一复用壳层交互样式。
-                  onClick={() => navigate({ to: '/spaces/$spaceId', params: { spaceId: document.spaceId } })}
+                  onClick={() =>
+                    navigate({ to: '/spaces/$spaceId', params: { spaceId: document.spaceId } })
+                  }
                 >
                   返回空间
                 </Button>
@@ -468,7 +526,9 @@ export function DocumentEditorPage({
                   color={isCurrentSnapshotIndexed ? 'teal' : undefined}
                   leftSection={<Database size={14} />}
                   loading={indexMutation.isPending || isIndexing}
-                  disabled={latestSnapshotVersion === null || snapshotMutation.isPending || isIndexing}
+                  disabled={
+                    latestSnapshotVersion === null || snapshotMutation.isPending || isIndexing
+                  }
                   onClick={handleTriggerIndex}
                 >
                   {isCurrentSnapshotIndexed ? '知识库已更新' : '更新知识库'}
@@ -555,8 +615,13 @@ export function DocumentEditorPage({
                     mode="collaboration"
                     editable={collaborationRuntime.payload.capabilities.canEdit}
                     ai={
-                      collaborationRuntime.payload.capabilities.canEdit && collaborationStatus === 'connected'
-                        ? { api: '/api/ai/editor', documentId: document.id, headers: getEditorAiHeaders }
+                      collaborationRuntime.payload.capabilities.canEdit &&
+                      collaborationStatus === 'connected'
+                        ? {
+                            api: '/api/ai/editor',
+                            documentId: document.id,
+                            headers: getEditorAiHeaders,
+                          }
                         : undefined
                     }
                     onChange={handleDocumentEditorChange}
@@ -581,7 +646,11 @@ export function DocumentEditorPage({
                   <DocumentEditor
                     key={`${document.id}:standalone`}
                     editable
-                    ai={{ api: '/api/ai/editor', documentId: document.id, headers: getEditorAiHeaders }}
+                    ai={{
+                      api: '/api/ai/editor',
+                      documentId: document.id,
+                      headers: getEditorAiHeaders,
+                    }}
                     initialContent={initialContent}
                     onChange={handleDocumentEditorChange}
                     onReady={handleLocateCitationBlock}
@@ -609,7 +678,7 @@ function mapProviderStatus(status: 'connecting' | 'connected' | 'disconnected') 
 
 function getCollaborationStatusLabel(
   status: CollaborationConnectionStatus,
-  useLocalFallback: boolean,
+  useLocalFallback: boolean
 ) {
   if (useLocalFallback) return '本地降级'
   if (status === 'connecting') return '协同连接中'
@@ -631,7 +700,7 @@ function getCollaborationColor(userId: number) {
 
 function toPresenceEntry(
   state: Record<string, unknown>,
-  currentUserId: number,
+  currentUserId: number
 ): CollaborationPresenceEntry | null {
   const presence =
     state.presence && typeof state.presence === 'object'

@@ -29,7 +29,7 @@ export function formatDocumentUpdatedAt(value: string | null | undefined) {
 }
 
 export function toDocumentPreviewViewModel(
-  document: Pick<DocumentSummaryDto, 'id' | 'title' | 'summary' | 'status' | 'updatedAt'>,
+  document: Pick<DocumentSummaryDto, 'id' | 'title' | 'summary' | 'status' | 'updatedAt'>
 ): DocumentPreviewViewModel {
   return {
     id: document.id,

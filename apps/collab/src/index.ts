@@ -11,7 +11,7 @@ const server = createCollaborationServer(config)
 await server.listen()
 
 console.log(
-  `[collab] listening on ws://${config.host}:${config.port} using minimal Hocuspocus runtime`,
+  `[collab] listening on ws://${config.host}:${config.port} using minimal Hocuspocus runtime`
 )
 
 async function assertPortAvailable(port: number) {
@@ -28,8 +28,8 @@ async function assertPortAvailable(port: number) {
               ownerPid ? `PID ${ownerPid} is listening on it.` : '',
               'A collab server is probably already running.',
               `Stop the old process or change PORT in apps/collab/.env before starting another one.`,
-            ].join(' '),
-          ),
+            ].join(' ')
+          )
         )
         return
       }
@@ -55,7 +55,7 @@ function findPortOwnerPid(port: number) {
     if (process.platform === 'win32') {
       const output = execSync(
         `powershell -NoProfile -Command "(Get-NetTCPConnection -LocalPort ${port} -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty OwningProcess)"`,
-        { stdio: ['ignore', 'pipe', 'ignore'] },
+        { stdio: ['ignore', 'pipe', 'ignore'] }
       )
         .toString()
         .trim()

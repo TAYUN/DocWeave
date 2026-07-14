@@ -1,7 +1,13 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
-import { activePreset, generatedOrder, presets, roleSpecs, staticValues } from './dark-token.config.mjs'
+import {
+  activePreset,
+  generatedOrder,
+  presets,
+  roleSpecs,
+  staticValues,
+} from './dark-token.config.mjs'
 
 const DEFAULT_TOKENS_PATH = path.resolve(process.cwd(), 'src/styles/tokens.css')
 
@@ -10,19 +16,23 @@ const BLOCK_END = '/* DARK_TOKENS_END */'
 
 async function main() {
   const options = parseCliArgs(process.argv.slice(2))
-  const targetPath = options.targetPath ? path.resolve(process.cwd(), options.targetPath) : DEFAULT_TOKENS_PATH
+  const targetPath = options.targetPath
+    ? path.resolve(process.cwd(), options.targetPath)
+    : DEFAULT_TOKENS_PATH
   const source = await readFile(targetPath, 'utf8')
   const rootVars = parseRootVars(source)
   const darkVars = generateDarkVars(rootVars, options.presetName)
   const darkBlock = renderDarkBlock(darkVars)
 
   if (!source.includes(BLOCK_START) || !source.includes(BLOCK_END)) {
-    throw new Error(`未在 ${targetPath} 中找到 ${BLOCK_START} / ${BLOCK_END} 标记，无法安全回写暗色 token。`)
+    throw new Error(
+      `未在 ${targetPath} 中找到 ${BLOCK_START} / ${BLOCK_END} 标记，无法安全回写暗色 token。`
+    )
   }
 
   const updated = source.replace(
     new RegExp(`${escapeRegExp(BLOCK_START)}[\\s\\S]*?${escapeRegExp(BLOCK_END)}`),
-    `${BLOCK_START}\n${darkBlock}\n${BLOCK_END}`,
+    `${BLOCK_START}\n${darkBlock}\n${BLOCK_END}`
   )
 
   await writeFile(targetPath, updated, 'utf8')
@@ -138,8 +148,10 @@ function applyPreset(spec, preset) {
   } else if (spec.kind === 'accent') {
     next.lightness = clamp(spec.lightness + preset.accentLightnessOffset, 0, 1)
     next.chromaScale = (spec.chromaScale ?? 1) * preset.chromaMultiplier
-    if (typeof spec.minChroma === 'number') next.minChroma = spec.minChroma * Math.min(preset.chromaMultiplier, 1)
-    if (typeof spec.maxChroma === 'number') next.maxChroma = spec.maxChroma * preset.chromaMultiplier
+    if (typeof spec.minChroma === 'number')
+      next.minChroma = spec.minChroma * Math.min(preset.chromaMultiplier, 1)
+    if (typeof spec.maxChroma === 'number')
+      next.maxChroma = spec.maxChroma * preset.chromaMultiplier
   } else if (spec.kind === 'text' || spec.kind === 'text-rgba') {
     next.lightness = clamp(spec.lightness + preset.textLightnessOffset, 0, 1)
   }
@@ -152,7 +164,7 @@ function mapWithOklch(rgb, spec) {
   const nextChroma = clamp(
     oklch.chroma * (spec.chromaScale ?? 1),
     spec.minChroma ?? 0,
-    spec.maxChroma ?? Number.POSITIVE_INFINITY,
+    spec.maxChroma ?? Number.POSITIVE_INFINITY
   )
 
   return oklchToRgb({
@@ -176,7 +188,10 @@ function parseColor(value) {
 
   const rgba = trimmed.match(/rgba?\(([\d.\s,]+)\)/i)
   if (rgba) {
-    const [r, g, b] = rgba[1].split(',').slice(0, 3).map((part) => Number.parseFloat(part.trim()) / 255)
+    const [r, g, b] = rgba[1]
+      .split(',')
+      .slice(0, 3)
+      .map((part) => Number.parseFloat(part.trim()) / 255)
     return { r, g, b }
   }
 
@@ -190,7 +205,7 @@ function rgbToOklch(rgb) {
       [0.2119034982, 0.6806995451, 0.1073969566],
       [0.0883024619, 0.2817188376, 0.6299787005],
     ],
-    [srgbToLinear(rgb.r), srgbToLinear(rgb.g), srgbToLinear(rgb.b)],
+    [srgbToLinear(rgb.r), srgbToLinear(rgb.g), srgbToLinear(rgb.b)]
   ).map((value) => Math.cbrt(value))
 
   const [L, a, b] = multiplyMatrix(
@@ -199,15 +214,16 @@ function rgbToOklch(rgb) {
       [1.9779984951, -2.428592205, 0.4505937099],
       [0.0259040371, 0.7827717662, -0.808675766],
     ],
-    lms,
+    lms
   )
 
   return {
     lightness: L,
     chroma: Math.sqrt(a ** 2 + b ** 2),
-    hue: (Math.atan2(b, a) * 180) / Math.PI < 0
-      ? (Math.atan2(b, a) * 180) / Math.PI + 360
-      : (Math.atan2(b, a) * 180) / Math.PI,
+    hue:
+      (Math.atan2(b, a) * 180) / Math.PI < 0
+        ? (Math.atan2(b, a) * 180) / Math.PI + 360
+        : (Math.atan2(b, a) * 180) / Math.PI,
   }
 }
 
@@ -227,7 +243,7 @@ function oklchToRgb(oklch) {
       [-1.2684380046, 2.6097574011, -0.3413193965],
       [-0.0041960863, -0.7034186147, 1.707614701],
     ],
-    lmsBase,
+    lmsBase
   ).map((value) => clamp(linearToSrgb(value), 0, 1))
 
   return { r, g, b: blue }
@@ -253,7 +269,8 @@ function toHex(rgb) {
   const channels = [rgb.r, rgb.g, rgb.b].map((channel) =>
     Math.round(clamp(channel, 0, 1) * 255)
       .toString(16)
-      .padStart(2, '0'))
+      .padStart(2, '0')
+  )
   return `#${channels.join('')}`
 }
 

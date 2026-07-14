@@ -1,5 +1,10 @@
 import type { DocumentProcessingStatusDto } from '@docweave/contracts/document'
-import type { RagCitation, RagSearchResponse, RagStreamError, RagStreamEvent } from '@docweave/contracts/rag'
+import type {
+  RagCitation,
+  RagSearchResponse,
+  RagStreamError,
+  RagStreamEvent,
+} from '@docweave/contracts/rag'
 import type { ApiRequestError } from '@/lib/api'
 
 export type RagCitationViewModel = {
@@ -11,7 +16,16 @@ export type RagCitationViewModel = {
 }
 
 export type RagSearchViewModel = {
-  state: 'idle' | 'loading' | 'index-loading' | 'index-failed' | 'results' | 'empty' | 'restricted' | 'no-index' | 'failed'
+  state:
+    | 'idle'
+    | 'loading'
+    | 'index-loading'
+    | 'index-failed'
+    | 'results'
+    | 'empty'
+    | 'restricted'
+    | 'no-index'
+    | 'failed'
   searchText: string
   hits: Array<{
     score: number
@@ -22,7 +36,16 @@ export type RagSearchViewModel = {
 }
 
 export type RagChatViewModel = {
-  state: 'idle' | 'streaming' | 'index-loading' | 'index-failed' | 'completed' | 'cancelled' | 'restricted' | 'no-index' | 'failed'
+  state:
+    | 'idle'
+    | 'streaming'
+    | 'index-loading'
+    | 'index-failed'
+    | 'completed'
+    | 'cancelled'
+    | 'restricted'
+    | 'no-index'
+    | 'failed'
   answer: string
   citations: RagCitationViewModel[]
   errorMessage: string | null
@@ -107,12 +130,20 @@ export function toRagChatViewModel(input: RagChatStateInput): RagChatViewModel {
   }
 
   if (input.status === 'index-failed') {
-    return { state: 'index-failed', answer: '', citations: [], errorMessage: getErrorMessage(input.error) }
+    return {
+      state: 'index-failed',
+      answer: '',
+      citations: [],
+      errorMessage: getErrorMessage(input.error),
+    }
   }
 
   const events = input.events
   const answer = events
-    .filter((event): event is Extract<RagStreamEvent, { type: 'text-delta' }> => event.type === 'text-delta')
+    .filter(
+      (event): event is Extract<RagStreamEvent, { type: 'text-delta' }> =>
+        event.type === 'text-delta'
+    )
     .map((event) => event.delta)
     .join('')
   const citations = uniqueCitations(
@@ -120,10 +151,10 @@ export function toRagChatViewModel(input: RagChatStateInput): RagChatViewModel {
       if (event.type === 'citation') return [event.citation]
       if (event.type === 'retrieval' || event.type === 'finish') return event.citations
       return []
-    }),
+    })
   )
   const streamError = events.find(
-    (event): event is Extract<RagStreamEvent, { type: 'error' }> => event.type === 'error',
+    (event): event is Extract<RagStreamEvent, { type: 'error' }> => event.type === 'error'
   )
 
   if (input.status === 'cancelled') {
@@ -165,7 +196,7 @@ export function getRagIndexState(
     statuses?: DocumentProcessingStatusDto[]
     statusesPending?: boolean
     statusesError?: Error | null
-  },
+  }
 ): RagIndexState {
   if (options.pending) return 'loading'
   if (options.error) return 'failed'
@@ -176,24 +207,28 @@ export function getRagIndexState(
     documents
       .filter((document) => !options.spaceId || document.spaceId === options.spaceId)
       .map((document) => document.id)
-      .filter((documentId): documentId is string => Boolean(documentId)),
+      .filter((documentId): documentId is string => Boolean(documentId))
   )
-  const scopedStatuses = (options.statuses ?? []).filter((status) => scopedDocumentIds.has(status.documentId))
+  const scopedStatuses = (options.statuses ?? []).filter((status) =>
+    scopedDocumentIds.has(status.documentId)
+  )
 
   if (
     scopedStatuses.some(
-      (status) => status.latestIndexedVersion === null && status.latestIndexJob?.status === 'failed',
+      (status) => status.latestIndexedVersion === null && status.latestIndexJob?.status === 'failed'
     )
   ) {
     return 'failed-index'
   }
 
-  return scopedStatuses.some((status) => status.latestIndexedVersion !== null) ? 'ready' : 'no-index'
+  return scopedStatuses.some((status) => status.latestIndexedVersion !== null)
+    ? 'ready'
+    : 'no-index'
 }
 
 export function getRagFailedIndexMessage(statuses: DocumentProcessingStatusDto[]) {
   const failedJob = statuses.find(
-    (status) => status.latestIndexedVersion === null && status.latestIndexJob?.status === 'failed',
+    (status) => status.latestIndexedVersion === null && status.latestIndexJob?.status === 'failed'
   )?.latestIndexJob
 
   return failedJob?.errorMessage ?? '一个或多个文档的最新索引失败，请修复后重新建立索引。'
@@ -210,16 +245,28 @@ export function toRagCitationViewModel(citation: RagCitation): RagCitationViewMo
 }
 
 function uniqueCitations(citations: RagCitation[]) {
-  return [...new Map(citations.map((citation) => [citation.id, toRagCitationViewModel(citation)])).values()]
+  return [
+    ...new Map(
+      citations.map((citation) => [citation.id, toRagCitationViewModel(citation)])
+    ).values(),
+  ]
 }
 
 function isRestricted(error: unknown) {
-  return getApiErrorCode(error) === 'AUTH_FORBIDDEN' || getRagStreamErrorCode(error) === 'RAG_PERMISSION_DENIED'
+  return (
+    getApiErrorCode(error) === 'AUTH_FORBIDDEN' ||
+    getRagStreamErrorCode(error) === 'RAG_PERMISSION_DENIED'
+  )
 }
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) return error.message
-  if (typeof error === 'object' && error && 'message' in error && typeof error.message === 'string') {
+  if (
+    typeof error === 'object' &&
+    error &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
     return error.message
   }
   return '请求失败，请稍后重试'

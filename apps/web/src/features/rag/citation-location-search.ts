@@ -5,7 +5,8 @@ export function validateCitationLocationSearch(search: CitationLocationSearchInp
   const blockId = typeof search.blockId === 'string' ? search.blockId.trim() : undefined
 
   return {
-    snapshotVersion: Number.isInteger(snapshotVersion) && snapshotVersion > 0 ? snapshotVersion : undefined,
+    snapshotVersion:
+      Number.isInteger(snapshotVersion) && snapshotVersion > 0 ? snapshotVersion : undefined,
     blockId: blockId || undefined,
   }
 }

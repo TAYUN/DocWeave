@@ -30,7 +30,12 @@ export function DocumentEditorPanel({
   return (
     <Paper className="section-card" p={{ base: 'lg', md: 'xl' }} withBorder>
       <Stack gap="md">
-        <TextInput label="标题" onChange={(event) => onChangeTitle(event.currentTarget.value)} required value={title} />
+        <TextInput
+          label="标题"
+          onChange={(event) => onChangeTitle(event.currentTarget.value)}
+          required
+          value={title}
+        />
         <Textarea
           autosize
           label="摘要"

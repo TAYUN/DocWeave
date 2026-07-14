@@ -13,9 +13,7 @@ export function SectionHeading({
 }) {
   return (
     <Stack gap={0}>
-      <Text className="section-eyebrow">
-        {eyebrow}
-      </Text>
+      <Text className="section-eyebrow">{eyebrow}</Text>
       <Title order={titleOrder} mt="xs">
         {title}
       </Title>

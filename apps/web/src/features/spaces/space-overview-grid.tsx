@@ -40,7 +40,12 @@ export function SpaceOverviewGrid({
         const relatedDocuments = pickRecentSpaceDocuments(space.id, documents)
 
         return (
-          <Paper key={view.id} className="space-overview-card" p={{ base: 'lg', md: 'xl' }} withBorder>
+          <Paper
+            key={view.id}
+            className="space-overview-card"
+            p={{ base: 'lg', md: 'xl' }}
+            withBorder
+          >
             <Stack gap="lg">
               <Group justify="space-between" align="flex-start" wrap="nowrap">
                 <Group gap="md" wrap="nowrap" align="flex-start">

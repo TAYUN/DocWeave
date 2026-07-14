@@ -55,7 +55,10 @@ test('loads workspace and space boundaries with the snapshot and forwards them t
     async getCollection() {
       return { config: { params: { vectors: { size: 2 } } } }
     },
-    async upsert(_collection: string, input: { points: Array<{ payload: Record<string, unknown> }> }) {
+    async upsert(
+      _collection: string,
+      input: { points: Array<{ payload: Record<string, unknown> }> }
+    ) {
       capturedPayloads = input.points.map((point) => point.payload)
     },
     async delete(_collection: string, input: unknown) {
@@ -71,7 +74,9 @@ test('loads workspace and space boundaries with the snapshot and forwards them t
 
   await runDocumentIndexJobs({ config, pool, ai, qdrant })
 
-  const snapshotQuery = queries.find(({ text }) => text.includes('from document_snapshots as snapshots'))
+  const snapshotQuery = queries.find(({ text }) =>
+    text.includes('from document_snapshots as snapshots')
+  )
   assert.ok(snapshotQuery)
   assert.match(snapshotQuery.text, /join documents on documents\.id = snapshots\.document_id/)
   assert.match(snapshotQuery.text, /join spaces on spaces\.id = documents\.space_id/)

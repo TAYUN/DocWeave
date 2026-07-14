@@ -43,7 +43,12 @@ export async function runDocumentIndexJobs(runtime: WorkerRuntime) {
     const snapshot = await loadSnapshot(runtime.pool, job)
 
     if (!snapshot) {
-      await markDocumentIndexJobFailed(runtime.pool, job.id, 'SNAPSHOT_NOT_FOUND', 'Snapshot not found')
+      await markDocumentIndexJobFailed(
+        runtime.pool,
+        job.id,
+        'SNAPSHOT_NOT_FOUND',
+        'Snapshot not found'
+      )
       return true
     }
 
@@ -98,7 +103,7 @@ export async function runDocumentIndexJobs(runtime: WorkerRuntime) {
           await ensureCollectionDimensions(
             runtime.qdrant,
             runtime.config.qdrantCollection,
-            dimensions,
+            dimensions
           )
         },
         upsert: async (points) => {
@@ -112,7 +117,7 @@ export async function runDocumentIndexJobs(runtime: WorkerRuntime) {
 
           return canPublishSnapshotVersion(runtime.pool, job.documentId, snapshotVersion)
         },
-      },
+      }
     )
 
     if (result.status === 'superseded') {
@@ -127,7 +132,7 @@ export async function runDocumentIndexJobs(runtime: WorkerRuntime) {
       runtime.config.qdrantCollection,
       job.documentId,
       job.targetSnapshotVersion,
-      currentPointIds,
+      currentPointIds
     )
     await publishIndexedVersion(runtime.pool, job)
     return true
@@ -154,7 +159,7 @@ async function claimNextDocumentIndexJob(pool: Pool, leaseMs: number) {
         limit 1
         for update skip locked
       `,
-      [leaseMs],
+      [leaseMs]
     )
 
     const nextJob = result.rows[0]
@@ -175,7 +180,7 @@ async function claimNextDocumentIndexJob(pool: Pool, leaseMs: number) {
             updated_at = now()
         where id = $1
       `,
-      [nextJob.id],
+      [nextJob.id]
     )
 
     await client.query('COMMIT')
@@ -203,7 +208,7 @@ async function loadSnapshot(pool: Pool, job: ClaimedJob) {
       where snapshots.document_id = $1 and snapshots.version = $2
       limit 1
     `,
-    [job.documentId, job.targetSnapshotVersion],
+    [job.documentId, job.targetSnapshotVersion]
   )
 
   return result.rows[0] ?? null
@@ -212,7 +217,7 @@ async function loadSnapshot(pool: Pool, job: ClaimedJob) {
 async function canPublishSnapshotVersion(pool: Pool, documentId: string, snapshotVersion: number) {
   const result = await pool.query<{ latest_indexed_version: number | null }>(
     'select latest_indexed_version from documents where id = $1 limit 1',
-    [documentId],
+    [documentId]
   )
 
   const latestIndexedVersion = result.rows[0]?.latest_indexed_version ?? null
@@ -227,7 +232,7 @@ async function publishIndexedVersion(pool: Pool, job: ClaimedJob) {
 
     const documentResult = await client.query<{ latest_indexed_version: number | null }>(
       'select latest_indexed_version from documents where id = $1 for update',
-      [job.documentId],
+      [job.documentId]
     )
 
     const latestIndexedVersion = documentResult.rows[0]?.latest_indexed_version ?? null
@@ -242,17 +247,17 @@ async function publishIndexedVersion(pool: Pool, job: ClaimedJob) {
               updated_at = now()
           where id = $1
         `,
-        [job.id],
+        [job.id]
       )
 
       await client.query('COMMIT')
       return
     }
 
-    await client.query(
-      'update documents set latest_indexed_version = $2 where id = $1',
-      [job.documentId, job.targetSnapshotVersion],
-    )
+    await client.query('update documents set latest_indexed_version = $2 where id = $1', [
+      job.documentId,
+      job.targetSnapshotVersion,
+    ])
     await client.query(
       `
         update rag_index_jobs
@@ -263,7 +268,7 @@ async function publishIndexedVersion(pool: Pool, job: ClaimedJob) {
             updated_at = now()
         where id = $1
       `,
-      [job.id],
+      [job.id]
     )
 
     await client.query('COMMIT')
@@ -278,11 +283,11 @@ async function publishIndexedVersion(pool: Pool, job: ClaimedJob) {
 async function markDocumentIndexJobStage(
   pool: Pool,
   jobId: string,
-  stage: 'chunking' | 'embedding' | 'upserting' | 'publishing',
+  stage: 'chunking' | 'embedding' | 'upserting' | 'publishing'
 ) {
   await pool.query(
     'update rag_index_jobs set stage = $2, locked_at = now(), updated_at = now() where id = $1',
-    [jobId, stage],
+    [jobId, stage]
   )
 }
 
@@ -290,7 +295,7 @@ async function markDocumentIndexJobFailed(
   pool: Pool,
   jobId: string,
   errorCode: string,
-  errorMessage: string,
+  errorMessage: string
 ) {
   await pool.query(
     `
@@ -303,7 +308,7 @@ async function markDocumentIndexJobFailed(
           updated_at = now()
       where id = $1
     `,
-    [jobId, errorCode, errorMessage.slice(0, 2000)],
+    [jobId, errorCode, errorMessage.slice(0, 2000)]
   )
 }
 
@@ -317,14 +322,14 @@ async function markDocumentIndexJobSuperseded(pool: Pool, jobId: string) {
           updated_at = now()
       where id = $1
     `,
-    [jobId],
+    [jobId]
   )
 }
 
 async function ensureCollectionDimensions(
   qdrant: QdrantClient,
   collectionName: string,
-  dimensions: number,
+  dimensions: number
 ) {
   try {
     const collection = await qdrant.getCollection(collectionName)
@@ -332,7 +337,7 @@ async function ensureCollectionDimensions(
 
     if (configuredDimensions !== dimensions) {
       throw new Error(
-        `Qdrant collection dimension mismatch: expected ${dimensions}, received ${configuredDimensions}`,
+        `Qdrant collection dimension mismatch: expected ${dimensions}, received ${configuredDimensions}`
       )
     }
   } catch (error) {
@@ -350,7 +355,11 @@ async function ensureCollectionDimensions(
   }
 }
 
-async function upsertPoints(qdrant: QdrantClient, collectionName: string, points: RagVectorPoint[]) {
+async function upsertPoints(
+  qdrant: QdrantClient,
+  collectionName: string,
+  points: RagVectorPoint[]
+) {
   if (points.length === 0) {
     return
   }
@@ -365,7 +374,7 @@ async function removeStaleSnapshotPoints(
   collectionName: string,
   documentId: string,
   snapshotVersion: number,
-  currentPointIds: string[],
+  currentPointIds: string[]
 ) {
   await qdrant.delete(collectionName, {
     wait: true,
@@ -381,7 +390,8 @@ async function removeStaleSnapshotPoints(
 }
 
 function readCollectionVectorDimensions(collection: unknown) {
-  const vectors = (collection as { config?: { params?: { vectors?: unknown } } })?.config?.params?.vectors
+  const vectors = (collection as { config?: { params?: { vectors?: unknown } } })?.config?.params
+    ?.vectors
 
   if (typeof vectors === 'object' && vectors !== null) {
     if ('size' in vectors && typeof vectors.size === 'number') {

@@ -4,7 +4,11 @@ import { CitationLink } from './citation-link'
 
 export function RagCitations({ citations }: { citations: RagCitationViewModel[] }) {
   if (!citations.length) {
-    return <Text size="sm" c="dimmed">本次回答没有可跳转的来源。</Text>
+    return (
+      <Text size="sm" c="dimmed">
+        本次回答没有可跳转的来源。
+      </Text>
+    )
   }
 
   return (
@@ -13,7 +17,9 @@ export function RagCitations({ citations }: { citations: RagCitationViewModel[] 
         <Accordion.Control>
           <Group gap="xs" wrap="nowrap">
             <Text fw={600}>参考来源</Text>
-            <Badge size="sm" variant="light" color="gray">{citations.length}</Badge>
+            <Badge size="sm" variant="light" color="gray">
+              {citations.length}
+            </Badge>
           </Group>
         </Accordion.Control>
         <Accordion.Panel>

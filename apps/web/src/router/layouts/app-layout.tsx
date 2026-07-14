@@ -8,7 +8,14 @@ import { AppSidebar } from '@/features/shell/app-sidebar'
 import { LoadingState } from '@/features/shared/loading-state'
 import { ErrorStatePanel } from '@/features/shared/state-panels'
 import { clearAccessToken, hasAccessToken } from '@/lib/auth'
-import { getCurrentUser, getSpaceTree, isAuthError, listDocuments, listSpaces, logout } from '@/lib/api'
+import {
+  getCurrentUser,
+  getSpaceTree,
+  isAuthError,
+  listDocuments,
+  listSpaces,
+  logout,
+} from '@/lib/api'
 
 export function AppLayout() {
   const navigate = useNavigate()
@@ -107,11 +114,7 @@ export function AppLayout() {
         treeEntries,
       }}
     >
-      <AppShell
-        header={{ height: 48 }}
-        navbar={{ width: 240, breakpoint: 'sm' }}
-        padding={0}
-      >
+      <AppShell header={{ height: 48 }} navbar={{ width: 240, breakpoint: 'sm' }} padding={0}>
         <AppShell.Header>
           <AppHeader
             currentUser={currentUserQuery.data ?? null}

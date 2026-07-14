@@ -1,7 +1,10 @@
 import { Alert, Group, Paper, Stack, Text } from '@mantine/core'
 import { Clock3, FileText } from 'lucide-react'
 import type { ApiDocumentSummary } from '@/lib/api'
-import { formatDocumentUpdatedAt, toDocumentPreviewViewModel } from '@/features/documents/lib/document-display'
+import {
+  formatDocumentUpdatedAt,
+  toDocumentPreviewViewModel,
+} from '@/features/documents/lib/document-display'
 
 export function DocumentDirectoryList({
   documents,
@@ -63,7 +66,9 @@ export function DocumentDirectoryList({
 
                 <Group gap={6} wrap="nowrap" flex="none" className="directory-row-meta">
                   <Clock3 size={13} />
-                  <Text size="xs">{formatDocumentUpdatedAt(document.updatedAt).replace('更新于 ', '')}</Text>
+                  <Text size="xs">
+                    {formatDocumentUpdatedAt(document.updatedAt).replace('更新于 ', '')}
+                  </Text>
                 </Group>
               </Group>
             </button>
