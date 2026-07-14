@@ -19,8 +19,12 @@ export const aiEditorRequestValidator = vine.create({
 export const ragSearchValidator = vine.create({
   // 避免与 Tuyau endpoint meta 的 query 字段重名，导致 registry 类型退化。
   searchText: vine.string().trim().minLength(1),
+  spaceId: vine.string().trim().minLength(1).optional(),
+  limit: vine.number().positive().withoutDecimals().max(20).optional(),
 })
 
 export const ragChatValidator = vine.create({
   message: vine.string().trim().minLength(1),
+  spaceId: vine.string().trim().minLength(1).optional(),
+  topK: vine.number().positive().withoutDecimals().max(20).optional(),
 })

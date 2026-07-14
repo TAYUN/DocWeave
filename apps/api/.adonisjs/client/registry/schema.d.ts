@@ -199,30 +199,6 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ai_editor_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
-  'internal_collaboration_runtime.show': {
-    methods: ["GET","HEAD"]
-    pattern: '/api/internal/collaboration/documents/:documentId/runtime'
-    types: {
-      body: {}
-      paramsTuple: [ParamValue]
-      params: { documentId: ParamValue }
-      query: {}
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['show']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['show']>>>
-    }
-  }
-  'internal_collaboration_runtime.update': {
-    methods: ["PUT"]
-    pattern: '/api/internal/collaboration/documents/:documentId/runtime'
-    types: {
-      body: ExtractBody<InferInput<(typeof import('#validators/runtime').updateCollaborationRuntimeValidator)>>
-      paramsTuple: [ParamValue]
-      params: { documentId: ParamValue }
-      query: ExtractQuery<InferInput<(typeof import('#validators/runtime').updateCollaborationRuntimeValidator)>>
-      response: ExtractResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['update']>>>
-      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
-    }
-  }
   'rag.search': {
     methods: ["POST"]
     pattern: '/api/rag/search'
@@ -245,6 +221,30 @@ export interface Registry {
       query: ExtractQuery<InferInput<(typeof import('#validators/runtime').ragChatValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['chat']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/rag_controller').default['chat']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'internal_collaboration_runtime.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/internal/collaboration/documents/:documentId/runtime'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { documentId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['show']>>>
+    }
+  }
+  'internal_collaboration_runtime.update': {
+    methods: ["PUT"]
+    pattern: '/api/internal/collaboration/documents/:documentId/runtime'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/runtime').updateCollaborationRuntimeValidator)>>
+      paramsTuple: [ParamValue]
+      params: { documentId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/runtime').updateCollaborationRuntimeValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/internal_collaboration_runtime_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
 }

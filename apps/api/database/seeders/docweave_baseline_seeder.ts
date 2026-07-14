@@ -1,12 +1,13 @@
 import Document from '#models/document'
 import Space from '#models/space'
+import SpaceMember from '#models/space_member'
 import User from '#models/user'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
 export default class extends BaseSeeder {
   async run() {
     // 为 M2 闭环提供稳定的开发态入口，避免登录页只能接到空数据库。
-    await User.updateOrCreateMany('email', [
+    const users = await User.updateOrCreateMany('email', [
       {
         email: 'owner@docweave.dev',
         fullName: 'DocWeave Owner',
@@ -18,6 +19,8 @@ export default class extends BaseSeeder {
         password: 'docweave123',
       },
     ])
+    const owner = users.find((user) => user.email === 'owner@docweave.dev')!
+    const editor = users.find((user) => user.email === 'editor@docweave.dev')!
 
     await Space.updateOrCreate(
       { id: 'product' },
@@ -34,6 +37,14 @@ export default class extends BaseSeeder {
         summary: 'Owns service boundaries, contracts, and implementation sequencing.',
       }
     )
+
+    // M6 以 space_members 作为唯一权限真相；两个空间创建后再构造 owner 与 viewer 场景。
+    await SpaceMember.updateOrCreate({ spaceId: 'product', userId: owner.id }, { role: 'owner' })
+    await SpaceMember.updateOrCreate(
+      { spaceId: 'architecture', userId: owner.id },
+      { role: 'owner' }
+    )
+    await SpaceMember.updateOrCreate({ spaceId: 'product', userId: editor.id }, { role: 'viewer' })
 
     await Document.updateOrCreate(
       { id: 'doc-editor-runtime' },

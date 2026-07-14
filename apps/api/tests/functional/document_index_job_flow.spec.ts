@@ -5,6 +5,7 @@ import Document from '#models/document'
 import DocumentSnapshot from '#models/document_snapshot'
 import RagIndexJob from '#models/rag_index_job'
 import Space from '#models/space'
+import SpaceMember from '#models/space_member'
 import User from '#models/user'
 
 type IndexJobResponseBody = ApiSuccessResponse<CreateDocumentIndexJobResultDto>
@@ -27,6 +28,7 @@ test.group('document index job flow', () => {
     await RagIndexJob.query().delete()
     await DocumentSnapshot.query().delete()
     await Document.query().delete()
+    await SpaceMember.query().delete()
     await Space.query().delete()
     await User.query().delete()
 
@@ -43,6 +45,7 @@ test.group('document index job flow', () => {
       name: 'Index Space',
       summary: 'Index baseline tests.',
     })
+    await SpaceMember.create({ spaceId: space.id, userId: user.id, role: 'owner' })
 
     const document = await Document.create({
       id: 'index-doc',
@@ -140,5 +143,47 @@ test.group('document index job flow', () => {
         },
       },
     })
+  })
+
+  test('rejects a non-member before creating a document index job', async ({ client, assert }) => {
+    await RagIndexJob.query().delete()
+    await DocumentSnapshot.query().delete()
+    await Document.query().delete()
+    await SpaceMember.query().delete()
+    await Space.query().delete()
+    await User.query().delete()
+
+    const owner = await User.create({
+      email: 'private-index-owner@docweave.dev',
+      fullName: 'Owner',
+      password: 'docweave123',
+    })
+    const outsider = await User.create({
+      email: 'private-index-outsider@docweave.dev',
+      fullName: 'Outsider',
+      password: 'docweave123',
+    })
+    const space = await Space.create({
+      id: 'private-index-space',
+      name: 'Private',
+      summary: 'Private index.',
+    })
+    await SpaceMember.create({ spaceId: space.id, userId: owner.id, role: 'owner' })
+    const document = await Document.create({
+      id: 'private-index-doc',
+      spaceId: space.id,
+      title: 'Private',
+      summary: '',
+      content: '[]',
+      status: 'draft',
+    })
+
+    const response = await client
+      .post(`/api/documents/${document.id}/index`)
+      .header('authorization', `Bearer ${await login(client, outsider)}`)
+      .json({})
+
+    response.assertStatus(403)
+    assert.lengthOf(await RagIndexJob.query().where('document_id', document.id), 0)
   })
 })

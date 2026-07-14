@@ -30,12 +30,12 @@ export interface ApiDefinition {
   aiEditor: {
     store: typeof routes['ai_editor.store']
   }
-  internalCollaborationRuntime: {
-    show: typeof routes['internal_collaboration_runtime.show']
-    update: typeof routes['internal_collaboration_runtime.update']
-  }
   rag: {
     search: typeof routes['rag.search']
     chat: typeof routes['rag.chat']
+  }
+  internalCollaborationRuntime: {
+    show: typeof routes['internal_collaboration_runtime.show']
+    update: typeof routes['internal_collaboration_runtime.update']
   }
 }

@@ -16,8 +16,29 @@ import {
 } from '@docweave/adapters'
 import Document from '#models/document'
 import Space from '#models/space'
+import SpaceMember from '#models/space_member'
+import db from '@adonisjs/lucid/services/db'
+import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
+
+type CreateSpaceDependencies = {
+  createOwnerMembership?: (
+    spaceId: string,
+    userId: number,
+    client: TransactionClientContract
+  ) => Promise<void>
+}
 
 export default class DocweaveCatalogService {
+  private createOwnerMembership: NonNullable<CreateSpaceDependencies['createOwnerMembership']>
+
+  constructor(dependencies: CreateSpaceDependencies = {}) {
+    // 将 membership 写入保留在同一 transaction 内，同时为失败回滚提供可验证边界。
+    this.createOwnerMembership =
+      dependencies.createOwnerMembership ??
+      ((spaceId, userId, client) =>
+        SpaceMember.create({ spaceId, userId, role: 'owner' }, { client }).then(() => undefined))
+  }
+
   // 统一把持久化访问收口在 service，controller 只表达接口语义；DTO 转换则继续下沉到 adapter。
   async listSpaces(): Promise<SpaceDto[]> {
     const spaces = await Space.query().preload('documents')
@@ -67,14 +88,20 @@ export default class DocweaveCatalogService {
     return toDocumentDetailDto(document)
   }
 
-  async createSpace(input: CreateSpaceInput): Promise<SpaceDto> {
-    const space = await Space.create({
-      id: this.toId(input.name),
-      name: input.name,
-      summary: input.summary,
-    })
+  async createSpace(input: CreateSpaceInput, userId: number): Promise<SpaceDto> {
+    return db.transaction(async (trx) => {
+      const space = await Space.create(
+        {
+          id: this.toId(input.name),
+          name: input.name,
+          summary: input.summary,
+        },
+        { client: trx }
+      )
+      await this.createOwnerMembership(space.id, userId, trx)
 
-    return toSpaceDto(space)
+      return toSpaceDto(space)
+    })
   }
 
   async createDocument(input: CreateDocumentInput): Promise<DocumentDetailDto | null> {

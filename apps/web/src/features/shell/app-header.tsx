@@ -41,6 +41,7 @@ export function AppHeader({
           leftSection={<Search size={16} />}
           rightSection={<Text size="xs" c="dimmed">⌘K</Text>}
           readOnly
+          onClick={() => navigate({ to: '/search' })}
           classNames={{ input: 'search-input' }}
           w="100%"
           maw={360}

@@ -50,6 +50,8 @@ router
         router.get('/documents/:documentId/status', [DocumentsController, 'status'])
         router.post('/collaboration/token', [CollaborationTokensController, 'store'])
         router.post('/ai/editor', [AiEditorController, 'store'])
+        router.post('/rag/search', [RagController, 'search'])
+        router.post('/rag/chat', [RagController, 'chat'])
       })
       // M2 工作台入口以“先认证、再进入业务资源”为边界，匿名请求不应直接读取空间和文档。
       .use(middleware.auth())
@@ -67,8 +69,5 @@ router
       })
       .prefix('/internal')
       .use(middleware.collabInternal())
-
-    router.post('/rag/search', [RagController, 'search'])
-    router.post('/rag/chat', [RagController, 'chat'])
   })
   .prefix('/api')

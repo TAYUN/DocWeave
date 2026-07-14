@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useMantineColorScheme } from '@mantine/core'
 import { BlockNoteView, darkDefaultTheme, lightDefaultTheme } from '@blocknote/mantine'
 import { BlockNoteEditor, type BlockNoteEditorOptions } from '@blocknote/core'
@@ -52,9 +53,15 @@ export type DocumentEditorAiProps = {
   headers?: () => Record<string, string>
 }
 
+export type DocumentEditorInstance = Pick<
+  BlockNoteEditor<any, any, any>,
+  'getBlock' | 'setTextCursorPosition'
+>
+
 export type DocumentEditorProps = {
   editable?: boolean
   ai?: DocumentEditorAiProps
+  onReady?: (editor: DocumentEditorInstance) => void
 } & (DocumentEditorStandaloneProps | DocumentEditorCollaborationProps)
 
 export function DocumentEditor(props: DocumentEditorProps) {
@@ -75,6 +82,10 @@ export function DocumentEditor(props: DocumentEditorProps) {
   const isDark = colorScheme === 'dark'
 
   const aiEnabled = Boolean(ai)
+
+  useEffect(() => {
+    props.onReady?.(editor)
+  }, [editor, props.onReady])
 
   return (
     <BlockNoteView

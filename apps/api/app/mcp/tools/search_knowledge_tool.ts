@@ -1,8 +1,7 @@
 import type { ToolContext } from '@jrmc/adonis-mcp/types/context'
 import type { BaseSchema } from '@jrmc/adonis-mcp/types/method'
 
-import { mcpMessages } from '#exceptions/error_messages'
-import RagService from '#services/rag_service'
+import { apiErrors, mcpMessages } from '#exceptions/error_messages'
 import { Tool } from '@jrmc/adonis-mcp'
 import { isReadOnly } from '@jrmc/adonis-mcp/tool_annotations'
 import vine from '@vinejs/vine'
@@ -23,8 +22,6 @@ export default class SearchKnowledgeTool extends Tool<Schema> {
   title = '检索知识库'
   description = '按查询词检索 DocWeave 知识库，返回当前可用的 RAG 命中结果'
 
-  private rag = new RagService()
-
   async handle({ args, response }: ToolContext<Schema>) {
     const query = args?.query
 
@@ -32,7 +29,9 @@ export default class SearchKnowledgeTool extends Tool<Schema> {
       return response.error(mcpMessages.queryRequired)
     }
 
-    return response.structured(await this.rag.search(query))
+    // MCP 尚无可映射到 space_members 的用户身份，必须在工具边界 fail closed。
+    // 此处不实例化 RagService，避免无身份请求触发 embedding 或 Qdrant 调用。
+    return response.error(apiErrors.unauthorized.message)
   }
 
   schema() {

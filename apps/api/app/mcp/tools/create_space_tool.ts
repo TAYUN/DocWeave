@@ -1,8 +1,7 @@
 import type { ToolContext } from '@jrmc/adonis-mcp/types/context'
 import type { BaseSchema } from '@jrmc/adonis-mcp/types/method'
 
-import { apiSuccessMessages, mcpMessages } from '#exceptions/error_messages'
-import DocweaveCatalogService from '#services/docweave_catalog_service'
+import { apiErrors, mcpMessages } from '#exceptions/error_messages'
 import { Tool } from '@jrmc/adonis-mcp'
 import vine from '@vinejs/vine'
 
@@ -25,23 +24,13 @@ export default class CreateSpaceTool extends Tool<Schema> {
   title = '创建空间'
   description = '创建一个新的 DocWeave 空间，并返回新空间详情'
 
-  private catalog = new DocweaveCatalogService()
-
   async handle({ args, response }: ToolContext<Schema>) {
     if (!args) {
       return response.error(mcpMessages.nameAndSummaryRequired)
     }
 
-    // 复用现有 service，保证空间 ID 生成规则和 HTTP API 完全一致，避免 MCP 层单独分叉。
-    const space = await this.catalog.createSpace({
-      name: args.name,
-      summary: args.summary,
-    })
-
-    return response.structured({
-      message: apiSuccessMessages.spaceCreated,
-      space,
-    })
+    // MCP 尚无用户身份映射，不能创建没有 owner membership 的空间。
+    return response.error(apiErrors.unauthorized.message)
   }
 
   schema() {

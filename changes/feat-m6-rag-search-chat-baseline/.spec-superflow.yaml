@@ -1,0 +1,42 @@
+# .spec-superflow.yaml — lightweight state machine
+# Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
+
+# === Core state ===
+state: executing
+workflow: full
+
+# === Hashes (fast staleness detection) ===
+artifacts_hash: sha256:62fd8e7918596b04abe5f7380d646290238fd5d759cd3beac4c0e41526ac6e34
+contract_hash: sha256:839d902a2050e52bb4f6e2e1b0a8ac0df262689d614f59c8e8d778a25a2add63
+
+# === Execution progress ===
+execution_mode: null
+batches_completed: 4
+test_result: pass
+spec_merged: false
+
+# === Metadata ===
+change_name: feat-m6-rag-search-chat-baseline
+last_transition: 2026-07-13T13:30:32.020Z
+last_transition_from: approved-for-build
+last_transition_to: executing
+
+# === Decision points ===
+dp_0_decisions: >-
+dp_0_result: confirmed
+dp_0_confirmed: true
+dp_0_timestamp: 2026-07-13T00:00:00Z
+dp_1_result: confirmed: proposal, spec, design, tasks, and planning-only scope define a stable M6 minimum-loop boundary before build execution.
+dp_1_timestamp: 2026-07-13T08:50:00Z
+dp_2_result: approved: 用户确认采用 Docmost 参考方案；space_members 为唯一权限真相，owner 是 membership role，HTTP/MCP 复用 scope resolver。
+dp_2_timestamp: 2026-07-13T13:30:00Z
+dp_3_result: approved: 用户确认按刷新后的 M6 规格和执行合同继续；先完成 space_members 权限基础与双用户/MCP 验证。
+dp_3_timestamp: 2026-07-13T13:30:00Z
+dp_4_result: SDD: cross-package contracts, worker, API, RAG, streaming, and Web dependencies require guarded batch execution and review gates.
+dp_4_timestamp: 2026-07-13T00:00:00Z
+dp_5_result: null
+dp_5_timestamp: null
+dp_6_result: pass: RAG 13/13, API 42/42, Web 10/10; API/Web lint, typecheck, production build, local UI flow and independent review passed.
+dp_6_timestamp: 2026-07-14T01:33:00Z
+dp_7_result: confirmed: 用户已要求在 M6 全部改动、验证和审查完成后提交 Git。
+dp_7_timestamp: 2026-07-14T01:34:00Z

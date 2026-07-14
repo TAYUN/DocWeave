@@ -14,7 +14,23 @@ export type RagIndexBlock = {
 
 export type RagSearchRequest = {
   searchText: string
+  spaceId?: string
   limit?: number
+}
+
+/** API 权限层已经确认可见，且可参与检索的文档身份。 */
+export type RagAuthorizedDocument = {
+  workspaceId: string
+  spaceId: string
+  documentId: string
+  /** `null` 表示该文档尚无可供检索的稳定索引版本。 */
+  latestIndexedVersion: number | null
+}
+
+/** 传入 RAG 领域层的已授权检索范围，不能由 payload 或客户端替代。 */
+export type RagRetrievalScope = {
+  documents: RagAuthorizedDocument[]
+  spaceId?: string
 }
 
 export type RagCitation = {
@@ -40,7 +56,8 @@ export type RagSearchResponse = {
 
 export type RagChatRequest = {
   message: string
-  conversationId?: string
+  /** 在已授权范围内进一步缩小本次单轮问答的上下文。 */
+  spaceId?: string
   topK?: number
 }
 

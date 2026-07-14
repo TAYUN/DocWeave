@@ -1,6 +1,6 @@
 import { Box, Divider, Group, Loader, NavLink, Stack, Text } from '@mantine/core'
 import { useLocation, useNavigate } from '@tanstack/react-router'
-import { FileText } from 'lucide-react'
+import { FileText, MessageCircle, Search } from 'lucide-react'
 import { useAppShellData, type AppShellTreeEntry } from './app-shell-data'
 import classes from './AppSidebar.module.css'
 
@@ -34,6 +34,21 @@ export function AppSidebar({ treeEntries }: { treeEntries: AppShellTreeEntry[] }
       </Box>
 
       <Box p="xs">
+        <NavLink
+          label="搜索知识库"
+          leftSection={<Search size={14} />}
+          active={location.pathname === '/search'}
+          onClick={() => navigate({ to: '/search' })}
+          className={`ui-interactive ${classes.navLink}`}
+        />
+        <NavLink
+          label="知识问答"
+          leftSection={<MessageCircle size={14} />}
+          active={location.pathname === '/chat'}
+          onClick={() => navigate({ to: '/chat' })}
+          className={`ui-interactive ${classes.navLink}`}
+        />
+        <Divider my={4} />
         <Group justify="space-between" px="xs" py={6}>
           <Text size="xs" c="dimmed" fw={600} tt="uppercase">
             空间

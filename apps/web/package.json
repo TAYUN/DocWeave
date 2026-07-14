@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "tsx --tsconfig tsconfig.app.json --test tests/rag-api.spec.ts tests/citation-navigation.spec.ts",
     "preview": "vite preview",
     "theme:dark": "node ./scripts/generate-dark-tokens.mjs",
     "theme:dark:soft": "node ./scripts/generate-dark-tokens.mjs --preset soft",

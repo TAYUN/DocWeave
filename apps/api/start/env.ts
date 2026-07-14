@@ -27,6 +27,13 @@ export default await Env.create(new URL('../', import.meta.url), {
   DASHSCOPE_API_KEY: Env.schema.secret.optional(),
   DASHSCOPE_BASE_URL: Env.schema.string.optional(),
   CHAT_MODEL: Env.schema.string.optional(),
+  EMBEDDING_MODEL: Env.schema.string.optional(),
+  EMBEDDING_DIMENSIONS: Env.schema.number.optional(),
+
+  // RAG search 与 worker 共用 collection 配置，但 API 只在真实检索发生时读取它们。
+  QDRANT_URL: Env.schema.string.optional(),
+  QDRANT_API_KEY: Env.schema.string.optional(),
+  QDRANT_COLLECTION: Env.schema.string.optional(),
 
   // Session
   SESSION_DRIVER: Env.schema.enum(['cookie', 'memory', 'database'] as const),

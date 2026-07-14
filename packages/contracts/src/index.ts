@@ -64,11 +64,13 @@ export type {
   UpdateDocumentInput,
 } from './document.js'
 export type {
+  RagAuthorizedDocument,
   RagChatRequest,
   RagChatResponse,
   RagCitation,
   RagFinishReason,
   RagIndexBlock,
+  RagRetrievalScope,
   RagSearchHit,
   RagSearchRequest,
   RagSearchResponse,

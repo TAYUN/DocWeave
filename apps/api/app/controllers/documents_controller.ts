@@ -3,6 +3,8 @@ import { getDocument } from '#application/documents/get_document'
 import { listDocuments } from '#application/documents/list_documents'
 import { EmptyDocumentPatchError, updateDocument } from '#application/documents/update_document'
 import DocweaveCatalogService from '#services/docweave_catalog_service'
+import SpaceMembershipService from '#services/space_membership_service'
+import Document from '#models/document'
 import DocumentProcessingService, {
   MissingStableSnapshotError,
   SnapshotVersionNotFoundError,
@@ -18,7 +20,8 @@ import { apiErrors, apiSuccessMessages, toApiErrorResponse } from '#exceptions/e
 export default class DocumentsController {
   constructor(
     private catalog = new DocweaveCatalogService(),
-    private processing = new DocumentProcessingService()
+    private processing = new DocumentProcessingService(),
+    private membership = new SpaceMembershipService()
   ) {}
 
   async index() {
@@ -63,8 +66,12 @@ export default class DocumentsController {
     }
   }
 
-  async update({ params, request, response }: HttpContext) {
+  async update({ auth, params, request, response }: HttpContext) {
     const patch = await request.validateUsing(updateDocumentValidator)
+
+    if (!(await this.canAccessDocument(auth.getUserOrFail().id, params.documentId))) {
+      return response.status(403).send(toApiErrorResponse(apiErrors.forbidden))
+    }
 
     try {
       const document = await updateDocument(params.documentId, patch, this.catalog)
@@ -86,7 +93,10 @@ export default class DocumentsController {
     }
   }
 
-  async createSnapshot({ params, response, serialize }: HttpContext) {
+  async createSnapshot({ auth, params, response, serialize }: HttpContext) {
+    if (!(await this.canAccessDocument(auth.getUserOrFail().id, params.documentId))) {
+      return response.status(403).send(toApiErrorResponse(apiErrors.forbidden))
+    }
     const result = await this.processing.createSnapshot(params.documentId)
 
     if (!result) {
@@ -98,6 +108,10 @@ export default class DocumentsController {
 
   async triggerIndex({ auth, params, request, response, serialize }: HttpContext) {
     const payload = await request.validateUsing(triggerDocumentIndexValidator)
+
+    if (!(await this.canAccessDocument(auth.getUserOrFail().id, params.documentId))) {
+      return response.status(403).send(toApiErrorResponse(apiErrors.forbidden))
+    }
 
     try {
       const result = await this.processing.triggerIndex(
@@ -124,7 +138,10 @@ export default class DocumentsController {
     }
   }
 
-  async status({ params, response, serialize }: HttpContext) {
+  async status({ auth, params, response, serialize }: HttpContext) {
+    if (!(await this.canAccessDocument(auth.getUserOrFail().id, params.documentId))) {
+      return response.status(403).send(toApiErrorResponse(apiErrors.forbidden))
+    }
     const result = await this.processing.getStatus(params.documentId)
 
     if (!result) {
@@ -132,5 +149,11 @@ export default class DocumentsController {
     }
 
     return serialize(result)
+  }
+
+  /** 将文档处理操作绑定到 space_members，避免仅凭 documentId 越权消耗索引资源。 */
+  private async canAccessDocument(userId: number, documentId: string) {
+    const document = await Document.find(documentId)
+    return document ? this.membership.hasSpaceAccess(userId, document.spaceId) : false
   }
 }

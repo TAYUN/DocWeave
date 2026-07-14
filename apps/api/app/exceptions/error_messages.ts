@@ -12,6 +12,7 @@ import { SimpleMessagesProvider } from '@vinejs/vine'
 const knownEnglishErrorMap: Record<string, ApiErrorDefinition> = {
   'Validation failed': apiErrors.validationFailed,
   'Unauthorized': apiErrors.unauthorized,
+  'Unauthorized access': apiErrors.unauthorized,
   'Forbidden': apiErrors.forbidden,
   'Not found': apiErrors.notFound,
   'Internal server error': apiErrors.internalServerError,

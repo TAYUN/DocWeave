@@ -20,10 +20,10 @@ export type ScannedRoutes = {
     'documents.status': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'collaboration_tokens.store': { paramsTuple?: []; params?: {} }
     'ai_editor.store': { paramsTuple?: []; params?: {} }
-    'internal_collaboration_runtime.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
-    'internal_collaboration_runtime.update': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
     'rag.search': { paramsTuple?: []; params?: {} }
     'rag.chat': { paramsTuple?: []; params?: {} }
+    'internal_collaboration_runtime.show': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
+    'internal_collaboration_runtime.update': { paramsTuple: [ParamValue]; params: {'documentId': ParamValue} }
   }
   GET: {
     'auth.me': { paramsTuple?: []; params?: {} }

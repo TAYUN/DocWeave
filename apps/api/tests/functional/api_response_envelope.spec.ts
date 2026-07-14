@@ -105,7 +105,7 @@ test.group('api response envelope', () => {
     assert.match(body.errors![0]!.message!, /不能为空|长度不能少于/)
   })
 
-  test('returns message and errors for rag search validation failures', async ({
+  test('rejects anonymous rag search before validating or retrieving content', async ({
     client,
     assert,
   }) => {
@@ -113,14 +113,12 @@ test.group('api response envelope', () => {
       searchText: '',
     })
 
-    response.assertStatus(422)
+    response.assertStatus(401)
 
     const body = response.body() as ApiErrorResponse
 
-    assert.equal(body.code, apiErrors.validationFailed.code)
-    assert.equal(body.message, apiErrors.validationFailed.message)
-    assert.isArray(body.errors)
-    assert.equal(body.errors![0]?.field, 'searchText')
-    assert.match(body.errors![0]!.message!, /不能为空|长度不能少于/)
+    assert.equal(body.code, apiErrors.unauthorized.code)
+    assert.equal(body.message, apiErrors.unauthorized.message)
+    assert.isUndefined(body.errors)
   })
 })

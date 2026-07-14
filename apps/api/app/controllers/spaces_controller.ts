@@ -27,7 +27,7 @@ export default class SpacesController {
     }
   }
 
-  async store({ request, response }: HttpContext) {
+  async store({ auth, request, response }: HttpContext) {
     // 统一走 Vine 校验，既能收口服务端约束，也能让 registry 生成准确的 body 类型。
     const payload = await request.validateUsing(createSpaceValidator)
 
@@ -36,6 +36,7 @@ export default class SpacesController {
         name: payload.name,
         summary: payload.summary,
       },
+      auth.getUserOrFail().id,
       this.catalog
     )
 

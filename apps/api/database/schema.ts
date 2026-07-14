@@ -106,6 +106,17 @@ export class DocumentSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class LegacySpaceOwnerMappingSchema extends BaseModel {
+  static $columns = ['mappedAt', 'spaceId', 'userId'] as const
+  $columns = LegacySpaceOwnerMappingSchema.$columns
+  @column.dateTime()
+  declare mappedAt: DateTime
+  @column({ isPrimary: true })
+  declare spaceId: string
+  @column()
+  declare userId: number
+}
+
 export class RagIndexJobSchema extends BaseModel {
   static $columns = [
     'attemptCount',
@@ -152,6 +163,23 @@ export class RagIndexJobSchema extends BaseModel {
   declare targetSnapshotVersion: number
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+}
+
+export class SpaceMemberSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'role', 'spaceId', 'updatedAt', 'userId'] as const
+  $columns = SpaceMemberSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare role: string
+  @column()
+  declare spaceId: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: number
 }
 
 export class SpaceSchema extends BaseModel {

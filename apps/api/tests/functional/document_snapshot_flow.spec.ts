@@ -4,6 +4,7 @@ import Document from '#models/document'
 import DocumentSnapshot from '#models/document_snapshot'
 import RagIndexJob from '#models/rag_index_job'
 import Space from '#models/space'
+import SpaceMember from '#models/space_member'
 import User from '#models/user'
 
 async function login(client: Parameters<typeof test>[0] extends never ? never : any, user: User) {
@@ -24,6 +25,7 @@ test.group('document snapshot flow', () => {
     await RagIndexJob.query().delete()
     await DocumentSnapshot.query().delete()
     await Document.query().delete()
+    await SpaceMember.query().delete()
     await Space.query().delete()
     await User.query().delete()
 
@@ -40,6 +42,7 @@ test.group('document snapshot flow', () => {
       name: 'Snapshot Space',
       summary: 'Snapshot baseline tests.',
     })
+    await SpaceMember.create({ spaceId: space.id, userId: user.id, role: 'owner' })
 
     const document = await Document.create({
       id: 'snapshot-doc',

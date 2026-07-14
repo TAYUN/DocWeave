@@ -102,18 +102,6 @@ const routes = {
     tokens: [{"old":"/api/ai/editor","type":0,"val":"api","end":""},{"old":"/api/ai/editor","type":0,"val":"ai","end":""},{"old":"/api/ai/editor","type":0,"val":"editor","end":""}],
     types: placeholder as Registry['ai_editor.store']['types'],
   },
-  'internal_collaboration_runtime.show': {
-    methods: ["GET","HEAD"],
-    pattern: '/api/internal/collaboration/documents/:documentId/runtime',
-    tokens: [{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"api","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"internal","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"collaboration","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"documents","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":1,"val":"documentId","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"runtime","end":""}],
-    types: placeholder as Registry['internal_collaboration_runtime.show']['types'],
-  },
-  'internal_collaboration_runtime.update': {
-    methods: ["PUT"],
-    pattern: '/api/internal/collaboration/documents/:documentId/runtime',
-    tokens: [{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"api","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"internal","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"collaboration","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"documents","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":1,"val":"documentId","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"runtime","end":""}],
-    types: placeholder as Registry['internal_collaboration_runtime.update']['types'],
-  },
   'rag.search': {
     methods: ["POST"],
     pattern: '/api/rag/search',
@@ -125,6 +113,18 @@ const routes = {
     pattern: '/api/rag/chat',
     tokens: [{"old":"/api/rag/chat","type":0,"val":"api","end":""},{"old":"/api/rag/chat","type":0,"val":"rag","end":""},{"old":"/api/rag/chat","type":0,"val":"chat","end":""}],
     types: placeholder as Registry['rag.chat']['types'],
+  },
+  'internal_collaboration_runtime.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/internal/collaboration/documents/:documentId/runtime',
+    tokens: [{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"api","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"internal","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"collaboration","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"documents","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":1,"val":"documentId","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"runtime","end":""}],
+    types: placeholder as Registry['internal_collaboration_runtime.show']['types'],
+  },
+  'internal_collaboration_runtime.update': {
+    methods: ["PUT"],
+    pattern: '/api/internal/collaboration/documents/:documentId/runtime',
+    tokens: [{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"api","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"internal","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"collaboration","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"documents","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":1,"val":"documentId","end":""},{"old":"/api/internal/collaboration/documents/:documentId/runtime","type":0,"val":"runtime","end":""}],
+    types: placeholder as Registry['internal_collaboration_runtime.update']['types'],
   },
 } as const satisfies Record<string, AdonisEndpoint>
 

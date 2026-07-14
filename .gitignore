@@ -108,3 +108,4 @@ storybook-static/
 .reasonix/
 reasonix.toml
 .codegraph/
+.superpowers/

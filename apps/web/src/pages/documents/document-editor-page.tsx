@@ -1,4 +1,4 @@
-import { Badge, Button, Container, Flex, Group, Paper, ScrollArea, Skeleton, Stack, Text, TextInput, Textarea } from '@mantine/core'
+import { Alert, Badge, Button, Container, Flex, Group, Paper, ScrollArea, Skeleton, Stack, Text, TextInput, Textarea } from '@mantine/core'
 import { parseDocumentContent, serializeDocumentContent } from '@docweave/adapters'
 import type {
   CollaborationConnectionStatus,
@@ -10,20 +10,24 @@ import { notifications } from '@mantine/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { HocuspocusProvider } from '@hocuspocus/provider'
-import { ArrowLeft, ChevronRight, Clock } from 'lucide-react'
-import { DocumentEditor, seedCollaborationFragment } from '@docweave/editor'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowLeft, ChevronRight, Clock, Database, Save } from 'lucide-react'
+import { DocumentEditor, seedCollaborationFragment, type DocumentEditorInstance } from '@docweave/editor'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as Y from 'yjs'
 import { toDocumentEditorViewModel } from '@/features/documents/lib/document-display'
 import { MutationNotice } from '@/features/shared/mutation-notice'
 import { ErrorStatePanel, NotFoundStatePanel, RestrictedStatePanel } from '@/features/shared/state-panels'
 import {
   getCollaborationToken,
+  createDocumentSnapshot,
   getDocumentById,
+  getDocumentProcessingStatus,
   readCollaborationTokenPayload,
+  triggerDocumentIndex,
   updateDocument,
 } from '@/lib/api'
 import { getAccessToken } from '@/lib/auth'
+import { locateCitationBlock } from './citation-locator'
 
 const COLLAB_FRAGMENT_NAME = 'document-store'
 const COLLAB_BOOT_TIMEOUT_MS = 2500
@@ -42,7 +46,13 @@ function getDocumentStateKind(message: string) {
   return 'error'
 }
 
-export function DocumentEditorPage({ documentId }: { documentId: string }) {
+export function DocumentEditorPage({
+  documentId,
+  citationLocation,
+}: {
+  documentId: string
+  citationLocation?: { snapshotVersion?: number; blockId?: string }
+}) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const documentQuery = useQuery({
@@ -59,9 +69,20 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
     enabled: documentQuery.isSuccess,
     retry: false,
   })
+  const processingStatusQuery = useQuery({
+    queryKey: ['document-processing-status', documentId],
+    queryFn: () => getDocumentProcessingStatus(documentId),
+    enabled: documentQuery.isSuccess,
+    retry: false,
+    refetchInterval: (query) => {
+      const status = query.state.data?.latestIndexJob?.status
+      return status === 'pending' || status === 'running' ? 3000 : false
+    },
+  })
   const documentView = useMemo(() => (document ? toDocumentEditorViewModel(document) : null), [document])
   const initialContent = useMemo(() => documentView?.content ?? parseDocumentContent(), [documentView])
   const initialContentRef = useRef(initialContent)
+  const editorSurfaceRef = useRef<HTMLDivElement>(null)
   const hasDocument = Boolean(document)
   const [title, setTitle] = useState('')
   const [summary, setSummary] = useState('')
@@ -77,6 +98,21 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
   } | null>(null)
   const [presenceEntries, setPresenceEntries] = useState<CollaborationPresenceEntry[]>([])
   const [useLocalFallback, setUseLocalFallback] = useState(false)
+  const [citationFocusState, setCitationFocusState] = useState<'pending' | 'located' | 'not-found'>('pending')
+
+  useEffect(() => {
+    setCitationFocusState('pending')
+  }, [citationLocation?.blockId, citationLocation?.snapshotVersion])
+
+  const handleLocateCitationBlock = useCallback((editor: DocumentEditorInstance) => {
+    locateCitationBlock({
+      editor,
+      blockId: citationLocation?.blockId,
+      editorSurface: editorSurfaceRef.current,
+      onLocated: () => setCitationFocusState('located'),
+      onNotFound: () => setCitationFocusState('not-found'),
+    })
+  }, [citationLocation?.blockId])
 
   useEffect(() => {
     if (!documentView) return
@@ -237,6 +273,38 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
     },
   })
 
+  const snapshotMutation = useMutation({
+    mutationFn: createDocumentSnapshot,
+    onSuccess: async (result) => {
+      notifications.show({
+        color: 'green',
+        title: '稳定快照已创建',
+        message: `当前文档已保存为快照 v${result.latestSnapshotVersion}。`,
+      })
+      await queryClient.invalidateQueries({ queryKey: ['document-processing-status', documentId] })
+      await queryClient.invalidateQueries({ queryKey: ['documents'] })
+    },
+    onError: (mutationError) => {
+      setError(mutationError instanceof Error ? mutationError.message : '创建稳定快照失败')
+    },
+  })
+
+  const indexMutation = useMutation({
+    mutationFn: ({ targetDocumentId, snapshotVersion }: { targetDocumentId: string; snapshotVersion: number }) =>
+      triggerDocumentIndex(targetDocumentId, snapshotVersion),
+    onSuccess: async (result) => {
+      notifications.show({
+        color: 'blue',
+        title: '知识库索引已提交',
+        message: `快照 v${result.job.targetSnapshotVersion} 正在后台建立索引。`,
+      })
+      await queryClient.invalidateQueries({ queryKey: ['document-processing-status', documentId] })
+    },
+    onError: (mutationError) => {
+      setError(mutationError instanceof Error ? mutationError.message : '提交知识库索引失败')
+    },
+  })
+
   if (documentQuery.isPending) {
     return (
       <Container size={1040} px={{ base: 'md', md: 'lg' }} py={{ base: 'md', md: 'xl' }}>
@@ -268,6 +336,34 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
       summary,
       ...(hasContentChanges ? { content: serializeDocumentContent(draftContent) } : {}),
     })
+  }
+
+  const handleCreateSnapshot = async () => {
+    setError(null)
+
+    if (hasUnsavedChanges) {
+      await updateDocumentMutation.mutateAsync({
+        documentId,
+        title,
+        summary,
+        content: serializeDocumentContent(draftContent),
+      })
+    }
+
+    await snapshotMutation.mutateAsync(documentId)
+  }
+
+  const latestSnapshotVersion = processingStatusQuery.data?.latestSnapshotVersion ?? null
+  const latestIndexedVersion = processingStatusQuery.data?.latestIndexedVersion ?? null
+  const indexJob = processingStatusQuery.data?.latestIndexJob
+  const isIndexing = indexJob?.status === 'pending' || indexJob?.status === 'running'
+  const isCurrentSnapshotIndexed =
+    latestSnapshotVersion !== null && latestSnapshotVersion === latestIndexedVersion
+
+  const handleTriggerIndex = () => {
+    if (latestSnapshotVersion === null) return
+    setError(null)
+    indexMutation.mutate({ targetDocumentId: documentId, snapshotVersion: latestSnapshotVersion })
   }
 
   return (
@@ -319,6 +415,27 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                 >
                   {updateDocumentMutation.isPending ? '保存中...' : '保存文档'}
                 </Button>
+                <Button
+                  size="sm"
+                  variant="light"
+                  leftSection={<Save size={14} />}
+                  loading={snapshotMutation.isPending}
+                  disabled={updateDocumentMutation.isPending || indexMutation.isPending}
+                  onClick={() => void handleCreateSnapshot()}
+                >
+                  {hasUnsavedChanges ? '保存并创建快照' : '创建稳定快照'}
+                </Button>
+                <Button
+                  size="sm"
+                  variant={isCurrentSnapshotIndexed ? 'light' : 'filled'}
+                  color={isCurrentSnapshotIndexed ? 'teal' : undefined}
+                  leftSection={<Database size={14} />}
+                  loading={indexMutation.isPending || isIndexing}
+                  disabled={latestSnapshotVersion === null || snapshotMutation.isPending || isIndexing}
+                  onClick={handleTriggerIndex}
+                >
+                  {isCurrentSnapshotIndexed ? '知识库已更新' : '更新知识库'}
+                </Button>
               </Group>
             </Group>
           </Container>
@@ -327,6 +444,18 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
         {error ? (
           <Container size={1040} px={{ base: 'md', md: 'lg' }} py="sm" w="100%">
             <MutationNotice message={error} />
+          </Container>
+        ) : null}
+
+        {citationLocation?.snapshotVersion && citationLocation.blockId ? (
+          <Container size={1040} px={{ base: 'md', md: 'lg' }} py="sm" w="100%">
+            <Alert color="blue" title="已打开引用来源">
+              {citationFocusState === 'located'
+                ? `已定位并高亮快照 v${citationLocation.snapshotVersion} 对应的当前文档块。`
+                : citationFocusState === 'not-found'
+                  ? `引用来自快照 v${citationLocation.snapshotVersion} 的块 ${citationLocation.blockId}，但该块已变更或不存在。当前文档仍可正常查看和编辑。`
+                  : `正在尝试定位快照 v${citationLocation.snapshotVersion} 的引用块...`}
+            </Alert>
           </Container>
         ) : null}
 
@@ -349,6 +478,15 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                 <Badge size="sm" variant="light">
                   {getCollaborationStatusLabel(collaborationStatus, useLocalFallback)}
                 </Badge>
+                <Badge size="sm" variant="light" color={isCurrentSnapshotIndexed ? 'teal' : 'gray'}>
+                  {isCurrentSnapshotIndexed
+                    ? `索引 v${latestIndexedVersion}`
+                    : latestSnapshotVersion === null
+                      ? '未创建快照'
+                      : isIndexing
+                        ? '索引进行中'
+                        : `快照 v${latestSnapshotVersion} 待索引`}
+                </Badge>
                 {presenceEntries.length > 0 ? (
                   <Text size="xs" c="dimmed">
                     在线 {presenceEntries.length} 人
@@ -365,7 +503,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                 maxRows={4}
               />
 
-              <Paper p="md" withBorder className="editor-surface">
+              <Paper p="md" withBorder className="editor-surface" ref={editorSurfaceRef}>
                 {isCollaborationEditor && collaborationRuntime ? (
                   <DocumentEditor
                     key={`${document.id}:collaboration`}
@@ -377,6 +515,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                         : undefined
                     }
                     onChange={setDraftContent}
+                    onReady={handleLocateCitationBlock}
                     collaboration={{
                       fragment: collaborationRuntime.fragment,
                       provider: {
@@ -400,6 +539,7 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
                     ai={{ api: '/api/ai/editor', documentId: document.id, headers: getEditorAiHeaders }}
                     initialContent={initialContent}
                     onChange={setDraftContent}
+                    onReady={handleLocateCitationBlock}
                   />
                 )}
               </Paper>
@@ -412,7 +552,8 @@ export function DocumentEditorPage({ documentId }: { documentId: string }) {
 }
 
 function getCollaborationWebsocketUrl() {
-  return import.meta.env.VITE_COLLAB_WS_URL ?? 'ws://127.0.0.1:3334'
+  // 与 Vite/API 的 localhost 开发地址保持一致，避免 IPv4 与 IPv6 loopback 混用导致握手失败。
+  return import.meta.env.VITE_COLLAB_WS_URL ?? 'ws://localhost:3334'
 }
 
 function mapProviderStatus(status: 'connecting' | 'connected' | 'disconnected') {

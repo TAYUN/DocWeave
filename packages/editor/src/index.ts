@@ -3,5 +3,6 @@ export type {
   DocumentEditorCollaboration,
   DocumentEditorContent,
   DocumentEditorAiProps,
+  DocumentEditorInstance,
   DocumentEditorProps,
 } from './document-editor'

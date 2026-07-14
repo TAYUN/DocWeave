@@ -3,7 +3,8 @@ import DocweaveCatalogService from '#services/docweave_catalog_service'
 
 export async function createSpace(
   input: CreateSpaceInput,
+  userId: number,
   catalog = new DocweaveCatalogService()
 ): Promise<SpaceDto> {
-  return catalog.createSpace(input)
+  return catalog.createSpace(input, userId)
 }
