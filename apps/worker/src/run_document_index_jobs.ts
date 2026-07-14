@@ -3,7 +3,12 @@ import { QdrantClient } from '@qdrant/js-client-rest'
 import type { AiRuntime } from '@docweave/ai'
 import { createModelRef } from '@docweave/adapters'
 import { readSnapshotContent } from '@docweave/document'
-import { indexDocumentSnapshot, type RagVectorPoint } from '@docweave/rag'
+import {
+  buildBlockChunks,
+  createStablePointId,
+  indexDocumentSnapshot,
+  type RagVectorPoint,
+} from '@docweave/rag'
 import type { WorkerConfig } from './config.js'
 
 type ClaimedJob = {
@@ -46,6 +51,13 @@ export async function runDocumentIndexJobs(runtime: WorkerRuntime) {
       content: snapshot.content,
       contentFormat: snapshot.content_format,
     })
+    const currentPointIds = buildBlockChunks({
+      workspaceId: snapshot.workspace_id,
+      spaceId: snapshot.space_id,
+      documentId: job.documentId,
+      snapshotVersion: job.targetSnapshotVersion,
+      blocks: parsed.blocks,
+    }).map(createStablePointId)
 
     await markDocumentIndexJobStage(runtime.pool, job.id, 'chunking')
 
@@ -108,6 +120,15 @@ export async function runDocumentIndexJobs(runtime: WorkerRuntime) {
       return true
     }
 
+    // 同一快照版本被重新建立索引时，旧 block 已不在当前快照中也必须被移除，
+    // 否则 retrieval 仅按版本过滤仍会返回无法回跳的过期 Citation。
+    await removeStaleSnapshotPoints(
+      runtime.qdrant,
+      runtime.config.qdrantCollection,
+      job.documentId,
+      job.targetSnapshotVersion,
+      currentPointIds,
+    )
     await publishIndexedVersion(runtime.pool, job)
     return true
   } catch (error) {
@@ -336,6 +357,26 @@ async function upsertPoints(qdrant: QdrantClient, collectionName: string, points
 
   await qdrant.upsert(collectionName, {
     points,
+  })
+}
+
+async function removeStaleSnapshotPoints(
+  qdrant: QdrantClient,
+  collectionName: string,
+  documentId: string,
+  snapshotVersion: number,
+  currentPointIds: string[],
+) {
+  await qdrant.delete(collectionName, {
+    wait: true,
+    filter: {
+      must: [
+        { key: 'documentId', match: { value: documentId } },
+        { key: 'snapshotVersion', match: { value: snapshotVersion } },
+      ],
+      // 空快照也需要清除同版本的历史 points，避免旧 Citation 继续被检索到。
+      ...(currentPointIds.length > 0 ? { must_not: [{ has_id: currentPointIds }] } : {}),
+    },
   })
 }
 

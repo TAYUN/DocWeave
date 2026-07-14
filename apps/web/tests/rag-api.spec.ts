@@ -3,6 +3,7 @@ import test from 'node:test'
 import type { DocumentProcessingStatusDto } from '@docweave/contracts/document'
 import { parseRagSseFrame, streamRagChat } from '../src/lib/api.ts'
 import { getRagIndexState, toRagChatViewModel, toRagSearchViewModel } from '../src/features/rag/lib/index.ts'
+import { toRagAnswerParts } from '../src/features/rag/rag-answer-parts.ts'
 
 test('parses one JSON data frame and ignores frames without data', () => {
   assert.deepEqual(
@@ -216,6 +217,54 @@ test('only evaluates document processing statuses within the selected visible sp
       ],
     }),
     'ready',
+  )
+})
+
+test('replaces only known verbose Citation IDs with compact answer references', () => {
+  const citations = [
+    {
+      id: 'rag-evaluation-playbook:2:a9453816-504d-4f3f-ab62-647a89a391ce:0',
+      documentId: 'rag-evaluation-playbook',
+      snapshotVersion: 2,
+      blockId: 'a9453816-504d-4f3f-ab62-647a89a391ce',
+      quote: 'RAG evidence',
+    },
+  ]
+
+  assert.deepEqual(
+    toRagAnswerParts(
+      '结论有据 [rag-evaluation-playbook:2:a9453816-504d-4f3f-ab62-647a89a391ce:0]，保留 [不应替换]。',
+      citations,
+    ),
+    [
+      { type: 'text', value: '结论有据 ' },
+      { type: 'citation', citation: citations[0], index: 1 },
+      { type: 'text', value: '，保留 [不应替换]。' },
+    ],
+  )
+})
+
+test('recognizes the model Citation shorthand that omits the repeated block ID', () => {
+  const citations = [
+    {
+      id: 'rag-evaluation-playbook:2:c200729c-2be4-4cad-989b-873274d4ac7d:c200729c-2be4-4cad-989b-873274d4ac7d:0',
+      documentId: 'rag-evaluation-playbook',
+      snapshotVersion: 2,
+      blockId: 'c200729c-2be4-4cad-989b-873274d4ac7d',
+      quote: '检索指标',
+    },
+  ]
+
+  assert.deepEqual(
+    toRagAnswerParts(
+      '应避免平均分掩盖关键失败 [rag-evaluation-playbook:2:c200729c-2be4-4cad-989b-873274d4ac7d:0]。',
+      citations,
+    ),
+    [
+      { type: 'text', value: '应避免平均分掩盖关键失败 ' },
+      { type: 'citation', citation: citations[0], index: 1 },
+      { type: 'text', value: '。' },
+    ],
   )
 })
 

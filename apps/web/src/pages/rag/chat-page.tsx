@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import type { RagStreamEvent } from '@docweave/contracts/rag'
 import { RagCitations } from '@/features/rag/rag-citations'
+import { RagAnswer } from '@/features/rag/rag-answer'
 import { getRagFailedIndexMessage, getRagIndexState, toRagChatViewModel } from '@/features/rag/lib'
 import { useAppShellData } from '@/features/shell/app-shell-data'
 import { getDocumentProcessingStatus, streamRagChat } from '@/lib/api'
@@ -125,8 +126,8 @@ export function ChatPage() {
         {displayView.state !== 'restricted' && (displayView.answer || displayView.state === 'streaming' || displayView.state === 'completed' || displayView.state === 'cancelled') ? (
           <Paper withBorder p="md" radius="sm">
             <Stack gap="md">
-              <div><Text fw={600} mb="xs">回答</Text><Text aria-live="polite" style={{ overflowWrap: 'anywhere', whiteSpace: 'pre-wrap' }}>{displayView.answer || '正在生成回答...'}</Text></div>
-              <div><Text fw={600} mb="xs">来源</Text><RagCitations citations={displayView.citations} /></div>
+              <div><Text fw={600} mb="xs">回答</Text><RagAnswer answer={displayView.answer || '正在生成回答...'} citations={displayView.citations} /></div>
+              <RagCitations citations={displayView.citations} />
             </Stack>
           </Paper>
         ) : null}

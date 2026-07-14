@@ -2,24 +2,24 @@
 # Derived data. Always rebuildable from artifacts. Lost/corrupt → fall back to content-level detection.
 
 # === Core state ===
-state: executing
+state: closing
 workflow: full
 
 # === Hashes (fast staleness detection) ===
-artifacts_hash: sha256:62fd8e7918596b04abe5f7380d646290238fd5d759cd3beac4c0e41526ac6e34
+artifacts_hash: sha256:96bfcd8b2587991426cd377d0e2913eb9b947c503277b60a1574498186e8cd19
 contract_hash: sha256:839d902a2050e52bb4f6e2e1b0a8ac0df262689d614f59c8e8d778a25a2add63
 
 # === Execution progress ===
 execution_mode: null
 batches_completed: 4
 test_result: pass
-spec_merged: false
+spec_merged: true
 
 # === Metadata ===
 change_name: feat-m6-rag-search-chat-baseline
-last_transition: 2026-07-13T13:30:32.020Z
-last_transition_from: approved-for-build
-last_transition_to: executing
+last_transition: 2026-07-14T03:56:17.188Z
+last_transition_from: executing
+last_transition_to: closing
 
 # === Decision points ===
 dp_0_decisions: >-

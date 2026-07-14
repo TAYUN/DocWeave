@@ -38,13 +38,13 @@ export type DocumentEditorCollaboration = NonNullable<
 type DocumentEditorStandaloneProps = {
   mode?: 'standalone'
   initialContent: DocumentEditorContent
-  onChange: (content: DocumentEditorContent) => void
+  onChange: (content: DocumentEditorContent, editor: DocumentEditorInstance) => void
 }
 
 type DocumentEditorCollaborationProps = {
   mode: 'collaboration'
   collaboration: DocumentEditorCollaboration
-  onChange?: (content: DocumentEditorContent) => void
+  onChange?: (content: DocumentEditorContent, editor: DocumentEditorInstance) => void
 }
 
 export type DocumentEditorAiProps = {
@@ -96,7 +96,7 @@ export function DocumentEditor(props: DocumentEditorProps) {
       theme={isDark ? darkDefaultTheme : lightDefaultTheme}
       formattingToolbar={aiEnabled ? false : undefined}
       slashMenu={aiEnabled ? false : undefined}
-      onChange={(currentEditor) => props.onChange?.(currentEditor.document)}
+      onChange={(currentEditor) => props.onChange?.(currentEditor.document, currentEditor)}
     >
       {aiEnabled ? (
         <AIMenuController aiMenu={props.mode === 'collaboration' ? CollaborationAIMenu : undefined} />

@@ -90,6 +90,11 @@ export function createCollaborationServer(config: CollabConfig) {
       // 路由切换会销毁最后一个浏览器 provider；此时显式回写一次，
       // 不把未达到 debounce 窗口的最后一段草稿留在内存中。
       await persistDocumentRuntime(runtime, documentId, data.document)
+
+      // 最后一个客户端离开后不继续保留 Yjs 运行态。外部保存、快照或 seed
+      // 可能已更新 API 正文；下次打开必须从持久化真相恢复，避免 Citation 指向
+      // 当前快照中存在、却在陈旧房间缓存里缺失的 block。
+      documents.delete(data.documentName)
     },
   })
 }

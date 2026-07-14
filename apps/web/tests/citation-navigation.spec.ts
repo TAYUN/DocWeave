@@ -31,13 +31,9 @@ test('serializes Citation location and accepts numeric route query strings safel
 
 test('locates the current Citation block without making a missing historical target fatal', () => {
   const calls: string[] = []
-  const classes = new Set<string>()
+  let selector = ''
   const target = {
     dataset: { id: 'block-1' },
-    classList: {
-      add: (name: string) => { classes.add(name); calls.push(`add:${name}`) },
-      remove: (name: string) => { classes.delete(name); calls.push(`remove:${name}`) },
-    },
     scrollIntoView: () => calls.push('scroll'),
     querySelector: () => ({ focus: () => calls.push('focus') }),
   }
@@ -49,16 +45,22 @@ test('locates the current Citation block without making a missing historical tar
       setTextCursorPosition: () => calls.push('cursor'),
     },
     blockId: 'block-1',
-    editorSurface: { querySelectorAll: () => [target] } as unknown as HTMLElement,
+    editorSurface: {
+      querySelector: (value: string) => { selector = value; return target },
+      querySelectorAll: () => [target],
+    } as unknown as HTMLElement,
     onLocated: () => { state = 'located' },
     onNotFound: () => { state = 'not-found' },
     schedule: (callback) => { callback(0); return 1 },
-    scheduleCleanup: (callback) => { callback(); return 1 },
+    scheduleCleanup: () => 1,
   })
 
   assert.equal(state, 'located')
-  assert.deepEqual(calls, ['cursor', 'scroll', 'focus', 'add:rag-citation-target', 'remove:rag-citation-target'])
-  assert.equal(classes.size, 0)
+  assert.equal(
+    selector,
+    '[data-node-type="blockContainer"][data-id="block-1"], [id="block-1"]',
+  )
+  assert.deepEqual(calls, ['cursor', 'scroll', 'focus'])
 
   locateCitationBlock({
     editor: { getBlock: () => undefined, setTextCursorPosition: () => calls.push('unexpected-cursor') },
@@ -66,9 +68,36 @@ test('locates the current Citation block without making a missing historical tar
     editorSurface: null,
     onLocated: () => { state = 'located' },
     onNotFound: () => { state = 'not-found' },
-    schedule: () => 1,
-    scheduleCleanup: () => 1,
+    schedule: (callback) => { callback(0); return 1 },
+    scheduleCleanup: (callback) => { callback(); return 1 },
   })
 
   assert.equal(state, 'not-found')
+})
+
+test('locates and highlights a rendered Citation block even when editor lookup is delayed', () => {
+  let state = 'pending'
+  const target = {
+    dataset: { id: 'block-1' },
+    scrollIntoView: () => undefined,
+    querySelector: () => null,
+  }
+
+  locateCitationBlock({
+    editor: {
+      getBlock: () => undefined,
+      setTextCursorPosition: () => undefined,
+    },
+    blockId: 'block-1',
+    editorSurface: {
+      querySelector: () => target,
+      querySelectorAll: () => [target],
+    } as unknown as HTMLElement,
+    onLocated: () => { state = 'located' },
+    onNotFound: () => { state = 'not-found' },
+    schedule: (callback) => { callback(0); return 1 },
+    scheduleCleanup: () => 1,
+  })
+
+  assert.equal(state, 'located')
 })

@@ -1,8 +1,8 @@
 # Decision-Point Audit Report
 
 **变更**: feat-m6-rag-search-chat-baseline  
-**生成时间**: 2026-07-14T01:32:44.155Z  
-**当前状态**: executing  
+**生成时间**: 2026-07-14T03:56:17.352Z  
+**当前状态**: closing  
 
 ## 汇总表
 

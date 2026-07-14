@@ -9,6 +9,7 @@ import { runDocumentIndexJobs } from './run_document_index_jobs.js'
 test('loads workspace and space boundaries with the snapshot and forwards them to indexing', async () => {
   const queries: Array<{ text: string; values?: unknown[] }> = []
   let capturedPayloads: Array<Record<string, unknown>> = []
+  let deleteRequest: unknown = null
   const job = { id: 'job-1', documentId: 'doc-1', targetSnapshotVersion: 4 }
 
   async function query(text: string, values?: unknown[]) {
@@ -57,6 +58,9 @@ test('loads workspace and space boundaries with the snapshot and forwards them t
     async upsert(_collection: string, input: { points: Array<{ payload: Record<string, unknown> }> }) {
       capturedPayloads = input.points.map((point) => point.payload)
     },
+    async delete(_collection: string, input: unknown) {
+      deleteRequest = input
+    },
   } as unknown as QdrantClient
   const config = {
     workerJobLeaseMs: 1_000,
@@ -86,4 +90,14 @@ test('loads workspace and space boundaries with the snapshot and forwards them t
       plainText: 'Indexed from a stable snapshot.',
     },
   ])
+  assert.deepEqual(deleteRequest, {
+    wait: true,
+    filter: {
+      must: [
+        { key: 'documentId', match: { value: 'doc-1' } },
+        { key: 'snapshotVersion', match: { value: 4 } },
+      ],
+      must_not: [{ has_id: ['f723f141-c8a7-3d28-6dbb-df90bc3e9b64'] }],
+    },
+  })
 })

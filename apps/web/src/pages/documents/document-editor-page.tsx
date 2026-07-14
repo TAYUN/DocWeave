@@ -87,6 +87,9 @@ export function DocumentEditorPage({
   const [title, setTitle] = useState('')
   const [summary, setSummary] = useState('')
   const [draftContent, setDraftContent] = useState(initialContent)
+  const [savedContent, setSavedContent] = useState(initialContent)
+  const hasEstablishedEditorBaselineRef = useRef(false)
+  const initializedDocumentIdRef = useRef<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [collaborationStatus, setCollaborationStatus] =
     useState<CollaborationConnectionStatus>('idle')
@@ -99,8 +102,10 @@ export function DocumentEditorPage({
   const [presenceEntries, setPresenceEntries] = useState<CollaborationPresenceEntry[]>([])
   const [useLocalFallback, setUseLocalFallback] = useState(false)
   const [citationFocusState, setCitationFocusState] = useState<'pending' | 'located' | 'not-found'>('pending')
+  const citationLocatedRef = useRef(false)
 
   useEffect(() => {
+    citationLocatedRef.current = false
     setCitationFocusState('pending')
   }, [citationLocation?.blockId, citationLocation?.snapshotVersion])
 
@@ -109,16 +114,24 @@ export function DocumentEditorPage({
       editor,
       blockId: citationLocation?.blockId,
       editorSurface: editorSurfaceRef.current,
-      onLocated: () => setCitationFocusState('located'),
+      onLocated: () => {
+        citationLocatedRef.current = true
+        setCitationFocusState('located')
+      },
       onNotFound: () => setCitationFocusState('not-found'),
     })
   }, [citationLocation?.blockId])
 
   useEffect(() => {
     if (!documentView) return
+    if (initializedDocumentIdRef.current === documentView.id) return
+
+    initializedDocumentIdRef.current = documentView.id
     setTitle(documentView.title)
     setSummary(documentView.summary)
     setDraftContent(documentView.content)
+    setSavedContent(documentView.content)
+    hasEstablishedEditorBaselineRef.current = false
     setError(null)
   }, [documentView])
 
@@ -233,7 +246,7 @@ export function DocumentEditorPage({
   const isCollaborationEditor =
     Boolean(collaborationRuntime) && !useLocalFallback && collaborationStatus === 'connected'
   const isCollaborationUnavailable = useLocalFallback || collaborationTokenQuery.isError
-  const hasContentChanges = JSON.stringify(draftContent) !== JSON.stringify(initialContent)
+  const hasContentChanges = JSON.stringify(draftContent) !== JSON.stringify(savedContent)
 
   const hasUnsavedChanges =
     !!document &&
@@ -259,6 +272,7 @@ export function DocumentEditorPage({
       setTitle(updatedView.title)
       setSummary(updatedView.summary)
       setDraftContent(updatedView.content)
+      setSavedContent(updatedView.content)
       setError(null)
       notifications.show({ color: 'green', title: '保存文档', message: '文档已保存。' })
       await Promise.all([
@@ -327,6 +341,29 @@ export function DocumentEditorPage({
   }
   if (!document)
     return <NotFoundStatePanel title="未找到对应文档" message="当前文档不存在。" onBack={() => navigate({ to: '/' })} />
+
+  const handleEditorChange = (content: typeof draftContent) => {
+    // BlockNote/Yjs 初次同步会把持久化的简化 blocks 规范化为 editor document。
+    // 这是初始化，不是用户改动；以规范化结果建立保存基线后再开始追踪真实编辑。
+    if (!hasEstablishedEditorBaselineRef.current) {
+      hasEstablishedEditorBaselineRef.current = true
+      setSavedContent(content)
+    }
+
+    setDraftContent(content)
+  }
+
+  const handleDocumentEditorChange = (
+    content: typeof draftContent,
+    editor: DocumentEditorInstance,
+  ) => {
+    handleEditorChange(content)
+
+    // 协同正文在 onReady 后仍可能异步挂载；以实际内容变更为第二个定位时机。
+    if (citationLocation?.blockId && !citationLocatedRef.current) {
+      handleLocateCitationBlock(editor)
+    }
+  }
 
   const handleSave = () => {
     setError(null)
@@ -503,7 +540,15 @@ export function DocumentEditorPage({
                 maxRows={4}
               />
 
-              <Paper p="md" withBorder className="editor-surface" ref={editorSurfaceRef}>
+              <Paper
+                p="md"
+                withBorder
+                className="editor-surface rag-citation-scope"
+                ref={editorSurfaceRef}
+              >
+                {citationFocusState === 'located' && citationLocation?.blockId ? (
+                  <CitationHighlightStyle blockId={citationLocation.blockId} />
+                ) : null}
                 {isCollaborationEditor && collaborationRuntime ? (
                   <DocumentEditor
                     key={`${document.id}:collaboration`}
@@ -514,7 +559,7 @@ export function DocumentEditorPage({
                         ? { api: '/api/ai/editor', documentId: document.id, headers: getEditorAiHeaders }
                         : undefined
                     }
-                    onChange={setDraftContent}
+                    onChange={handleDocumentEditorChange}
                     onReady={handleLocateCitationBlock}
                     collaboration={{
                       fragment: collaborationRuntime.fragment,
@@ -538,7 +583,7 @@ export function DocumentEditorPage({
                     editable
                     ai={{ api: '/api/ai/editor', documentId: document.id, headers: getEditorAiHeaders }}
                     initialContent={initialContent}
-                    onChange={setDraftContent}
+                    onChange={handleDocumentEditorChange}
                     onReady={handleLocateCitationBlock}
                   />
                 )}
@@ -609,4 +654,42 @@ function toPresenceEntry(
     canEdit: Boolean(presence.canEdit),
     isCurrentUser: candidate.id === currentUserId,
   }
+}
+
+function CitationHighlightStyle({ blockId }: { blockId: string }) {
+  // BlockNote 官方 HTML 为每个 blockContainer 输出稳定 data-id；由路由状态生成选择器，
+  // 能在协同编辑器重绘节点后继续指向同一个 Citation，而不是依赖一次性的 DOM mutation。
+  const selector = `[data-node-type="blockContainer"][data-id="${escapeCssString(blockId)}"]`
+
+  return (
+    <style>{`
+      .rag-citation-scope ${selector} {
+        border-left: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      .rag-citation-scope ${selector} > .bn-block-content {
+        background: #fff3bf !important;
+        border-radius: 4px;
+        box-shadow: inset 0 0 0 1px #fde68a;
+      }
+
+      .rag-citation-scope ${selector} .bn-inline-content {
+        background: transparent !important;
+      }
+
+      [data-mantine-color-scheme="dark"] .rag-citation-scope ${selector} > .bn-block-content {
+        background: rgba(217, 119, 6, 0.18) !important;
+        box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.28);
+      }
+    `}</style>
+  )
+}
+
+function escapeCssString(value: string) {
+  // 使用 code point escape，避免 URL 参数中的引号或反斜杠改变 style 标签内的选择器结构。
+  return Array.from(value)
+    .map((character) => `\\${character.codePointAt(0)?.toString(16)} `)
+    .join('')
 }

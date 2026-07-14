@@ -627,10 +627,3 @@
     flex: 1 1 0;
   }
 }
-
-/* Citation 跳转仅短暂标记当前块，避免把历史快照定位失败变成阻断性状态。 */
-.rag-citation-target {
-  outline: 2px solid var(--mantine-color-blue-5);
-  outline-offset: 4px;
-  transition: outline-color 180ms ease;
-}
